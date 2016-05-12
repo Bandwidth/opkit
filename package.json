@@ -1,0 +1,26 @@
+{
+  "name": "opkit",
+  "version": "1.0.0",
+  "description": "Library of DevOps Functions",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inetCatapult/opkit.git"
+  },
+  "keywords": [
+    "botkit"
+  ],
+  "author": "Bandwidth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/inetCatapult/opkit/issues"
+  },
+  "homepage": "https://github.com/inetCatapult/opkit#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  }
+}
