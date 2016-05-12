@@ -38,104 +38,234 @@ function updateRegion(targetRegion){
     });
 }
 
-/*Queries SQS queues using auth and url provided.
-Returns the number of messages in the queue if request is successful.
-Returns the error given by Amazon if the query fails for whatever reason. */
+/*
+	Function: getSQSQueueSizeData
+	
+	Queries SQS queues using auth and url provided. If 3 parameters are
+	entered instead, the program will develop a URL assuming that the 
+	arguments were entered in the order: region endpoint, account number,
+	name of queue.
+	
+	Parameters:
+	
+		url - URL of queue on AWS.
+		
+	Returns:
+	
+		The number of messages in the queue.
+		
+	See Also:
+	
+		<getSQSQueueSizeInt>
+*/
 function getSQSQueueSizeData(url){
-
-	var params = {
-		QueueUrl: url, 
-		AttributeNames: [
-			'ApproximateNumberOfMessages',
-			]
-		};
+	
+	if (arguments.length === 3) {
+		url = sqsQueueURLBuilder(arguments[0], arguments[1], arguments[2]);
+	}
+	
+	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessages');
 	
 		sqs.getQueueAttributes(params, function(err, data) {
-		if (err) {
-			console.log(err, err.stack);
-		}	  
-		else  {
-			console.log(data);
-		}
+			printSQSQueueData(err,data);
 	});
 }
 
-//Same as above, but returns an integer value rather than data.
+/*
+	Function: getSQSQueueSizeInt
+	
+	Queries SQS queues using auth and url provided. If 3 parameters are
+	entered instead, the program will develop a URL assuming that the 
+	arguments were entered in the order: region endpoint, account number,
+	name of queue.
+	
+	Parameters:
+	
+		url - URL of queue on AWS.
+		
+	Returns:
+	
+		The number of messages in the queue (as an integer).
+		
+	See Also:
+	
+		<getSQSQueueSizeData>
+*/
 function getSQSQueueSizeInt(url){
 	
-	var params = {
-		QueueUrl: url,
-		AttributeNames: [
-			'ApproximateNumberOfMessages',
-			]
-		};
+	if (arguments.length === 3) {
+		url = sqsQueueURLBuilder(arguments[0], arguments[1], arguments[2]);
+	}
+	
+	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessages');
 	
 		sqs.getQueueAttributes(params, function(err, data) {
 		if (err) {
 			console.log(err, err.stack);
 		}	  
 		else  {
-			var returnMe = '';
 			var messages = data.Attributes.ApproximateNumberOfMessages;
-			returnMe += messages;
-			var integer = parseInt(returnMe);
-			console.log(returnMe);
+			sqsQueueMessageParser(messages);
 		}
 	});
 }
 
-/*Queries SQS queues using auth and url provided.
-Returns the number of messages not visible (i.e messages taken off the queue that have not 
-finished processing) in the queue if request is successful.
-Returns the error given by Amazon if the query fails for whatever reason. */
+/*
+	Function: getSQSQueueSizeNotVisibleData
+	
+	Queries SQS queues using auth and url provided. If 3 parameters are
+	entered instead, the program will develop a URL assuming that the 
+	arguments were entered in the order: region endpoint, account number,
+	name of queue.
+	
+	Parameters:
+	
+		url - URL of queue on AWS.
+		
+	Returns:
+	
+		The number of messages which have been taken off of the queue,
+		but have not finished processing.
+		
+	See Also:
+	
+		<getSQSQueueSizeNotVisibleInt>
+*/
 function getSQSQueueSizeNotVisibleData(url) {
+	
+	if (arguments.length === 3) {
+		url = sqsQueueURLBuilder(arguments[0], arguments[1], arguments[2]);
+	}
 
-	var params = {
-		QueueUrl: url, 
-		AttributeNames: [
-			'ApproximateNumberOfMessagesNotVisible',
-			]
-		};
+	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessagesNotVisible');
 	
 		sqs.getQueueAttributes(params, function(err, data) {
-		if (err) {
-			console.log(err, err.stack);
-		}	  
-		else  {
-			console.log(data);
-		}
+			printSQSQueueData(err,data);
 	});
 }
 
-//Same as above, but returns an integer value rather than data.
+/*
+	Function: getSQSQueueSizeNotVisibleInt
+	
+	Queries SQS queues using auth and url provided. If 3 parameters are
+	entered instead, the program will develop a URL assuming that the 
+	arguments were entered in the order: region endpoint, account number,
+	name of queue.
+	
+	Parameters:
+	
+		url - URL of queue on AWS.
+		
+	Returns:
+	
+		The number of messages which have been taken off of the queue,
+		but have not finished processing (as an integer).
+		
+	See Also:
+	
+		<getSQSQueueSizeNotVisibleData>
+*/
 function getSQSQueueSizeNotVisibleInt(url) {
+	
+	if (arguments.length === 3) {
+		url = sqsQueueURLBuilder(arguments[0], arguments[1], arguments[2]);
+	}
 
-	var params = {
-		QueueUrl: url,
-		AttributeNames: [
-			'ApproximateNumberOfMessagesNotVisible',
-			]
-		};
+	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessagesNotVisible');
 
 		sqs.getQueueAttributes(params, function(err, data) {
 		if (err) {
 			console.log(err, err.stack);
 		}	  
 		else  {
-			var returnMe = '';
 			var messages = data.Attributes.ApproximateNumberOfMessagesNotVisible;
-			returnMe += messages;
-			var integer = parseInt(returnMe);
-			console.log(returnMe);
+			sqsQueueMessageParser(messages);
 		}
 	});
 }
 
-/* function printData(err, data) {
+/*
+	Function: printSQSQueueData
+	
+	Prints out data retrieved by querying queue.
+	
+	Parameters:
+	
+		err - error field returned by AWS query (null for successful query).
+		data - data returned by AWS query (null for unsuccessful query).
+		
+	Returns:
+	
+		Data returned by AWS query
+*/
+function printSQSQueueData(err, data) {
 	if (err) {
 		console.log(err, err.stack);
 	}	  
 	else  {
 		console.log(data);
 	}
-} */
+} 
+
+/*
+	Function: sqsQueueMessageParser
+	
+	Prints out data retrieved by querying queue as an integer.
+	
+	Parameters:
+	
+		str - Data retrieved from SQS query
+		
+	Returns:
+	
+		Data returned by AWS query as an integer.
+*/
+function sqsQueueMessageParser(str) {
+	var returnMe = '';
+	returnMe += str;
+	var integer = parseInt(returnMe);
+	console.log(returnMe);
+}
+
+/*
+	Function: sqsQueueURLBuilder
+	
+	Returns an AWS queue URL.
+	
+	Parameters:
+	
+		str1 - Region endpoint.
+		str2 - AWS account number.
+		str3 - Name of queue.
+		
+	Returns:
+	
+		A valid AWS queue URL using the specified parameters.
+*/
+function sqsQueueURLBuilder(str1, str2, str3) {
+	return 'https://sqs.' + str1 + '.amazonaws.com/' + str2 + '/' + str3;
+}
+
+/*
+	Function: sqsQueueParameterFormatter
+	
+	Returns a valid parameter object to be used to 
+	retrieve queue attributes.
+	
+	Parameters:
+	
+		url - URL of SQS queue.
+		attribute - Specified attribute to retrieve.
+		
+	Returns:
+	
+		An object containing a QueueURL field and an attribute field.
+*/
+function sqsQueueParameterFormatter(url, attribute) {
+	return {
+		QueueUrl: url, 
+		AttributeNames: [
+			attribute,
+			]
+	};
+}
