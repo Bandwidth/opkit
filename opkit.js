@@ -90,7 +90,7 @@ function getSQSQueueSizeNotVisibleData(url) {
 	QueueUrl: url, 
 	AttributeNames: [
 		'ApproximateNumberOfMessagesNotVisible',
-	]
+		]
 	};
 	
 	sqs.getQueueAttributes(params, function(err, data) {
@@ -110,8 +110,8 @@ function getSQSQueueSizeNotVisibleInt(url) {
 	QueueUrl: url,
 	AttributeNames: [
 		'ApproximateNumberOfMessagesNotVisible',
-	]
-};
+		]
+	};
 
 	sqs.getQueueAttributes(params, function(err, data) {
 	if (err) {
