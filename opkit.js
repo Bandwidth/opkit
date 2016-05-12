@@ -44,9 +44,9 @@ function updateRegion(targetRegion){
 function getSQSQueueSizeData(url){
 
 	var params = {
-		QueueUrl: url, 
-		AttributeNames: [
-			'ApproximateNumberOfMessages',
+	QueueUrl: url, 
+	AttributeNames: [
+		'ApproximateNumberOfMessages',
 		]
 	};
 	
@@ -55,18 +55,18 @@ function getSQSQueueSizeData(url){
 		console.log(err, err.stack);
 	}	  
 	else  {
-			console.log(data);
+		console.log(data);
 	}
 	});
 }
 
 //Same as above, but returns an integer value rather than data.
 function getSQSQueueSizeInt(url){
-
+	
 	var params = {
-		QueueUrl: url, 
-		AttributeNames: [
-			'ApproximateNumberOfMessages',
+	QueueUrl: url,
+	AttributeNames: [
+		'ApproximateNumberOfMessages',
 		]
 	};
 	
@@ -75,7 +75,11 @@ function getSQSQueueSizeInt(url){
 		console.log(err, err.stack);
 	}	  
 	else  {
-			console.log(data);
+		var returnMe = '';
+		var messages = data.Attributes.ApproximateNumberOfMessages;
+		returnMe += messages;
+		var integer = parseInt(returnMe);
+		console.log(returnMe);
 	}
 	});
 }
