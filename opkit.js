@@ -38,25 +38,25 @@ function updateRegion(targetRegion){
     });
 }
 
-//Queries SQS queues using auth and url provided.
-//Returns the number of messages in the queue if request is successful.
-//Returns the error given by Amazon if the query fails for whatever reason.
+/*Queries SQS queues using auth and url provided.
+Returns the number of messages in the queue if request is successful.
+Returns the error given by Amazon if the query fails for whatever reason. */
 function getSQSQueueSizeData(url){
 
 	var params = {
-	QueueUrl: url, 
-	AttributeNames: [
-		'ApproximateNumberOfMessages',
-		]
-	};
+		QueueUrl: url, 
+		AttributeNames: [
+			'ApproximateNumberOfMessages',
+			]
+		};
 	
-	sqs.getQueueAttributes(params, function(err, data) {
-	if (err) {
-		console.log(err, err.stack);
-	}	  
-	else  {
-		console.log(data);
-	}
+		sqs.getQueueAttributes(params, function(err, data) {
+		if (err) {
+			console.log(err, err.stack);
+		}	  
+		else  {
+			console.log(data);
+		}
 	});
 }
 
@@ -64,46 +64,46 @@ function getSQSQueueSizeData(url){
 function getSQSQueueSizeInt(url){
 	
 	var params = {
-	QueueUrl: url,
-	AttributeNames: [
-		'ApproximateNumberOfMessages',
-		]
-	};
+		QueueUrl: url,
+		AttributeNames: [
+			'ApproximateNumberOfMessages',
+			]
+		};
 	
-	sqs.getQueueAttributes(params, function(err, data) {
-	if (err) {
-		console.log(err, err.stack);
-	}	  
-	else  {
-		var returnMe = '';
-		var messages = data.Attributes.ApproximateNumberOfMessages;
-		returnMe += messages;
-		var integer = parseInt(returnMe);
-		console.log(returnMe);
-	}
+		sqs.getQueueAttributes(params, function(err, data) {
+		if (err) {
+			console.log(err, err.stack);
+		}	  
+		else  {
+			var returnMe = '';
+			var messages = data.Attributes.ApproximateNumberOfMessages;
+			returnMe += messages;
+			var integer = parseInt(returnMe);
+			console.log(returnMe);
+		}
 	});
 }
 
-//Queries SQS queues using auth and url provided.
-//Returns the number of messages not visible (i.e messages taken off the queue that have not 
-//finished processing) in the queue if request is successful.
-//Returns the error given by Amazon if the query fails for whatever reason.
+/*Queries SQS queues using auth and url provided.
+Returns the number of messages not visible (i.e messages taken off the queue that have not 
+finished processing) in the queue if request is successful.
+Returns the error given by Amazon if the query fails for whatever reason. */
 function getSQSQueueSizeNotVisibleData(url) {
 
 	var params = {
-	QueueUrl: url, 
-	AttributeNames: [
-		'ApproximateNumberOfMessagesNotVisible',
-		]
-	};
+		QueueUrl: url, 
+		AttributeNames: [
+			'ApproximateNumberOfMessagesNotVisible',
+			]
+		};
 	
-	sqs.getQueueAttributes(params, function(err, data) {
-	if (err) {
-		console.log(err, err.stack);
-	}	  
-	else  {
-		console.log(data);
-	}
+		sqs.getQueueAttributes(params, function(err, data) {
+		if (err) {
+			console.log(err, err.stack);
+		}	  
+		else  {
+			console.log(data);
+		}
 	});
 }
 
@@ -111,22 +111,31 @@ function getSQSQueueSizeNotVisibleData(url) {
 function getSQSQueueSizeNotVisibleInt(url) {
 
 	var params = {
-	QueueUrl: url,
-	AttributeNames: [
-		'ApproximateNumberOfMessagesNotVisible',
-		]
-	};
+		QueueUrl: url,
+		AttributeNames: [
+			'ApproximateNumberOfMessagesNotVisible',
+			]
+		};
 
-	sqs.getQueueAttributes(params, function(err, data) {
+		sqs.getQueueAttributes(params, function(err, data) {
+		if (err) {
+			console.log(err, err.stack);
+		}	  
+		else  {
+			var returnMe = '';
+			var messages = data.Attributes.ApproximateNumberOfMessagesNotVisible;
+			returnMe += messages;
+			var integer = parseInt(returnMe);
+			console.log(returnMe);
+		}
+	});
+}
+
+/* function printData(err, data) {
 	if (err) {
 		console.log(err, err.stack);
 	}	  
 	else  {
-		var returnMe = '';
-		var messages = data.Attributes.ApproximateNumberOfMessagesNotVisible;
-		returnMe += messages;
-		var integer = parseInt(returnMe);
-		console.log(returnMe);
+		console.log(data);
 	}
-	});
-}
+} */
