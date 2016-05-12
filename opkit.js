@@ -9,6 +9,7 @@ A framework to help you build devops bots
 
 var Botkit = require('botkit');
 var AWS = require('aws-sdk');
+var sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 
 //Functions that allow you to update the authorization keys (both at a time or each at once)
 function updateAuthKeys(accessKeyId, secretAccessKey){
@@ -35,4 +36,93 @@ function updateRegion(targetRegion){
     AWS.config.update({
         region: targetRegion
     });
+}
+
+//Queries SQS queues using auth and url provided.
+//Returns the number of messages in the queue if request is successful.
+//Returns the error given by Amazon if the query fails for whatever reason.
+function getSQSQueueSizeData(url){
+
+	var params = {
+		QueueUrl: url, 
+		AttributeNames: [
+			'ApproximateNumberOfMessages',
+		]
+	};
+	
+	sqs.getQueueAttributes(params, function(err, data) {
+	if (err) {
+		console.log(err, err.stack);
+	}	  
+	else  {
+			console.log(data);
+	}
+	});
+}
+
+//Same as above, but returns an integer value rather than data.
+function getSQSQueueSizeInt(url){
+
+	var params = {
+		QueueUrl: url, 
+		AttributeNames: [
+			'ApproximateNumberOfMessages',
+		]
+	};
+	
+	sqs.getQueueAttributes(params, function(err, data) {
+	if (err) {
+		console.log(err, err.stack);
+	}	  
+	else  {
+			console.log(data);
+	}
+	});
+}
+
+//Queries SQS queues using auth and url provided.
+//Returns the number of messages not visible (i.e messages taken off the queue that have not 
+//finished processing) in the queue if request is successful.
+//Returns the error given by Amazon if the query fails for whatever reason.
+function getSQSQueueSizeNotVisibleData(url) {
+
+	var params = {
+	QueueUrl: url, 
+	AttributeNames: [
+		'ApproximateNumberOfMessagesNotVisible',
+	]
+	};
+	
+	sqs.getQueueAttributes(params, function(err, data) {
+	if (err) {
+		console.log(err, err.stack);
+	}	  
+	else  {
+		console.log(data);
+	}
+	});
+}
+
+//Same as above, but returns an integer value rather than data.
+function getSQSQueueSizeNotVisibleInt(url) {
+
+	var params = {
+	QueueUrl: url,
+	AttributeNames: [
+		'ApproximateNumberOfMessagesNotVisible',
+	]
+};
+
+	sqs.getQueueAttributes(params, function(err, data) {
+	if (err) {
+		console.log(err, err.stack);
+	}	  
+	else  {
+		var returnMe = '';
+		var messages = data.Attributes.ApproximateNumberOfMessagesNotVisible;
+		returnMe += messages;
+		var integer = parseInt(returnMe);
+		console.log(returnMe);
+	}
+	});
 }
