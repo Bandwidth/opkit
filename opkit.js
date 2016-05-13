@@ -14,7 +14,7 @@ var AWS = require('aws-promised');
 var cloudwatch = new AWS.cloudWatch({apiVersion: '2016-05-12'});
 var sqs = new AWS.sqs({apiVersion: '2012-11-05'});
 function Opkit(){
-	this.props : {
+	this.props = {
 		apiVersion : '2016-05-12'
 	}
 }
