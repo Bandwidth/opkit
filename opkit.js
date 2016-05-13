@@ -12,7 +12,7 @@ A framework to help you build devops bots
 //var Botkit = require('botkit');
 var AWS = require('aws-promised');
 var cloudwatch = new AWS.cloudWatch({apiVersion: '2016-05-12'});
-var sqs = new AWS.SQS({apiVersion: '2012-11-05'});
+var sqs = new AWS.sqs({apiVersion: '2012-11-05'});
 var props = {
 	apiVersion : '2016-05-12'
 };
@@ -134,6 +134,7 @@ function retrieveSQSQueueData(url, param, callback) {
 		}
 	props.region = targetRegion;
 	updateAwsConfig();
+	});
 }
 
 /*
