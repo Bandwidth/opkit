@@ -78,7 +78,7 @@ function queryAlarmsByStateReadably(state){
 		var returnMe = '';
 		var alarms = data.MetricAlarms ;
 		for (var k=0; k<alarms.length; k++){
-			returnMe = returnMe + alarms[k].Namespace +', ' + 
+			returnMe += alarms[k].Namespace +', ' + 
 			alarms[k].MetricName + ': ' + alarms[k].AlarmDescription + "\n";
 		}
 		return returnMe;
@@ -112,7 +112,7 @@ function healthReportByState(){
 	.then(function(data){
 		var alarms = data.MetricAlarms;
 		var numOK=0, numInsufficient=0, numAlarm=0;
-		for (k=0; k<alarms.length; k++){
+		for (var k=0; k<alarms.length; k++){
 			if (alarms[k].StateValue === 'ALARM'){
 				numAlarm++;
 			}
@@ -130,17 +130,6 @@ function healthReportByState(){
 	});
 }
 
-//props = {
-//	apiVersion : '2016-05-13',
-//	region : 'us-east-1',
-//	accessKeyId: 'AKIAINZQY3G3NEL3IGKA',
-//	secretAccessKey: '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'
-//};
-updateAuthKeys('AKIAINZQY3G3NEL3IGKA', 'OMYYNvnGMgY1g9dtgkvVUuVaAFj2OCzFFztRl9fj');
-updateRegion('us-east-1');
-healthReportByState('OK')
-	.then(console.log)
-	.catch(console.error);
 /*
          About: License
 
