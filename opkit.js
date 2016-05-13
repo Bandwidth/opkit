@@ -57,7 +57,7 @@ function updateRegion(targetRegion){
 	
 		<getSQSQueueSizeNotVisibleInt>, <retrieveSQSQueueData>
 */
-function getSQSQueueSizeInt(url, callback){
+function getSQSQueueSizeInt(url, callback) {
 	retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', function(err, data) {
 		if (err) {
 			callback(err, null);
