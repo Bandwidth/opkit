@@ -41,12 +41,46 @@ describe('Opkit', function() {
 });
 
 describe('Opkit', function() {
+	describe('#updateRegion', function() {
+		it('should verify updating the region does not cause an error', function() {
+			object.updateRegion('us-east-1');
+		});
+	});
+});
+
+describe('Opkit', function() {
+	describe('#queryAlarmsByState', function() {
+		it('should verify queryAlarmsByState does not produce an error', function() {
+			object.queryAlarmsByState('OK');
+		});
+	});
+});
+
+describe('Opkit', function() {
+	describe('#queryAlarmsByStateReadably', function() {
+		it('should verify queryAlarmsByStateReadably does not produce an error', function() {
+			object.queryAlarmsByStateReadably('OK');
+		});
+	});
+});
+
+describe('Opkit', function() {
+	describe('#healthReportByState', function() {
+		it('should verify healthReportByState does not produce an error', function() {
+			object.healthReportByState();
+		});
+	});
+});
+
+/*
+describe('Opkit', function() {
 	describe('#getSQSQueueSizeInt', function() {
 		it('should verify getSQSQueueSizeInt does not cause an error', function(done) {
 			object.getSQSQueueSizeInt('https://sqs.us-east-1.amazonaws.com/848840820992/nguyer-sms-queue', done);
 		});
 	});
 });
+*/
 
 describe('Opkit', function() {
 	describe('#sqsQueueParameterFormatter', function() {
