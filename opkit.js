@@ -7,131 +7,148 @@ A framework to help you build devops bots
 (but only if you're deployed to AWS and talking in Slack)
 */
 
-var Botkit = require('botkit');
-var AWS = require('aws-sdk');
-var cloudwatch = new AWS.CloudWatch({apiVersion: '2016-05-12'});
-
-//Function to update AWS Config and recreate the cloudwatch object
-function updateAwsConfig(props){
-	AWS.config.update(props);
-	cloudwatch = new AWS.CloudWatch({apiVersion: '2016-05-12'});
+//var Botkit = require('botkit');
+var AWS = require('aws-promised');
+var cloudwatch = new AWS.cloudWatch({apiVersion: '2016-05-12'});
+var props = {
+	apiVersion : '2016-05-12'
+};
+function updateAwsConfig(){
+	cloudwatch = new AWS.cloudWatch(props);
 }
 
-//Functions that allow you to update the authorization keys (both at a time or each at once)
-//Each update also recreates the singleton object cloudwatch
+/*
+   Function: updateAuthKeys
+   Updates the access and secret keys by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. 
+*/
 function updateAuthKeys(accessKeyId, secretAccessKey){
-	updateAwsConfig({
-		accessKeyId: accessKeyId,
-		secretAccessKey: secretAccessKey
-	});
+	props.accessKeyId = accessKeyId;
+	props.secretAccessKey = secretAccessKey;
+	updateAwsConfig();
 }
-
+/*
+   Function: updateAccessKeyId
+   Updates the accessKeyId by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. If you are updating both keys, use the function updateAuthKeys instead; it's faster than calling this and updateSecretAccessKey.
+*/
 function updateAccessKeyId(accessKeyId){
-	updateAwsConfig({
-		accessKeyId: accessKeyId
-	});
+	props.accessKeyId = accessKeyId;
+	updateAwsConfig();
 }
-
+/*
+   Function: updateSecretAccessKey
+   Updates the secretAccessKey by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. If you are updating both keys, use the function updateAuthKeys instead; it's faster than calling this and updateAccessKeyId.
+*/
 function updateSecretAccessKey(secretAccessKey){
-	updateAwsConfig({
-		secretAccessKey: secretAccessKey
-	});
+	props.secretAccessKey = secretAccessKey;
+	updateAwsConfig();
 }
 
-//Functions that allow you to update the AWS region from which you are querying
+/*
+   Function: updateRegion
+   Updates the region (e.g. us-east-1) by creating a new cloudwatch object. Updating the region replaces the previous region for all future queries.
+*/
 function updateRegion(targetRegion){
-	updateAwsConfig({
-		region: targetRegion
-	});
+	props.region = targetRegion;
+	updateAwsConfig();
 }
 
+/*
+   Function: queryAlarmsByState
+   Queries CloudWatch alarms using the auth and region given.
+   Is promised.
+   Returned promise contains the alarms that match the given state or the Amazon error.
+   State can be one of OK, INSUFFICIENT_DATA, or ALARM.
+*/
 
-/* All query functions take a callback as a parameter.
-   That callback returns one of (err, data). The error
-   field contains the error as presented by Amazon. */
+function queryAlarmsByState(state){
+	return cloudwatch.describeAlarmsPromised({StateValue: state });
+}
 
+/*
+   Function: queryAlarmsByStateReadably
+   Queries CloudWatch alarms using the auth and region given.
+   Is promised.
+   Returned promise contains the alarms that match the given state, in a neat human-readable table ready to be printed by your bot (or the Amazon error as a JS object).
+   State can be one of OK, INSUFFICIENT_DATA, or ALARM.
+*/
 
-//Queries CloudWatch alarms using the auth and region given.
-//Returns a JSON of the alarms that match the state if request successful.
-//Returns the error given by Amazon if the query fails for whatever reason.
-//State can be OK, INSUFFICIENT_DATA, or ALARM.
-function queryAlarmsByState(state, callback){
-	cloudwatch.describeAlarms({StateValue: state }, function (err, data) {
-		if (err){
-		   console.log(err, err.stack); 
-		   callback(err, null);
-		} 
-		else {
-			callback(null, data)
+function queryAlarmsByStateReadably(state){
+	return queryAlarmsByState(state)
+	.then(function(data){
+		var returnMe = '';
+		var alarms = data.MetricAlarms ;
+		for (var k=0; k<alarms.length; k++){
+			returnMe = returnMe + alarms[k].Namespace +', ' + 
+			alarms[k].MetricName + ': ' + alarms[k].AlarmDescription + "\n";
 		}
+		return returnMe;
 	});
 }
 
-//Same as above, but returns a newline-separated string of alarms if successful.
-function queryAlarmsByStateReadably(state, callback){
-	cloudwatch.describeAlarms({StateValue: state }, function (err, data) {
-		if (err){
-		   console.log(err, err.stack); 
-		   callback(err, null)
-		} 
-		else {
-			var returnMe = '';
-			var alarms = data.MetricAlarms ;
-			for (k=0; k<alarms.length; k++){
-				returnMe = returnMe + alarms[k].Namespace +', ' + 
-				alarms[k].MetricName + ': ' + alarms[k].AlarmDescription + "\n";
+/*
+   Function: countAlarmsByState
+   Queries CloudWatch alarms using the auth and region given.
+   Is promised.
+   Returned promise contains the number of alarms that match the given state (or the Amazon error as a JS object).
+   State can be one of OK, INSUFFICIENT_DATA, or ALARM.
+*/
+function countAlarmsByState(state){
+	return queryAlarmsByState(state)
+	.then(function(data){
+		var alarms = data.MetricAlarms;
+		return alarms.length;
+	});
+}
+
+/*
+   Function: healthReportByState
+   Queries CloudWatch alarms using the auth and region given.
+   Is promised.
+   Returned promise contains the count of alarms in each state, in a neat human-readable table ready to be printed by your bot (or the Amazon error as a JS object).
+   State can be one of OK, INSUFFICIENT_DATA, or ALARM.
+*/
+function healthReportByState(){
+	return cloudwatch.describeAlarmsPromised({})
+	.then(function(data){
+		var alarms = data.MetricAlarms;
+		var numOK=0, numInsufficient=0, numAlarm=0;
+		for (k=0; k<alarms.length; k++){
+			if (alarms[k].StateValue === 'ALARM'){
+				numAlarm++;
 			}
-			callback(null, returnMe);
-		}
-	});
-}
-
-//Queries CloudWatch alarms using the auth and region given.
-//Returns the number of the alarms that match the state if request successful.
-//Returns the error given by Amazon if the query fails for whatever reason.
-//State can be OK, INSUFFICIENT_DATA, or ALARM.
-function countAlarmsByState(state, callback){
-	cloudwatch.describeAlarms({StateValue: state }, function (err, data) {
-		if (err){
-		   console.log(err, err.stack); 
-		   callback(err, null);
-		} 
-		else {
-			var alarms = data.MetricAlarms;
-			callback(null, alarms.length);
-		}
-	});
-}
-
-//Queries CloudWatch alarms using the auth and region given.
-//Returns a human-readable health report as a newline-separated string.
-//This health report includes information about the number of alarms in each state.
-
-function healthReportByState(callback){
-	cloudwatch.describeAlarms({ }, function (err, data) {
-		if (err){
-		   console.log(err, err.stack); 
-		   callback(err, null);
-		} 
-		else {
-			var alarms = data.MetricAlarms;
-			var numOK=0, numInsufficient=0, numAlarm=0;
-			for (k=0; k<alarms.length; k++){
-				if (alarms[k].StateValue.valueOf() == 'ALARM'){
-					numAlarm++;
-				}
-				else if (alarms[k].StateValue.valueOf() == 'OK'){
-					numOK++;
-				}
-				else{
-					numInsufficient++;
-				}
+			else if (alarms[k].StateValue === 'OK'){
+				numOK++;
 			}
-			callback(null, "Number Of Alarms, By State: \n"+
-				"There are "+numOK+" OK alarms, \n"+
-				"          "+numAlarm+ " alarming alarms, and \n"+
-				"          "+numInsufficient+" alarms for which there is insufficient data.");
+			else{
+				numInsufficient++;
+			}
 		}
+		return "Number Of Alarms, By State: \n"+
+			"There are "+numOK+" OK alarms, \n"+
+			"          "+numAlarm+ " alarming alarms, and \n"+
+			"          "+numInsufficient+" alarms for which there is insufficient data.";
 	});
 }
 
+//props = {
+//	apiVersion : '2016-05-13',
+//	region : 'us-east-1',
+//	accessKeyId: 'AKIAINZQY3G3NEL3IGKA',
+//	secretAccessKey: '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'
+//};
+updateAuthKeys('AKIAINZQY3G3NEL3IGKA', 'OMYYNvnGMgY1g9dtgkvVUuVaAFj2OCzFFztRl9fj');
+updateRegion('us-east-1');
+healthReportByState('OK')
+	.then(console.log)
+	.catch(console.error);
+/*
+         About: License
+
+    Copyright (c) 2016 bandwidth.com, Inc.
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+      */
