@@ -56,17 +56,10 @@ function updateRegion(targetRegion){
 		
 	See Also:
 	
-		<getSQSQueueSizeInt>
+		<getSQSQueueSizeInt>, <retrieveSQSQueueData>
 */
 function getSQSQueueSizeData(url){
-	
-	url = sqsQueueURLBuilder(arguments);
-	
-	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessages');
-	
-		sqs.getQueueAttributes(params, function(err, data) {
-			printSQSQueueData(err,data,false,params.AttributeNames[0]);
-	});
+	retrieveSQSQueueData(arguments, 'ApproximateNumberOfMessages', false);
 }
 
 /*
@@ -87,17 +80,10 @@ function getSQSQueueSizeData(url){
 		
 	See Also:
 	
-		<getSQSQueueSizeData>
+		<getSQSQueueSizeData>, <retrieveSQSQueueData>
 */
 function getSQSQueueSizeInt(url){
-	
-	url = sqsQueueURLBuilder(arguments);
-	
-	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessages');
-	
-		sqs.getQueueAttributes(params, function(err, data) {
-			printSQSQueueData(err,data,true,params.AttributeNames[0]);
-	});
+	retrieveSQSQueueData(arguments, 'ApproximateNumberOfMessages', true);
 }
 
 /*
@@ -119,17 +105,10 @@ function getSQSQueueSizeInt(url){
 		
 	See Also:
 	
-		<getSQSQueueSizeNotVisibleInt>
+		<getSQSQueueSizeNotVisibleInt>, <retrieveSQSQueueData>
 */
 function getSQSQueueSizeNotVisibleData(url) {
-	
-	url = sqsQueueURLBuilder(arguments);
-
-	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessagesNotVisible');
-	
-		sqs.getQueueAttributes(params, function(err, data) {
-			printSQSQueueData(err,data,false,params.AttributeNames[0]);
-	});
+	retrieveSQSQueueData(arguments, 'ApproximateNumberOfMessagesNotVisible', false);
 }
 
 /*
@@ -151,16 +130,38 @@ function getSQSQueueSizeNotVisibleData(url) {
 		
 	See Also:
 	
-		<getSQSQueueSizeNotVisibleData>
+		<getSQSQueueSizeNotVisibleData>, <retrieveSQSQueueData>
 */
 function getSQSQueueSizeNotVisibleInt(url) {
+	retrieveSQSQueueData(arguments, 'ApproximateNumberOfMessagesNotVisible', true);
+}
+
+/*
+	Function: retrieveSQSQueueData
 	
-	url = sqsQueueURLBuilder(arguments);
-
-	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessagesNotVisible');
-
-		sqs.getQueueAttributes(params, function(err, data) {
-			printSQSQueueData(err,data,true,params.AttributeNames[0]);
+	Gets SQS queue data based on the provided parameters.
+	
+	Parameters:
+	
+		args - Arguments passed into the method (url).
+		str - Specified attribute to fetch data for (either 
+		ApproximateNumberOfMessages or ApproximateNumberOfMessagesNotVisible)
+		bool - Denotes whehter the data should be returned as a 
+		string or integer (true for integer, false for string)
+		
+	Returns:
+	
+		Data about messages on the SQS queue.
+		
+	See Also:
+	
+		<sqsQueueURLBuilder>, <sqsQueueParameterFormatter>, <printSQSQueueData>
+*/
+function retrieveSQSQueueData(args, str, bool) {
+	url = sqsQueueURLBuilder(args);
+	var params = sqsQueueParameterFormatter(url, str);
+	sqs.getQueueAttributes(params, function(err, data) {
+			printSQSQueueData(err,data,bool,params.AttributeNames[0]);
 	});
 }
 
@@ -185,40 +186,24 @@ function printSQSQueueData(err, data, bool, attribute) {
 		console.log(err, err.stack);
 	}	  
 	else  {
-		if (bool) {
+		if (bool)
+		{
 			if (attribute === 'ApproximateNumberOfMessages') {
 				var messages = data.Attributes.ApproximateNumberOfMessages;
 			}
 			else {
 				var messages = data.Attributes.ApproximateNumberOfMessagesNotVisible;
 			}
-			sqsQueueMessageParser(messages)
+			var returnMe = '';
+			returnMe += messages;
+			var integer = parseInt(returnMe);
+			console.log(integer);
 		}
 		else {
 			console.log(data);
 		}
 	}
 }  
-
-/*
-	Function: sqsQueueMessageParser
-	
-	Prints out data retrieved by querying queue as an integer.
-	
-	Parameters:
-	
-		str - Data retrieved from SQS query
-		
-	Returns:
-	
-		Data returned by AWS query as an integer.
-*/
-function sqsQueueMessageParser(str) {
-	var returnMe = '';
-	returnMe += str;
-	var integer = parseInt(returnMe);
-	console.log(returnMe);
-}
 
 /*
 	Function: sqsQueueURLBuilder
