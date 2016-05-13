@@ -126,7 +126,7 @@ Opkit.prototype.getSQSQueueSizeNotVisibleInt = function(url, callback) {
 		<sqsQueueParameterFormatter>, <getSQSQueueSizeInt>, <getSQSQueueSizeNotVisibleInt>
 */
 Opkit.prototype.retrieveSQSQueueData = function(url, param, callback) {
-	sqs.getQueueAttributes(sqsQueueParameterFormatter(url, param), function(err, data) {
+	sqs.getQueueAttributes(this.sqsQueueParameterFormatter(url, param), function(err, data) {
 		if (err) {
 			callback(err, null);
 		}

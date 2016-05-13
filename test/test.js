@@ -32,10 +32,18 @@ AWS.config.update({region: 'us-east-1'}); */
 console.log(object.props);
 
 describe('Opkit', function() {
-	describe('#getSQSQueueSizeInt()', function() {
-		it('should verify getSQSQueueInt does not cause an error', function() {
+	describe('#updateAuthKeys()', function() {
+		it('should verify updateAuthKeys does not cause an error', function() {
 			object.updateAuthKeys('AKIAJOQCFVMRLLNFWLZA', 'bHXuXbdF9tg7NJjCN2PutXjCJnkCV+Cb/0vJPn7F');
 			//object.sqsQueueParameterFormatter('https://sqs.us-east-1.amazonaws.com/848840820992/nguyer-sms-queue', 'Attrib');
+		});
+	});
+});
+
+describe('Opkit', function() {
+	describe('#getSQSQueueSizeInt', function() {
+		it('should verify getSQSQueueSizeInt does not cause an error', function(done) {
+			object.getSQSQueueSizeInt('https://sqs.us-east-1.amazonaws.com/848840820992/nguyer-sms-queue', done);
 		});
 	});
 });
