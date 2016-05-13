@@ -13,13 +13,13 @@ A framework to help you build devops bots
 var AWS = require('aws-promised');
 var cloudwatch = new AWS.cloudWatch({apiVersion: '2016-05-12'});
 var sqs = new AWS.sqs({apiVersion: '2012-11-05'});
-var props = {
-	apiVersion : '2016-05-12'
-};
-
 function Opkit(){
 
 }
+
+Opkit.prototype.props = {
+	apiVersion : '2016-05-12'
+};
 
 Opkit.prototype.updateAwsConfig = function(){
 	cloudwatch = new AWS.cloudWatch(props);
@@ -30,25 +30,25 @@ Opkit.prototype.updateAwsConfig = function(){
    Updates the access and secret keys by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. 
 */
 Opkit.prototype.updateAuthKeys = function(accessKeyId, secretAccessKey){
-	props.accessKeyId = accessKeyId;
-	props.secretAccessKey = secretAccessKey;
-	updateAwsConfig();
+	Opkit.prototype.props.accessKeyId = accessKeyId;
+	Opkit.prototype.props.secretAccessKey = secretAccessKey;
+	Opkit.prototype.updateAwsConfig();
 }
 /*
    Function: updateAccessKeyId
    Updates the accessKeyId by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. If you are updating both keys, use the function updateAuthKeys instead; it's faster than calling this and updateSecretAccessKey.
 */
 Opkit.prototype.updateAccessKeyId = function(accessKeyId){
-	props.accessKeyId = accessKeyId;
-	updateAwsConfig();
+	Opkit.prototype.props.accessKeyId = accessKeyId;
+	Opkit.prototype.updateAwsConfig();
 }
 /*
    Function: updateSecretAccessKey
    Updates the secretAccessKey by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. If you are updating both keys, use the function updateAuthKeys instead; it's faster than calling this and updateAccessKeyId.
 */
 Opkit.prototype.updateSecretAccessKey = function(secretAccessKey){
-	props.secretAccessKey = secretAccessKey;
-	updateAwsConfig();
+	Opkit.prototype.props.secretAccessKey = secretAccessKey;
+	Opkit.prototype.updateAwsConfig();
 }
 
 /*
@@ -56,9 +56,8 @@ Opkit.prototype.updateSecretAccessKey = function(secretAccessKey){
    Updates the region (e.g. us-east-1) by creating a new cloudwatch object. Updating the region replaces the previous region for all future queries.
 */
 Opkit.prototype.updateRegion = function(targetRegion){
-    AWS.config.update({
-        region: targetRegion
-    });
+	Opkit.prototype.props.region = targetRegion;
+	Opkit.prototype.updateAwsConfig();
 }
 
 /*
@@ -81,7 +80,7 @@ Opkit.prototype.updateRegion = function(targetRegion){
 		<getSQSQueueSizeNotVisibleInt>, <retrieveSQSQueueData>
 */
 Opkit.prototype.getSQSQueueSizeInt = function(url, callback){
-	retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', callback);
+	Opkit.prototype.retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', callback);
 }
 
 /*
@@ -105,7 +104,7 @@ Opkit.prototype.getSQSQueueSizeInt = function(url, callback){
 		<getSQSQueueSizeInt>, <retrieveSQSQueueData>
 */
 Opkit.prototype.getSQSQueueSizeNotVisibleInt = function(url, callback) {
-	retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisible', callback);
+	Opkit.prototype.retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisible', callback);
 }
 
 /*
@@ -137,8 +136,6 @@ Opkit.prototype.retrieveSQSQueueData = function(url, param, callback) {
 			var messages = data.Attributes[param];
 			callback(null, messages);
 		}
-	props.region = targetRegion;
-	updateAwsConfig();
 	});
 }
 
@@ -163,7 +160,7 @@ Opkit.prototype.queryAlarmsByState = function(state){
 */
 
 Opkit.prototype.queryAlarmsByStateReadably = function(state){
-	return queryAlarmsByState(state)
+	return Opkit.prototype.queryAlarmsByState(state)
 	.then(function(data){
 		var returnMe = '';
 		var alarms = data.MetricAlarms ;
@@ -183,7 +180,7 @@ Opkit.prototype.queryAlarmsByStateReadably = function(state){
    State can be one of OK, INSUFFICIENT_DATA, or ALARM.
 */
 Opkit.prototype.countAlarmsByState = function(state){
-	return queryAlarmsByState(state)
+	return Opkit.prototype.queryAlarmsByState(state)
 	.then(function(data){
 		var alarms = data.MetricAlarms;
 		return alarms.length;
