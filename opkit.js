@@ -7,6 +7,8 @@ A framework to help you build devops bots
 (but only if you're deployed to AWS and talking in Slack)
 */
 
+//Must include module.exports 
+
 var Botkit = require('botkit');
 var AWS = require('aws-sdk');
 var sqs = new AWS.SQS({apiVersion: '2012-11-05'});
@@ -57,15 +59,8 @@ function updateRegion(targetRegion){
 	
 		<getSQSQueueSizeNotVisibleInt>, <retrieveSQSQueueData>
 */
-function getSQSQueueSizeInt(url, callback) {
-	retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', function(err, data) {
-		if (err) {
-			callback(err, null);
-		}
-		else {
-			callback(null, data);
-		}
-	});
+function getSQSQueueSizeInt(url, callback){
+	retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', callback);
 }
 
 /*
@@ -89,14 +84,7 @@ function getSQSQueueSizeInt(url, callback) {
 		<getSQSQueueSizeInt>, <retrieveSQSQueueData>
 */
 function getSQSQueueSizeNotVisibleInt(url, callback) {
-	retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisible', function(err, data) {
-		if (err) {
-			callback(err, null);
-		}
-		else {
-			callback(null,data);
-		}
-	});
+	retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisible', callback);
 }
 
 /*
