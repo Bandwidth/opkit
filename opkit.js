@@ -1,5 +1,5 @@
 /*
-OPKIT v0.0.1 2016-05-12
+Opkit v0.0.1 2016-05-12
 Illirik Smirnov (ismirnov@bandwidth.com)
 Ram Rao (rrao@bandwidth.com)
 
@@ -16,7 +16,12 @@ var sqs = new AWS.sqs({apiVersion: '2012-11-05'});
 var props = {
 	apiVersion : '2016-05-12'
 };
-function updateAwsConfig(){
+
+function Opkit(){
+
+}
+
+Opkit.prototype.updateAwsConfig = function(){
 	cloudwatch = new AWS.cloudWatch(props);
 }
 
@@ -24,7 +29,7 @@ function updateAwsConfig(){
    Function: updateAuthKeys
    Updates the access and secret keys by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. 
 */
-function updateAuthKeys(accessKeyId, secretAccessKey){
+Opkit.prototype.updateAuthKeys = function(accessKeyId, secretAccessKey){
 	props.accessKeyId = accessKeyId;
 	props.secretAccessKey = secretAccessKey;
 	updateAwsConfig();
@@ -33,7 +38,7 @@ function updateAuthKeys(accessKeyId, secretAccessKey){
    Function: updateAccessKeyId
    Updates the accessKeyId by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. If you are updating both keys, use the function updateAuthKeys instead; it's faster than calling this and updateSecretAccessKey.
 */
-function updateAccessKeyId(accessKeyId){
+Opkit.prototype.updateAccessKeyId = function(accessKeyId){
 	props.accessKeyId = accessKeyId;
 	updateAwsConfig();
 }
@@ -41,7 +46,7 @@ function updateAccessKeyId(accessKeyId){
    Function: updateSecretAccessKey
    Updates the secretAccessKey by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. If you are updating both keys, use the function updateAuthKeys instead; it's faster than calling this and updateAccessKeyId.
 */
-function updateSecretAccessKey(secretAccessKey){
+Opkit.prototype.updateSecretAccessKey = function(secretAccessKey){
 	props.secretAccessKey = secretAccessKey;
 	updateAwsConfig();
 }
@@ -50,7 +55,7 @@ function updateSecretAccessKey(secretAccessKey){
    Function: updateRegion
    Updates the region (e.g. us-east-1) by creating a new cloudwatch object. Updating the region replaces the previous region for all future queries.
 */
-function updateRegion(targetRegion){
+Opkit.prototype.updateRegion = function(targetRegion){
     AWS.config.update({
         region: targetRegion
     });
@@ -75,7 +80,7 @@ function updateRegion(targetRegion){
 	
 		<getSQSQueueSizeNotVisibleInt>, <retrieveSQSQueueData>
 */
-function getSQSQueueSizeInt(url, callback){
+Opkit.prototype.getSQSQueueSizeInt = function(url, callback){
 	retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', callback);
 }
 
@@ -99,7 +104,7 @@ function getSQSQueueSizeInt(url, callback){
 	
 		<getSQSQueueSizeInt>, <retrieveSQSQueueData>
 */
-function getSQSQueueSizeNotVisibleInt(url, callback) {
+Opkit.prototype.getSQSQueueSizeNotVisibleInt = function(url, callback) {
 	retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisible', callback);
 }
 
@@ -123,7 +128,7 @@ function getSQSQueueSizeNotVisibleInt(url, callback) {
 	
 		<sqsQueueParameterFormatter>, <getSQSQueueSizeInt>, <getSQSQueueSizeNotVisibleInt>
 */
-function retrieveSQSQueueData(url, param, callback) {
+Opkit.prototype.retrieveSQSQueueData = function(url, param, callback) {
 	sqs.getQueueAttributes(sqsQueueParameterFormatter(url, param), function(err, data) {
 		if (err) {
 			callback(err, null);
@@ -145,7 +150,7 @@ function retrieveSQSQueueData(url, param, callback) {
    State can be one of OK, INSUFFICIENT_DATA, or ALARM.
 */
 
-function queryAlarmsByState(state){
+Opkit.prototype.queryAlarmsByState = function(state){
 	return cloudwatch.describeAlarmsPromised({StateValue: state });
 }
 
@@ -157,7 +162,7 @@ function queryAlarmsByState(state){
    State can be one of OK, INSUFFICIENT_DATA, or ALARM.
 */
 
-function queryAlarmsByStateReadably(state){
+Opkit.prototype.queryAlarmsByStateReadably = function(state){
 	return queryAlarmsByState(state)
 	.then(function(data){
 		var returnMe = '';
@@ -177,7 +182,7 @@ function queryAlarmsByStateReadably(state){
    Returned promise contains the number of alarms that match the given state (or the Amazon error as a JS object).
    State can be one of OK, INSUFFICIENT_DATA, or ALARM.
 */
-function countAlarmsByState(state){
+Opkit.prototype.countAlarmsByState = function(state){
 	return queryAlarmsByState(state)
 	.then(function(data){
 		var alarms = data.MetricAlarms;
@@ -200,7 +205,7 @@ function countAlarmsByState(state){
 	
 		An object containing a QueueURL field and an attribute field.
 */
-function sqsQueueParameterFormatter(url, attribute) {
+Opkit.prototype.sqsQueueParameterFormatter = function(url, attribute) {
 	return {
 		QueueUrl: url, 
 		AttributeNames: [
@@ -216,7 +221,7 @@ function sqsQueueParameterFormatter(url, attribute) {
    Returned promise contains the count of alarms in each state, in a neat human-readable table ready to be printed by your bot (or the Amazon error as a JS object).
    State can be one of OK, INSUFFICIENT_DATA, or ALARM.
 */
-function healthReportByState(){
+Opkit.prototype.healthReportByState = function(){
 	return cloudwatch.describeAlarmsPromised({})
 	.then(function(data){
 		var alarms = data.MetricAlarms;
@@ -238,3 +243,5 @@ function healthReportByState(){
 			"          "+numInsufficient+" alarms for which there is insufficient data.";
 	});
 }
+
+module.exports = Opkit;
