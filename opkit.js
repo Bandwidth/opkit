@@ -60,14 +60,12 @@ function updateRegion(targetRegion){
 */
 function getSQSQueueSizeData(url){
 	
-	if (arguments.length === 3) {
-		url = sqsQueueURLBuilder(arguments[0], arguments[1], arguments[2]);
-	}
+	url = sqsQueueURLBuilder(arguments);
 	
 	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessages');
 	
 		sqs.getQueueAttributes(params, function(err, data) {
-			printSQSQueueData(err,data);
+			printSQSQueueData(err,data,false,params.AttributeNames[0]);
 	});
 }
 
@@ -93,20 +91,12 @@ function getSQSQueueSizeData(url){
 */
 function getSQSQueueSizeInt(url){
 	
-	if (arguments.length === 3) {
-		url = sqsQueueURLBuilder(arguments[0], arguments[1], arguments[2]);
-	}
+	url = sqsQueueURLBuilder(arguments);
 	
 	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessages');
 	
 		sqs.getQueueAttributes(params, function(err, data) {
-		if (err) {
-			console.log(err, err.stack);
-		}	  
-		else  {
-			var messages = data.Attributes.ApproximateNumberOfMessages;
-			sqsQueueMessageParser(messages);
-		}
+			printSQSQueueData(err,data,true,params.AttributeNames[0]);
 	});
 }
 
@@ -133,14 +123,12 @@ function getSQSQueueSizeInt(url){
 */
 function getSQSQueueSizeNotVisibleData(url) {
 	
-	if (arguments.length === 3) {
-		url = sqsQueueURLBuilder(arguments[0], arguments[1], arguments[2]);
-	}
+	url = sqsQueueURLBuilder(arguments);
 
 	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessagesNotVisible');
 	
 		sqs.getQueueAttributes(params, function(err, data) {
-			printSQSQueueData(err,data);
+			printSQSQueueData(err,data,false,params.AttributeNames[0]);
 	});
 }
 
@@ -167,20 +155,12 @@ function getSQSQueueSizeNotVisibleData(url) {
 */
 function getSQSQueueSizeNotVisibleInt(url) {
 	
-	if (arguments.length === 3) {
-		url = sqsQueueURLBuilder(arguments[0], arguments[1], arguments[2]);
-	}
+	url = sqsQueueURLBuilder(arguments);
 
 	var params = sqsQueueParameterFormatter(url, 'ApproximateNumberOfMessagesNotVisible');
 
 		sqs.getQueueAttributes(params, function(err, data) {
-		if (err) {
-			console.log(err, err.stack);
-		}	  
-		else  {
-			var messages = data.Attributes.ApproximateNumberOfMessagesNotVisible;
-			sqsQueueMessageParser(messages);
-		}
+			printSQSQueueData(err,data,true,params.AttributeNames[0]);
 	});
 }
 
@@ -191,21 +171,34 @@ function getSQSQueueSizeNotVisibleInt(url) {
 	
 	Parameters:
 	
-		err - error field returned by AWS query (null for successful query).
-		data - data returned by AWS query (null for unsuccessful query).
+		err - Error field returned by AWS query (null for successful query).
+		data - Data returned by AWS query (null for unsuccessful query).
+		bool - Boolean indicator of whether to return as an int (true = return as int).
+		attribute - Specified attribute to return (either ApproximateNumberOfMessages or ApproximateNumberOfMessagesNotVisible)
 		
 	Returns:
 	
 		Data returned by AWS query
 */
-function printSQSQueueData(err, data) {
+function printSQSQueueData(err, data, bool, attribute) {
 	if (err) {
 		console.log(err, err.stack);
 	}	  
 	else  {
-		console.log(data);
+		if (bool) {
+			if (attribute === 'ApproximateNumberOfMessages') {
+				var messages = data.Attributes.ApproximateNumberOfMessages;
+			}
+			else {
+				var messages = data.Attributes.ApproximateNumberOfMessagesNotVisible;
+			}
+			sqsQueueMessageParser(messages)
+		}
+		else {
+			console.log(data);
+		}
 	}
-} 
+}  
 
 /*
 	Function: sqsQueueMessageParser
@@ -234,16 +227,20 @@ function sqsQueueMessageParser(str) {
 	
 	Parameters:
 	
-		str1 - Region endpoint.
-		str2 - AWS account number.
-		str3 - Name of queue.
+		args - Arguments passed into any given SQS queue query listed above.
 		
 	Returns:
 	
 		A valid AWS queue URL using the specified parameters.
 */
-function sqsQueueURLBuilder(str1, str2, str3) {
-	return 'https://sqs.' + str1 + '.amazonaws.com/' + str2 + '/' + str3;
+function sqsQueueURLBuilder(args)
+{
+	if (args.length === 3) {
+		return 'https://sqs.' + args[0] + '.amazonaws.com/' + args[1] + '/' + args[2];
+	}
+	else {
+		return args[0];
+	}
 }
 
 /*
