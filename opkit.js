@@ -7,9 +7,12 @@ A framework to help you build devops bots
 (but only if you're deployed to AWS and talking in Slack)
 */
 
+//Must include module.exports 
+
 //var Botkit = require('botkit');
 var AWS = require('aws-promised');
 var cloudwatch = new AWS.cloudWatch({apiVersion: '2016-05-12'});
+var sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 var props = {
 	apiVersion : '2016-05-12'
 };
@@ -48,6 +51,87 @@ function updateSecretAccessKey(secretAccessKey){
    Updates the region (e.g. us-east-1) by creating a new cloudwatch object. Updating the region replaces the previous region for all future queries.
 */
 function updateRegion(targetRegion){
+    AWS.config.update({
+        region: targetRegion
+    });
+}
+
+/*
+	Function: getSQSQueueSizeInt
+	
+	Queries SQS queues using auth and url provided. 
+	
+	Parameters:
+	
+		url - URL of queue on AWS.
+		callback - User written callback function to handle data 
+		retrieved by AWS SQS queue.
+		
+	Returns:
+	
+		The number of messages in the queue (as an integer).
+		
+	See Also:
+	
+		<getSQSQueueSizeNotVisibleInt>, <retrieveSQSQueueData>
+*/
+function getSQSQueueSizeInt(url, callback){
+	retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', callback);
+}
+
+/*
+	Function: getSQSQueueSizeNotVisibleInt
+	
+	Queries SQS queues using auth and url provided. 
+	
+	Parameters:
+	
+		url - URL of queue on AWS.
+		callback - User written callback function to handle data 
+		retrieved by AWS SQS queue.
+		
+	Returns:
+	
+		The number of messages which have been taken off of the queue,
+		but have not finished processing (as an integer).
+		
+	See Also:
+	
+		<getSQSQueueSizeInt>, <retrieveSQSQueueData>
+*/
+function getSQSQueueSizeNotVisibleInt(url, callback) {
+	retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisible', callback);
+}
+
+/*
+	Function: retrieveSQSQueueData
+	
+	Gets SQS queue data based on the provided parameters.
+	
+	Parameters:
+	
+		url - URL of of queue on AWS.
+		str - Specified parameter to specify retrieved data (either
+		ApproximateNumberOfMessages or ApproximateNumberOfMessagesNotVisible).
+		callback - Callback function.
+		
+	Returns:
+	
+		Data about messages on the SQS queue.
+		
+	See Also:
+	
+		<sqsQueueParameterFormatter>, <getSQSQueueSizeInt>, <getSQSQueueSizeNotVisibleInt>
+*/
+function retrieveSQSQueueData(url, param, callback) {
+	sqs.getQueueAttributes(sqsQueueParameterFormatter(url, param), function(err, data) {
+		if (err) {
+			callback(err, null);
+		}
+		else {
+			var messages = data.Attributes[param];
+			callback(null, messages);
+		}
 	props.region = targetRegion;
 	updateAwsConfig();
 }
@@ -98,6 +182,30 @@ function countAlarmsByState(state){
 		var alarms = data.MetricAlarms;
 		return alarms.length;
 	});
+}
+
+/*
+	Function: sqsQueueParameterFormatter
+	
+	Returns a valid parameter object to be used to 
+	retrieve queue attributes.
+	
+	Parameters:
+	
+		url - URL of SQS queue.
+		attribute - Specified attribute to retrieve.
+		
+	Returns:
+	
+		An object containing a QueueURL field and an attribute field.
+*/
+function sqsQueueParameterFormatter(url, attribute) {
+	return {
+		QueueUrl: url, 
+		AttributeNames: [
+			attribute,
+		]
+	};
 }
 
 /*
