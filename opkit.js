@@ -39,40 +39,15 @@ function updateRegion(targetRegion){
 }
 
 /*
-	Function: getSQSQueueSizeData
-	
-	Queries SQS queues using auth and url provided. If 3 parameters are
-	entered instead, the program will develop a URL assuming that the 
-	arguments were entered in the order: region endpoint, account number,
-	name of queue.
-	
-	Parameters:
-	
-		url - URL of queue on AWS.
-		
-	Returns:
-	
-		The number of messages in the queue.
-		
-	See Also:
-	
-		<getSQSQueueSizeInt>, <retrieveSQSQueueData>
-*/
-function getSQSQueueSizeData(url){
-	retrieveSQSQueueData(arguments, 'ApproximateNumberOfMessages', false);
-}
-
-/*
 	Function: getSQSQueueSizeInt
 	
-	Queries SQS queues using auth and url provided. If 3 parameters are
-	entered instead, the program will develop a URL assuming that the 
-	arguments were entered in the order: region endpoint, account number,
-	name of queue.
+	Queries SQS queues using auth and url provided. 
 	
 	Parameters:
 	
 		url - URL of queue on AWS.
+		callback - User written callback function to handle data 
+		retrieved by AWS SQS queue.
 		
 	Returns:
 	
@@ -80,48 +55,29 @@ function getSQSQueueSizeData(url){
 		
 	See Also:
 	
-		<getSQSQueueSizeData>, <retrieveSQSQueueData>
-*/
-function getSQSQueueSizeInt(url){
-	retrieveSQSQueueData(arguments, 'ApproximateNumberOfMessages', true);
-}
-
-/*
-	Function: getSQSQueueSizeNotVisibleData
-	
-	Queries SQS queues using auth and url provided. If 3 parameters are
-	entered instead, the program will develop a URL assuming that the 
-	arguments were entered in the order: region endpoint, account number,
-	name of queue.
-	
-	Parameters:
-	
-		url - URL of queue on AWS.
-		
-	Returns:
-	
-		The number of messages which have been taken off of the queue,
-		but have not finished processing.
-		
-	See Also:
-	
 		<getSQSQueueSizeNotVisibleInt>, <retrieveSQSQueueData>
 */
-function getSQSQueueSizeNotVisibleData(url) {
-	retrieveSQSQueueData(arguments, 'ApproximateNumberOfMessagesNotVisible', false);
+function getSQSQueueSizeInt(url, callback){
+	retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', function(err, data) {
+		if (err) {
+			callback(err, null);
+		}
+		else {
+			callback(null, data);
+		}
+	});
 }
 
 /*
 	Function: getSQSQueueSizeNotVisibleInt
 	
-	Queries SQS queues using auth and url provided. If 3 parameters are
-	entered instead, the program will develop a URL assuming that the 
-	arguments were entered in the order: region endpoint, account number,
-	name of queue.
+	Queries SQS queues using auth and url provided. 
 	
 	Parameters:
 	
 		url - URL of queue on AWS.
+		callback - User written callback function to handle data 
+		retrieved by AWS SQS queue.
 		
 	Returns:
 	
@@ -130,10 +86,17 @@ function getSQSQueueSizeNotVisibleData(url) {
 		
 	See Also:
 	
-		<getSQSQueueSizeNotVisibleData>, <retrieveSQSQueueData>
+		<getSQSQueueSizeInt>, <retrieveSQSQueueData>
 */
-function getSQSQueueSizeNotVisibleInt(url) {
-	retrieveSQSQueueData(arguments, 'ApproximateNumberOfMessagesNotVisible', true);
+function getSQSQueueSizeNotVisibleInt(url, callback) {
+	retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisible', function(err, data) {
+		if (err) {
+			callback(err, null);
+		}
+		else {
+			callback(null,data);
+		}
+	});
 }
 
 /*
@@ -143,11 +106,10 @@ function getSQSQueueSizeNotVisibleInt(url) {
 	
 	Parameters:
 	
-		args - Arguments passed into the method (url).
-		str - Specified attribute to fetch data for (either 
-		ApproximateNumberOfMessages or ApproximateNumberOfMessagesNotVisible)
-		bool - Denotes whehter the data should be returned as a 
-		string or integer (true for integer, false for string)
+		url - URL of of queue on AWS.
+		str - Specified parameter to specify retrieved data (either
+		ApproximateNumberOfMessages or ApproximateNumberOfMessagesNotVisible).
+		callback - Callback function.
 		
 	Returns:
 	
@@ -155,77 +117,18 @@ function getSQSQueueSizeNotVisibleInt(url) {
 		
 	See Also:
 	
-		<sqsQueueURLBuilder>, <sqsQueueParameterFormatter>, <printSQSQueueData>
+		<sqsQueueParameterFormatter>, <getSQSQueueSizeInt>, <getSQSQueueSizeNotVisibleInt>
 */
-function retrieveSQSQueueData(args, str, bool) {
-	url = sqsQueueURLBuilder(args);
-	var params = sqsQueueParameterFormatter(url, str);
-	sqs.getQueueAttributes(params, function(err, data) {
-			printSQSQueueData(err,data,bool,params.AttributeNames[0]);
-	});
-}
-
-/*
-	Function: printSQSQueueData
-	
-	Prints out data retrieved by querying queue.
-	
-	Parameters:
-	
-		err - Error field returned by AWS query (null for successful query).
-		data - Data returned by AWS query (null for unsuccessful query).
-		bool - Boolean indicator of whether to return as an int (true = return as int).
-		attribute - Specified attribute to return (either ApproximateNumberOfMessages or ApproximateNumberOfMessagesNotVisible)
-		
-	Returns:
-	
-		Data returned by AWS query
-*/
-function printSQSQueueData(err, data, bool, attribute) {
-	if (err) {
-		console.log(err, err.stack);
-	}	  
-	else  {
-		if (bool)
-		{
-			if (attribute === 'ApproximateNumberOfMessages') {
-				var messages = data.Attributes.ApproximateNumberOfMessages;
-			}
-			else {
-				var messages = data.Attributes.ApproximateNumberOfMessagesNotVisible;
-			}
-			var returnMe = '';
-			returnMe += messages;
-			var integer = parseInt(returnMe);
-			console.log(integer);
+function retrieveSQSQueueData(url, param, callback) {
+	sqs.getQueueAttributes(sqsQueueParameterFormatter(url, param), function(err, data) {
+		if (err) {
+			callback(err, null);
 		}
 		else {
-			console.log(data);
+			var messages = data.Attributes[param];
+			callback(null, messages);
 		}
-	}
-}  
-
-/*
-	Function: sqsQueueURLBuilder
-	
-	Returns an AWS queue URL.
-	
-	Parameters:
-	
-		args - Arguments passed into any given SQS queue query listed above.
-		
-	Returns:
-	
-		A valid AWS queue URL using the specified parameters.
-*/
-function sqsQueueURLBuilder(args)
-{
-	if (args.length === 3) {
-		return 'https://sqs.' + args[0] + '.amazonaws.com/' + args[1] + '/' + args[2];
-	}
-	else {
-		return args[0];
-	}
+	});
 }
 
 /*
@@ -248,6 +151,6 @@ function sqsQueueParameterFormatter(url, attribute) {
 		QueueUrl: url, 
 		AttributeNames: [
 			attribute,
-			]
+		]
 	};
 }
