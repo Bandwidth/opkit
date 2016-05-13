@@ -20,7 +20,7 @@ function Opkit(){
 }
 
 Opkit.prototype.updateAwsConfig = function(){
-	cloudwatch = new AWS.cloudWatch(props);
+	cloudwatch = new AWS.cloudWatch(this.props);
 }
 
 /*
