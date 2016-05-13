@@ -14,12 +14,10 @@ var AWS = require('aws-promised');
 var cloudwatch = new AWS.cloudWatch({apiVersion: '2016-05-12'});
 var sqs = new AWS.sqs({apiVersion: '2012-11-05'});
 function Opkit(){
-
+	this.props : {
+		apiVersion : '2016-05-12'
+	}
 }
-
-Opkit.prototype.props = {
-	apiVersion : '2016-05-12'
-};
 
 Opkit.prototype.updateAwsConfig = function(){
 	cloudwatch = new AWS.cloudWatch(props);
@@ -30,25 +28,25 @@ Opkit.prototype.updateAwsConfig = function(){
    Updates the access and secret keys by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. 
 */
 Opkit.prototype.updateAuthKeys = function(accessKeyId, secretAccessKey){
-	Opkit.prototype.props.accessKeyId = accessKeyId;
-	Opkit.prototype.props.secretAccessKey = secretAccessKey;
-	Opkit.prototype.updateAwsConfig();
+	this.props.accessKeyId = accessKeyId;
+	this.props.secretAccessKey = secretAccessKey;
+	this.updateAwsConfig();
 }
 /*
    Function: updateAccessKeyId
    Updates the accessKeyId by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. If you are updating both keys, use the function updateAuthKeys instead; it's faster than calling this and updateSecretAccessKey.
 */
 Opkit.prototype.updateAccessKeyId = function(accessKeyId){
-	Opkit.prototype.props.accessKeyId = accessKeyId;
-	Opkit.prototype.updateAwsConfig();
+	this.props.accessKeyId = accessKeyId;
+	this.updateAwsConfig();
 }
 /*
    Function: updateSecretAccessKey
    Updates the secretAccessKey by creating a new cloudwatch object. Updating keys replaces the previous keys for all future queries. If you are updating both keys, use the function updateAuthKeys instead; it's faster than calling this and updateAccessKeyId.
 */
 Opkit.prototype.updateSecretAccessKey = function(secretAccessKey){
-	Opkit.prototype.props.secretAccessKey = secretAccessKey;
-	Opkit.prototype.updateAwsConfig();
+	this.props.secretAccessKey = secretAccessKey;
+	this.updateAwsConfig();
 }
 
 /*
@@ -56,8 +54,8 @@ Opkit.prototype.updateSecretAccessKey = function(secretAccessKey){
    Updates the region (e.g. us-east-1) by creating a new cloudwatch object. Updating the region replaces the previous region for all future queries.
 */
 Opkit.prototype.updateRegion = function(targetRegion){
-	Opkit.prototype.props.region = targetRegion;
-	Opkit.prototype.updateAwsConfig();
+	this.props.region = targetRegion;
+	this.updateAwsConfig();
 }
 
 /*
@@ -80,7 +78,7 @@ Opkit.prototype.updateRegion = function(targetRegion){
 		<getSQSQueueSizeNotVisibleInt>, <retrieveSQSQueueData>
 */
 Opkit.prototype.getSQSQueueSizeInt = function(url, callback){
-	Opkit.prototype.retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', callback);
+	this.retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', callback);
 }
 
 /*
@@ -104,7 +102,7 @@ Opkit.prototype.getSQSQueueSizeInt = function(url, callback){
 		<getSQSQueueSizeInt>, <retrieveSQSQueueData>
 */
 Opkit.prototype.getSQSQueueSizeNotVisibleInt = function(url, callback) {
-	Opkit.prototype.retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisible', callback);
+	this.retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisible', callback);
 }
 
 /*
@@ -160,7 +158,7 @@ Opkit.prototype.queryAlarmsByState = function(state){
 */
 
 Opkit.prototype.queryAlarmsByStateReadably = function(state){
-	return Opkit.prototype.queryAlarmsByState(state)
+	return this.queryAlarmsByState(state)
 	.then(function(data){
 		var returnMe = '';
 		var alarms = data.MetricAlarms ;
@@ -180,7 +178,7 @@ Opkit.prototype.queryAlarmsByStateReadably = function(state){
    State can be one of OK, INSUFFICIENT_DATA, or ALARM.
 */
 Opkit.prototype.countAlarmsByState = function(state){
-	return Opkit.prototype.queryAlarmsByState(state)
+	return this.queryAlarmsByState(state)
 	.then(function(data){
 		var alarms = data.MetricAlarms;
 		return alarms.length;
