@@ -37,10 +37,12 @@ describe('Opkit testing', function() {
 		beforeEach(function() {
 			
 			AWSMock.mock('SQS', 'getQueueAttributes', function(params, callback) {
-				var m = new Map();
-				m.set('ApproximateNumberOfMessages', 2);
-				m.set('ApproximateNumberOfMessagesNotVisible', 0);
-				callback(null, {Attributes: {m}});
+				var data = {};
+				var qualities = {};
+				qualities.ApproximateNumberOfMessages = 2;
+				qualities.ApproximateNumberOfMessagesNotVisible = 0;
+				data.Attributes = qualities;
+				callback(null, data);
 			});
 		});
 
@@ -53,14 +55,14 @@ describe('Opkit testing', function() {
 			var spy = sinon.spy();
 			var proxy = sqsqueue.getSQSQueueSizeInt("Example", {apiVersion: '2012-11-05'}, spy);
 			
-			assert(spy.called);
+			assert(spy.calledWith(null, 2));
 		});
 
 		it("getSQSQueueSizeNotVisibleInt successfully makes a callback", function() {
 			var spy = sinon.spy();
 			var proxy = sqsqueue.getSQSQueueSizeNotVisibleInt("Example", {apiVersion: '2012-11-05'}, spy);
 			
-			assert(spy.called);
+			assert(spy.calledWith(null, 0));
 		});
 	});
 	

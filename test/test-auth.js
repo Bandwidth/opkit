@@ -1,5 +1,5 @@
 var assert = require('chai').assert;
-var opkit = require('../opkit');
+var opkit = require('../index');
 
 describe('Auth', function() {
 	describe('#updateRegion()', function () {
