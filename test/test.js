@@ -1,9 +1,11 @@
 var assert = require('chai').assert;
 var opkit = require('../index');
-var object = new opkit.SQS();
+var sqsqueue = new opkit.SQS();
 var alarms = new opkit.Alarms();
 //var object = new opkit();
 var sinon = require('sinon');
+var AWSMock = require('aws-sdk-mock');
+var AWS = require('aws-promised');
 
 /**** Example
 function once(fn) {
@@ -29,54 +31,52 @@ it("calls the original function", function () {
 
 //Mocking out functions
 beforeEach(function() {
-	sinon.stub(object, 'retrieveSQSQueueData', function (url, param, auth, callback) {
-		callback(null,'success.');
-	});
-
-	sinon.stub(object, 'getSQSQueueSizeInt', function(url, auth, callback) {
-		object.retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', auth, callback);
+	
+	AWSMock.mock('SQS', 'getQueueAttributes', function(params, callback) {
+		callback(null, 'success');
 	});
 	
-	sinon.stub(object, 'getSQSQueueSizeNotVisibleInt', function(url, auth, callback) {
-		object.retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisible', auth, callback);
+	sinon.stub(sqsqueue, 'getSQSQueueSizeInt', function(url, callback) {
+		this.retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', callback);
 	});
 	
-	//Not sure how to stub out promises
-	/*sinon.stub(alarms, 'healthReportByState', function(auth) {
-		return new Promise(function(resolve) {
-			return "success";
+	sinon.stub(sqsqueue, 'getSQSQueueSizeNotVisibleInt', function(url, callback) {
+		this.retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisble', callback);
+	});
+	
+	sinon.stub(sqsqueue, 'retrieveSQSQueueData', function(url, param, callback) {
+		var sqs = new AWS.sqs({apiVersion: '2012-11-05'});
+		sqs.getQueueAttributes(this.sqsQueueParameterFormatter(url, param), function(err, data) {
+			if (err) {
+				callback(err, null);
+			}
+			else {
+				callback(null, data);
+			}
 		});
-	});*/
+	});
+	
 });
 
 //Executed after tests
 afterEach(function() {
-	object.retrieveSQSQueueData.restore();
-	object.getSQSQueueSizeInt.restore();
-	object.getSQSQueueSizeNotVisibleInt.restore();
-	//alarms.healthReportByState.restore();
+	sqsqueue.retrieveSQSQueueData.restore();
+	sqsqueue.getSQSQueueSizeInt.restore();
+	sqsqueue.getSQSQueueSizeNotVisibleInt.restore();
+	AWSMock.restore('SQS', 'getQueueAttributes');
 });
 
 it("getSQSQueueSizeInt successfully makes a callback", function() {
 	var spy = sinon.spy();
-	var proxy = object.getSQSQueueSizeInt("Example", "d", spy);
+	var proxy = sqsqueue.getSQSQueueSizeInt("Example", spy);
 	
 	assert(spy.called);
 });
 
 it("getSQSQueueSizeNotVisibleInt successfully makes a callback", function() {
 	var spy = sinon.spy();
-	var proxy = object.getSQSQueueSizeNotVisibleInt("Example", "d", spy);
+	var proxy = sqsqueue.getSQSQueueSizeNotVisibleInt("Example", spy);
 	
 	assert(spy.called);
 });
 
-/*
-it("Does a simple test", function() {
-	var spy = sinon.spy();
-	var proxy = alarms.healthReportByState("test");
-	proxy.then(spy);
-	
-	assert(spy.called);
-});
-*/
