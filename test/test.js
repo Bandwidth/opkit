@@ -37,24 +37,15 @@ describe('Opkit testing', function() {
 		beforeEach(function() {
 			
 			AWSMock.mock('SQS', 'getQueueAttributes', function(params, callback) {
-				callback(null, 'success');
-			});
-			
-			sinon.stub(sqsqueue, 'retrieveSQSQueueData', function(url, param, callback) {
-				var sqs = new AWS.sqs({apiVersion: '2012-11-05'});
-				sqs.getQueueAttributes(this.sqsQueueParameterFormatter(url, param), function(err, data) {
-					if (err) {
-						callback(err, null);
-					}
-					else {
-						callback(null, data);
-					}
-				});
+				var m = new Map();
+				m.set('ApproximateNumberOfMessages', 2);
+				m.set('ApproximateNumberOfMessagesNotVisible', 0);
+				callback(null, {Attributes: {m}});
 			});
 		});
 
 		afterEach(function() {
-			sqsqueue.retrieveSQSQueueData.restore();
+			//sqsqueue.retrieveSQSQueueData.restore();
 			AWSMock.restore('SQS', 'getQueueAttributes');
 		});
 
