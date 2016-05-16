@@ -30,53 +30,50 @@ it("calls the original function", function () {
 ****/ 
 
 //Mocking out functions
-beforeEach(function() {
-	
-	AWSMock.mock('SQS', 'getQueueAttributes', function(params, callback) {
-		callback(null, 'success');
-	});
-	
-	sinon.stub(sqsqueue, 'getSQSQueueSizeInt', function(url, callback) {
-		this.retrieveSQSQueueData(url, 'ApproximateNumberOfMessages', callback);
-	});
-	
-	sinon.stub(sqsqueue, 'getSQSQueueSizeNotVisibleInt', function(url, callback) {
-		this.retrieveSQSQueueData(url, 'ApproximateNumberOfMessagesNotVisble', callback);
-	});
-	
-	sinon.stub(sqsqueue, 'retrieveSQSQueueData', function(url, param, callback) {
-		var sqs = new AWS.sqs({apiVersion: '2012-11-05'});
-		sqs.getQueueAttributes(this.sqsQueueParameterFormatter(url, param), function(err, data) {
-			if (err) {
-				callback(err, null);
-			}
-			else {
-				callback(null, data);
-			}
+describe('Opkit testing', function() {
+
+	describe('SQS functions', function() {
+		
+		beforeEach(function() {
+			
+			AWSMock.mock('SQS', 'getQueueAttributes', function(params, callback) {
+				callback(null, 'success');
+			});
+			
+			sinon.stub(sqsqueue, 'retrieveSQSQueueData', function(url, param, callback) {
+				var sqs = new AWS.sqs({apiVersion: '2012-11-05'});
+				sqs.getQueueAttributes(this.sqsQueueParameterFormatter(url, param), function(err, data) {
+					if (err) {
+						callback(err, null);
+					}
+					else {
+						callback(null, data);
+					}
+				});
+			});
+		});
+
+		afterEach(function() {
+			sqsqueue.retrieveSQSQueueData.restore();
+			AWSMock.restore('SQS', 'getQueueAttributes');
+		});
+
+		it("getSQSQueueSizeInt successfully makes a callback", function() {
+			var spy = sinon.spy();
+			var proxy = sqsqueue.getSQSQueueSizeInt("Example", {apiVersion: '2012-11-05'}, spy);
+			
+			assert(spy.called);
+		});
+
+		it("getSQSQueueSizeNotVisibleInt successfully makes a callback", function() {
+			var spy = sinon.spy();
+			var proxy = sqsqueue.getSQSQueueSizeNotVisibleInt("Example", {apiVersion: '2012-11-05'}, spy);
+			
+			assert(spy.called);
 		});
 	});
 	
-});
-
-//Executed after tests
-afterEach(function() {
-	sqsqueue.retrieveSQSQueueData.restore();
-	sqsqueue.getSQSQueueSizeInt.restore();
-	sqsqueue.getSQSQueueSizeNotVisibleInt.restore();
-	AWSMock.restore('SQS', 'getQueueAttributes');
-});
-
-it("getSQSQueueSizeInt successfully makes a callback", function() {
-	var spy = sinon.spy();
-	var proxy = sqsqueue.getSQSQueueSizeInt("Example", spy);
+	/**** Some other testing unrelated to SQSQueues goes here - should be unaffected by mocks made eariler ****/
 	
-	assert(spy.called);
-});
-
-it("getSQSQueueSizeNotVisibleInt successfully makes a callback", function() {
-	var spy = sinon.spy();
-	var proxy = sqsqueue.getSQSQueueSizeNotVisibleInt("Example", spy);
-	
-	assert(spy.called);
 });
 
