@@ -20,40 +20,58 @@ AWSMock.mock('CloudWatch', 'describeAlarms', function(params, callback){
 	});
 });
 
+var result;
+
 describe('Alarms', function(){
 	describe('#queryAlarmsByState()', function(){
-		it('Should result in an object with StateValue same as state given', function () {
+		before(function() {
+			result = undefined;
 			alarms.queryAlarmsByState('OK', auth1)
 			.then(function (data){
-				assert.equal(data.MetricAlarms[0].StateValue, 'OK');
+				result = data.MetricAlarms[0].StateValue;
 			});
+		});		
+		it('Should result in an object with StateValue same as state given', function () {
+			assert.equal(result, 'OK');
 		});
 	});
 	describe('#queryAlarmsByStateReadably', function(){
-		it('Should result in the correct human-readable string', function () {
+		before(function() {
+			result = undefined;
 			alarms.queryAlarmsByStateReadably('OK', auth1)
 			.then(function (data){
-				assert.equal(data, 'Namespace, MetricName: AlarmDescription\n');
-			})
+				result = data;
+			});
+		});
+		it('Should result in the correct human-readable string', function () {
+			assert.equal(result, 'Namespace, MetricName: AlarmDescription\n');
 		})
 	});
 	describe('#countAlarmsByState', function(){
-		it('Should result in the number of alarms in the particular search', function () {
+		before(function () {
+			result = undefined;
 			alarms.countAlarmsByState('OK', auth1)
 			.then(function (data){
-				assert.equal(data, 1);
+				result = data;
 			});
+		});
+		it('Should result in the number of alarms in the particular search', function () {
+			assert.equal(result, 1);
 		});
 	});
 	describe('#healthReportByState', function(){
-		it('Should result in a correct health report', function () {
+		before(function () {
+			result = undefined;
 			alarms.healthReportByState(auth1)
 			.then(function (data){
-				assert.equal(data, "Number Of Alarms, By State: \n"+
+				result = data;
+			});
+		});
+		it('Should result in a correct health report', function () {
+			assert.equal(result, "Number Of Alarms, By State: \n"+
 			"There are "+'1'+" OK alarms, \n"+
 			"          "+'0'+ " alarming alarms, and \n"+
 			"          "+'0'+" alarms for which there is insufficient data.");
-			});
 		});
 	});
 });
