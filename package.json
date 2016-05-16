@@ -1,8 +1,8 @@
 {
   "name": "opkit",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Library of DevOps Functions",
-  "main": "opkit.js",
+  "main": "index.js",
   "scripts": {
     "test": "test"
   },
