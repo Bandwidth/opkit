@@ -4,7 +4,7 @@
   "description": "Library of DevOps Functions",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "./test test.js"
   },
   "repository": {
     "type": "git",
