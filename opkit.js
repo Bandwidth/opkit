@@ -137,6 +137,11 @@ Opkit.prototype.retrieveSQSQueueData = function(url, param, callback) {
 	});
 }
 
+/**** TESTING FUNCTION ****/
+Opkit.prototype.retrieveSQSQueueDataMock = function(url, param, callback) {
+	callback(null, "Request Received.");
+}
+
 /*
    Function: queryAlarmsByState
    Queries CloudWatch alarms using the auth and region given.

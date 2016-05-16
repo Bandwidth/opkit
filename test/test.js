@@ -1,38 +1,50 @@
 var assert = require('chai').assert;
 var Opkit = require('../opkit');
 var object = new Opkit();
-var AWS = require('../node_modules/aws-promised');
-var sqs = new AWS.sqs({apiVersion: '2012-11-05'});
+var sinon = require('sinon');
 
-describe('Opkit', function() {
-	describe('#updateAuthKeys()', function() {
-		it('should verify updateAuthKeys does not cause an error', function() {
-			object.updateAuthKeys('YOURKEY', 'YOURSECRETKEY');
-		});
-	});
+/****** EXAMPLE USAGE
+function once(fn) {
+    var returnValue, called = false;
+    return function () {
+        if (!called) {
+            called = true;
+            returnValue = fn.apply(this, arguments);
+        }
+        return returnValue;
+    };
+}
+
+it("calls the original function", function () {
+    var callback = sinon.spy();
+    var proxy = once(callback);
+
+    proxy();
+
+    assert(callback.called);
+});
+*/
+
+it("calls the callback function", function() {
+	var callback = sinon.spy();
+	object.retrieveSQSQueueDataMock('example', 'ApproximateNumberOfMessages', callback);
+	
+	//proxy();
+	
+	assert(callback.called);
 });
 
-describe('Opkit', function() {
-	describe('#getSQSQueueSizeInt', function() {
-		it('should verify getSQSQueueSizeInt does not cause an error', function(done) {
-			object.getSQSQueueSizeInt('YOUR URL', done);
-		});
-	});
-});
+/* Does not work yet
+it("test should call subscribers with message as first argument", function () {
+    var key = 'ExampleKey';
+	var sKey = 'ExampleSecretKey';
+    var spy = sinon.spy();
+	
+	object.updateAuthKeys(key, sKey, spy);
+	//assert.equal(object.props.accessKeyID,'ExampleKey');
+	assert(spy.calledWith(key, sKey));
+    PubSub.publishSync(message, "some payload");
 
-describe('Opkit', function() {
-	describe('#sqsQueueParameterFormatter', function() {
-		it('should be a basic test', function() {
-			object.sqsQueueParameterFormatter('YOUR URL', 'Attrib');
-		});
-	});
+    assert(spy.calledWith(message));
 });
-
-describe('Array', function() {
-  describe('#indexOf()', function () {
-    it('should return -1 when the value is not present', function () {
-      assert.equal(-1, [1,2,3].indexOf(5));
-      assert.equal(-1, [1,2,3].indexOf(0));
-    });
-  });
-});
+*/
