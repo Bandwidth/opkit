@@ -20,7 +20,7 @@ function Opkit(){
 }
 
 Opkit.prototype.updateAwsConfig = function(){
-	cloudwatch = new AWS.cloudWatch(props);
+	cloudwatch = new AWS.cloudWatch(this.props);
 }
 
 /*
@@ -126,7 +126,7 @@ Opkit.prototype.getSQSQueueSizeNotVisibleInt = function(url, callback) {
 		<sqsQueueParameterFormatter>, <getSQSQueueSizeInt>, <getSQSQueueSizeNotVisibleInt>
 */
 Opkit.prototype.retrieveSQSQueueData = function(url, param, callback) {
-	sqs.getQueueAttributes(sqsQueueParameterFormatter(url, param), function(err, data) {
+	sqs.getQueueAttributes(this.sqsQueueParameterFormatter(url, param), function(err, data) {
 		if (err) {
 			callback(err, null);
 		}
@@ -135,6 +135,11 @@ Opkit.prototype.retrieveSQSQueueData = function(url, param, callback) {
 			callback(null, messages);
 		}
 	});
+}
+
+/**** TESTING FUNCTION ****/
+Opkit.prototype.retrieveSQSQueueDataMock = function(url, param, callback) {
+	callback(null, "Request Received.");
 }
 
 /*

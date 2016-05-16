@@ -21,7 +21,8 @@
   "homepage": "https://github.com/inetCatapult/opkit#readme",
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.4.5"
+    "mocha": "^2.4.5",
+    "sinon": "^1.17.4"
   },
   "dependencies": {
     "aws-promised": "^2.13.0",
