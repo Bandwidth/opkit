@@ -5,8 +5,6 @@ var sinon = require('sinon');
 var AWSMock = require('aws-sdk-mock');
 var AWS = require('aws-promised');
 
-var result = undefined;
-
 AWSMock.mock('SQS', 'getQueueAttributes', function(params, callback) {
 	var data = {};
 	var qualities = {};
@@ -18,6 +16,7 @@ AWSMock.mock('SQS', 'getQueueAttributes', function(params, callback) {
 
 describe('Opkit testing', function() {
 	describe('SQSQueueSizeInt', function() {
+		var result = undefined;
 		before(function() {
 			result = undefined;
 			sqsqueue.getSQSQueueSizeInt("Example", {apiVersion: '2012-11-05'})
