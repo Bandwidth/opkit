@@ -1,6 +1,6 @@
 /*
 Alarms-Bot
-An AWS Alarm Querying bot that uses Opkit.
+An AWS SQS querying bot that uses Opkit.
 
 Deploy info:
 set token=YOUR SLACK TOKEN HERE
@@ -12,7 +12,7 @@ node THISFILE
 var Opkit = require('../index');
 var Botkit = require('botkit');
 var auth = new Opkit.Auth();
-var Alarms = new Opkit.Alarms();
+var SQS = new Opkit.SQS();
 // make sure we have a Slack token
 
 if (!process.env.token) {
@@ -67,29 +67,18 @@ askPrivateKey = function(response, convo) {
 	});
 }
 
-controller.hears(['health'], ['direct_message'], function(bot, message){
-	Alarms.healthReportByState(auth)
-	.then(function (data){
-		bot.reply(message, data)
-	}, function (data) {
-		bot.reply(message, "There's been an error retrieving your data. Please"
-		+ " check your credentials and try again.");
-	});
+controller.hears(['queuesize'], ['direct_message'], function(bot, message) {
+	bot.startConversation(message, askURL);
 });
 
-controller.hears(['alarmnumber'], ['direct_message'], function(bot, message) {
-	bot.startConversation(message, askStateNumberOfAlarms);
-});
-
-askStateNumberOfAlarms = function(response, convo) {
-	convo.ask("What state would you like to retrieve data about (OK, INSUFFICIENT_DATA, or ALARM)?", function(response, convo) {
-		convo.say("OK. You would like to retrieve data about state: " + response.text + ".");
-		Alarms.countAlarmsByState(response.text, auth)
-		.then(function (data) {
-			convo.say("Number of alarms in state: " + response.text +
-		    " is " + data + ".");
+askURL = function(response, convo) {
+	convo.ask("What is the URL of the SQS Queue you would like to retrieve data about?", function(response, convo) {
+		convo.say("OK. You want to retrieve queue data from this url: " + response.text + ".");
+		SQS.getSQSQueueSizeInt(response.text.substring(1, response.text.length - 1), auth) 
+		.then(function(data) {
+			convo.say("Number of messages on queue: " + data + ".");
 			convo.next();
-		}, function (data) {
+		}, function(data) {
 			convo.say("There's been an error retrieving your data. Please"
 			+ " check your credentials and try again.");
 			convo.next();
@@ -97,33 +86,32 @@ askStateNumberOfAlarms = function(response, convo) {
 	});
 }
 
-controller.hears(['queryalarms'], ['direct_message'], function(bot, message) {
-	bot.startConversation(message, askStateQueryAlarms);
+controller.hears(['queuesizenotvisible'], ['direct_message'], function(bot, message) {
+	bot.startConversation(message, askURLNotVisible);
 });
 
-askStateQueryAlarms = function(response, convo) {
-	convo.ask("What state would you like to retrieve data about(OK, INSUFFICIENT_DATA, or ALARM)?", function(response, convo) {
-		convo.say("OK. You would like to retrieve data about state: " + response.text + ".");
-		Alarms.queryAlarmsByStateReadably(response.text, auth)
-		.then(function (data) {
-			convo.say(data);
+askURLNotVisible = function(response, convo) {
+	convo.ask("What is the URL of the SQS Queue you would like to retrieve data about?", function(response, convo) {
+		convo.say("OK. You want to retrieve queue data from this url: " + response.text + ".");
+		SQS.getSQSQueueSizeIntNotVisible(response.text.substring(1, response.text.length - 1), auth) 
+		.then(function(data) {
+			convo.say("Number of messages on queue: " + data + ".");
 			convo.next();
-		}, function (data) {
+		}, function(data) {
 			convo.say("There's been an error retrieving your data. Please"
 			+ " check your credentials and try again.");
 			convo.next();
 		});
-	});
+	});	
 }
 
 controller.hears(['help'], ['direct_message'], function(bot, message) {
 	bot.startConversation(message,function(err,convo) {
-		convo.say('AlarmBot Help');
+		convo.say('SQSBot Help');
 		convo.say('Commands:');
 		convo.say('intialize: setup AWS credentials config');
-		convo.say('health: retrieves data on all alarms');
-		convo.say('alarmnumber: retrieves number of alarms with indicated status');
-		convo.say('queryalarms: retrieves data about alarms with indicated status');
+		convo.say('queuesize: retrieves number of messages on specified queue');
+		convo.say('queuesizenotvisible: retrieves number of messages not visible on specified queue');
 		convo.next();
 	});
 });
