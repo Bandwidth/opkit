@@ -12,10 +12,10 @@ node THISFILE
 "use strict";
 
 var Opkit = require('../index');
-var Botkit = require('botkit');
 var auth = new Opkit.Auth();
 var Alarms = new Opkit.Alarms();
 var SQS = new Opkit.SQS();
+var opkitbot = new Opkit.Bot();
 // make sure we have a Slack token
 
 if (!process.env.token) {
@@ -23,11 +23,7 @@ if (!process.env.token) {
 	process.exit(1);
 }
 
-var controller = Botkit.slackbot({
-// set this to false if you don't want a console full of text
-	debug: true
-});
-
+var controller = opkitbot.makeBot();
 // start up our new bot
 
 controller.spawn({
