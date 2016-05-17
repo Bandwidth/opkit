@@ -9,6 +9,8 @@ node THISFILE
 
 //initialize some stuff
 
+"use strict";
+
 var Opkit = require('../index');
 var Botkit = require('botkit');
 var auth = new Opkit.Auth();
@@ -45,7 +47,7 @@ controller.hears(['initialize'], ['direct_message'], function(bot,message) {
 	bot.startConversation(message, askRegion);
 });
 
-askRegion = function(response, convo) {
+function askRegion(response, convo) {
 	convo.ask("To what region would you like to connect?", function(response, convo) {
 		convo.say("You're querying " + response.text + ".");
 		auth.updateRegion(response.text)
@@ -53,7 +55,7 @@ askRegion = function(response, convo) {
 		convo.next();
 	});
 }
-askPublicKey = function(response, convo) {
+function askPublicKey(response, convo) {
 	convo.ask("What is the Access Key ID?", function(response, convo) {
 		convo.say("Got that. The Access Key ID is " + response.text + ".");
 		auth.updateAccessKeyId(response.text)
@@ -61,7 +63,7 @@ askPublicKey = function(response, convo) {
 		convo.next();
 	});
 }
-askPrivateKey = function(response, convo) { 
+function askPrivateKey(response, convo) { 
 	convo.ask("What is the Private Key?", function(response, convo) {
 		convo.say("Got that. The Private Key is " + response.text + ".");
 		auth.updateSecretAccessKey(response.text)
@@ -85,7 +87,7 @@ controller.hears(['alarmnumber'], ['direct_message'], function(bot, message) {
 	bot.startConversation(message, askStateNumberOfAlarms);
 });
 
-askStateNumberOfAlarms = function(response, convo) {
+function askStateNumberOfAlarms(response, convo) {
 	convo.ask("What state would you like to retrieve data about (OK, INSUFFICIENT_DATA, or ALARM)?", function(response, convo) {
 		convo.say("OK. You would like to retrieve data about state: " + response.text + ".");
 		Alarms.countAlarmsByState(response.text, auth)
@@ -106,7 +108,7 @@ controller.hears(['queryalarms'], ['direct_message'], function(bot, message) {
 	bot.startConversation(message, askStateQueryAlarms);
 });
 
-askStateQueryAlarms = function(response, convo) {
+function askStateQueryAlarms(response, convo) {
 	convo.ask("What state would you like to retrieve data about(OK, INSUFFICIENT_DATA, or ALARM)?", function(response, convo) {
 		convo.say("OK. You would like to retrieve data about state: " + response.text + ".");
 		Alarms.queryAlarmsByStateReadably(response.text, auth)
@@ -126,7 +128,7 @@ controller.hears(['queuesize'], ['direct_message'], function(bot, message) {
 	bot.startConversation(message, askURL);
 });
 
-askURL = function(response, convo) {
+function askURL(response, convo) {
 	convo.ask("What is the URL of the SQS Queue you would like to retrieve data about?", function(response, convo) {
 		convo.say("OK. You want to retrieve queue data from this url: " + response.text + ".");
 		SQS.getSQSQueueSizeInt(response.text.substring(1, response.text.length - 1), auth) 
@@ -146,7 +148,7 @@ controller.hears(['queuesizenotvisible'], ['direct_message'], function(bot, mess
 	bot.startConversation(message, askURLNotVisible);
 });
 
-askURLNotVisible = function(response, convo) {
+function askURLNotVisible(response, convo) {
 	convo.ask("What is the URL of the SQS Queue you would like to retrieve data about?", function(response, convo) {
 		convo.say("OK. You want to retrieve queue data from this url: " + response.text + ".");
 		SQS.getSQSQueueSizeIntNotVisible(response.text.substring(1, response.text.length - 1), auth) 
