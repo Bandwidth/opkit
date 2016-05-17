@@ -6,9 +6,6 @@ Deploy info:
 set token=YOUR SLACK TOKEN HERE
 node THISFILE
 */
-
-//initialize some stuff
-
 "use strict";
 
 var Opkit = require('../index');
@@ -16,7 +13,6 @@ var auth = new Opkit.Auth();
 var Alarms = new Opkit.Alarms();
 var SQS = new Opkit.SQS();
 var opkitbot = new Opkit.Bot();
-// make sure we have a Slack token
 
 if (!process.env.token) {
 	console.log('Error: Specify token in environment');
@@ -24,7 +20,6 @@ if (!process.env.token) {
 }
 
 var controller = opkitbot.makeBot();
-// start up our new bot
 
 controller.spawn({
 	token: process.env.token
@@ -51,6 +46,7 @@ function askRegion(response, convo) {
 		convo.next();
 	});
 }
+
 function askPublicKey(response, convo) {
 	convo.ask("What is the Access Key ID?", function(response, convo) {
 		convo.say("Got that. The Access Key ID is " + response.text + ".");
@@ -59,6 +55,7 @@ function askPublicKey(response, convo) {
 		convo.next();
 	});
 }
+
 function askPrivateKey(response, convo) { 
 	convo.ask("What is the Private Key?", function(response, convo) {
 		convo.say("Got that. The Private Key is " + response.text + ".");
