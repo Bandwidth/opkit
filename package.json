@@ -4,7 +4,7 @@
   "description": "Library of DevOps Functions",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "mocha ./test/*"
   },
   "repository": {
     "type": "git",
@@ -25,12 +25,14 @@
   },
   "homepage": "https://github.com/inetCatapult/opkit#readme",
   "devDependencies": {
+    "aws-sdk-mock": "^1.1.0",
     "chai": "^3.5.0",
     "mocha": "^2.4.5"
   },
   "dependencies": {
     "aws-promised": "^2.13.0",
     "aws-sdk": "^2.3.10",
-    "botkit": "^0.1.1"
+    "botkit": "^0.1.1",
+    "sinon": "^1.17.4"
   }
 }

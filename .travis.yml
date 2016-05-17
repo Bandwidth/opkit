@@ -1,0 +1,4 @@
+before_script: chmod 0777 ./node_modules/.bin/mocha
+language: node_js
+node_js:
+  - 0.12
