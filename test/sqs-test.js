@@ -32,11 +32,12 @@ AWSMock.mock('SQS', 'getQueueUrl', function(params, callback) {
 describe('Opkit testing', function() {
 	describe('SQSQueueSizeInt', function() {
 		var result = undefined;
-		before(function() {
+		before(function(done) {
 			result = undefined;
 			sqsqueue.getSQSQueueSizeInt("https://sqs", auth1)
 			.then(function (data) {
 				result = data;
+				done();
 			});
 		});
 		
@@ -45,11 +46,12 @@ describe('Opkit testing', function() {
 		});
 	});	
 	describe('SQSQueueSizeNotVisibleInt', function() {
-		before(function() {
+		before(function(done) {
 			result = undefined;
 			sqsqueue.getSQSQueueSizeNotVisibleInt("Example", auth1)
 			.then(function (data) {
 				result = data;
+				done();
 			});
 		});
 		
@@ -58,11 +60,12 @@ describe('Opkit testing', function() {
 		});
 	});
 	describe('ListQueues', function() {
-		before(function() {
+		before(function(done) {
 			result = undefined;
 			sqsqueue.listQueues("prefix", auth1)
 			.then(function (data) {
 				result = data;
+				done();
 			});
 		});
 		
