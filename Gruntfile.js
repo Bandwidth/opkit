@@ -27,5 +27,5 @@ module.exports = function(grunt){
     });
 
     grunt.loadNpmTasks('grunt-mocha-istanbul');
-    grunt.registerTask('default', ['mocha_istanbul:coverage']);
+    grunt.registerTask('default', ['istanbul_check_coverage']);
 };
