@@ -32,12 +32,11 @@ AWSMock.mock('SQS', 'getQueueUrl', function(params, callback) {
 describe('SQS', function() {
 	describe('SQSQueueSizeInt', function() {
 		var result = undefined;
-		before(function(done) {
+		before(function() {
 			result = undefined;
-			sqsqueue.getSQSQueueSizeInt("https://sqs", auth1)
+			return sqsqueue.getSQSQueueSizeInt("https://sqs", auth1)
 			.then(function (data) {
 				result = data;
-				done();
 			});
 		});
 		
@@ -46,12 +45,11 @@ describe('SQS', function() {
 		});
 	});	
 	describe('SQSQueueSizeNotVisibleInt', function() {
-		before(function(done) {
+		before(function() {
 			result = undefined;
-			sqsqueue.getSQSQueueSizeNotVisibleInt("Example", auth1)
+			return sqsqueue.getSQSQueueSizeNotVisibleInt("Example", auth1)
 			.then(function (data) {
 				result = data;
-				done();
 			});
 		});
 		
@@ -60,12 +58,11 @@ describe('SQS', function() {
 		});
 	});
 	describe('ListQueues', function() {
-		before(function(done) {
+		before(function() {
 			result = undefined;
-			sqsqueue.listQueues("prefix", auth1)
+			return sqsqueue.listQueues("prefix", auth1)
 			.then(function (data) {
 				result = data;
-				done();
 			});
 		});
 		
