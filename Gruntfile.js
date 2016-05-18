@@ -8,6 +8,8 @@ module.exports = function(grunt){
         istanbul_check_coverage: {
           default: {
             options: {
+            	coverage : true,
+            	reporter: 'spec',
               coverageFolder: 'coverage*', // will check both coverage folders and merge the coverage results
               check: {
                 lines: 100,
