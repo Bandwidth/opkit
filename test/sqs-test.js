@@ -5,10 +5,6 @@ var sinon = require('sinon');
 var AWSMock = require('aws-sdk-mock');
 var AWS = require('aws-promised');
 
-var auth1 = new opkit.Auth();
-auth1.updateRegion('narnia-1');
-auth1.updateAuthKeys('shiny gold one', 'old rusty one');
-
 AWSMock.mock('SQS', 'getQueueAttributes', function(params, callback) {
 	var data = {};
 	var qualities = {};
@@ -18,23 +14,12 @@ AWSMock.mock('SQS', 'getQueueAttributes', function(params, callback) {
 	callback(null, data);
 });
 
-AWSMock.mock('SQS', 'listQueues', function(params, callback) {
-	var data = {};
-	var urls = ['www.example.com'];
-	data.QueueUrls = urls;
-	callback(null, data);
-});
-
-AWSMock.mock('SQS', 'getQueueUrl', function(params, callback) {
-	callback(null, "www.example.com");
-});
-
 describe('SQS', function() {
 	describe('SQSQueueSizeInt', function() {
 		var result = undefined;
 		before(function() {
 			result = undefined;
-			return sqsqueue.getSQSQueueSizeInt("https://sqs", auth1)
+			sqsqueue.getSQSQueueSizeInt("Example", {apiVersion: '2012-11-05'})
 			.then(function (data) {
 				result = data;
 			});
@@ -47,7 +32,7 @@ describe('SQS', function() {
 	describe('SQSQueueSizeNotVisibleInt', function() {
 		before(function() {
 			result = undefined;
-			return sqsqueue.getSQSQueueSizeNotVisibleInt("Example", auth1)
+			sqsqueue.getSQSQueueSizeNotVisibleInt("Example", {apiVersion: '2012-11-05'})
 			.then(function (data) {
 				result = data;
 			});
@@ -57,17 +42,7 @@ describe('SQS', function() {
 			assert.equal(result,0);
 		});
 	});
-	describe('ListQueues', function() {
-		before(function() {
-			result = undefined;
-			return sqsqueue.listQueues("prefix", auth1)
-			.then(function (data) {
-				result = data;
-			});
-		});
-		
-		it("listQueues successfully returns a promise with an array of queue urls", function() {
-			assert.equal(result.toString(), ['www.example.com'].toString());
-		});
-	});
 });
+
+
+
