@@ -10,7 +10,7 @@ module.exports = function(grunt){
 				options: {
 					coverage : true,
 					reporter: 'spec',
-					coverageFolder: 'coverage*', // will check both coverage folders and merge the coverage results
+					coverageFolder: 'coverage', // will check both coverage folders and merge the coverage results
 					check: {
 						lines: 100,
 						statements: 100
