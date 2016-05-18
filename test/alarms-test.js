@@ -14,8 +14,8 @@ AWSMock.mock('CloudWatch', 'describeAlarms', function(params, callback){
 			StateValue : 'OK',
 			MetricName : 'MetricName',
 			AlarmDescription: 'AlarmDescription',
-			Namespace : 'Namespace'
-		
+			Namespace : 'Namespace',
+			AlarmName : 'AlarmName'
 		}]
 	});
 });
@@ -44,7 +44,7 @@ describe('Alarms', function(){
 			});
 		});
 		it('Should result in the correct human-readable string', function () {
-			assert.equal(result, 'Namespace, MetricName: AlarmDescription\n');
+			assert.equal(result, 'Namespace, AlarmName: AlarmDescription\n');
 		})
 	});
 	describe('#countAlarmsByState', function(){
@@ -74,4 +74,59 @@ describe('Alarms', function(){
 			"          "+'0'+" alarms for which there is insufficient data.");
 		});
 	});
+	describe('#queryAlarmsByWatchlist()', function(){
+		before(function() {
+			result = undefined;
+			alarms.queryAlarmsByWatchlist(['AlarmName'], auth1)
+			.then(function (data){
+				result = data.MetricAlarms[0].AlarmName;
+			});
+		});		
+		it('Should result in an object with AlarmName on the watchlist', function () {
+			assert.equal(result, 'AlarmName');
+		});
+	});
+	describe('#queryAlarmsByWatchlistReadably()', function(){
+		before(function() {
+			result = undefined;
+			alarms.queryAlarmsByWatchlistReadably(['AlarmName'], auth1)
+			.then(function (data){
+				result = data;
+			});
+		});		
+		it('Should result in a neat string with the correct AlarmName', function () {
+			assert.equal(result, 'Namespace' +', ' + 
+			'AlarmName' + ': ' +
+			'AlarmDescription' + " (" +
+			'OK' + ")\n");
+		});
+	});
+	describe('#queryAlarmsByPrefix()', function(){
+		before(function() {
+			result = undefined;
+			alarms.queryAlarmsByPrefix('Alarm', auth1)
+			.then(function (data){
+				result = data.MetricAlarms[0].AlarmName;
+			});
+		});		
+		it('Should result in an object with AlarmName that starts with prefix', function () {
+			assert.equal(result, 'AlarmName');
+		});
+	});
+	describe('#queryAlarmsByPrefixReadably()', function(){
+		before(function() {
+			result = undefined;
+			alarms.queryAlarmsByPrefixReadably('Alarm', auth1)
+			.then(function (data){
+				result = data;
+			});
+		});		
+		it('Should result in a neat string with the correct AlarmName', function () {
+			assert.equal(result, 'Namespace' +', ' + 
+			'AlarmName' + ': ' +
+			'AlarmDescription' + " (" +
+			'OK' + ")\n");
+		});
+	});
+
 });

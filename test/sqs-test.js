@@ -14,7 +14,7 @@ AWSMock.mock('SQS', 'getQueueAttributes', function(params, callback) {
 	callback(null, data);
 });
 
-describe('Opkit testing', function() {
+describe('SQS', function() {
 	describe('SQSQueueSizeInt', function() {
 		var result = undefined;
 		before(function() {
