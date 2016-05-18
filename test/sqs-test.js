@@ -29,7 +29,7 @@ AWSMock.mock('SQS', 'getQueueUrl', function(params, callback) {
 	callback(null, "www.example.com");
 });
 
-describe('Opkit testing', function() {
+describe('SQS', function() {
 	describe('SQSQueueSizeInt', function() {
 		var result = undefined;
 		before(function(done) {
