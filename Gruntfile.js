@@ -3,9 +3,6 @@ module.exports = function(grunt){
         mocha_istanbul: {
             coverage: {
                 src: 'test', // a folder works nicely
-                options: {
-                    mask: '*.spec.js'
-                }
             }
         },
         istanbul_check_coverage: {
