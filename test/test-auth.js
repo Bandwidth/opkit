@@ -99,4 +99,27 @@ describe('Auth', function() {
 			assert.equal("lockpick", auth2.props.secretAccessKey);
 		});
 	});
+
+	describe('#updateShortName', function () {
+		it('should update the short name in that particular object', function () {
+			var auth1 = new opkit.Auth();
+			auth1.updateShortName("skeleton");
+			assert.equal("skeleton", auth1.shortName);
+			auth1.updateShortName("lockpick");
+			assert.equal("lockpick", auth1.shortName);
+		});
+
+		it('should update the short name in that particular object,\n' +
+		'and not change other names', function () {
+			var auth1 = new opkit.Auth();
+			var auth2 = new opkit.Auth();
+			auth1.updateShortName("skeleton");
+			auth2.updateShortName("skeleton");
+			assert.equal("skeleton", auth1.shortName);
+			assert.equal("skeleton", auth2.shortName);
+			auth2.updateShortName("lockpick");
+			assert.equal("skeleton", auth1.shortName);
+			assert.equal("lockpick", auth2.shortName);
+		});
+	});
 });
