@@ -3,7 +3,6 @@ var opkit = require('../index');
 var alarms = new opkit.Alarms();
 var sinon = require('sinon');
 var AWS = require('aws-sdk-mock');
-//var AWS = require('aws-promised');
 
 var auth1 = new opkit.Auth();
 auth1.updateRegion('narnia-1');
@@ -23,9 +22,6 @@ AWS.mock('CloudWatch', 'describeAlarms', function(params, callback){
 var result;
 
 describe('Alarms', function(){
-	before(function() {
-
-	});
 	describe('#queryAlarmsByState()', function(){
 		before(function() {
 			result = undefined;
