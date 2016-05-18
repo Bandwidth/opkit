@@ -83,16 +83,23 @@ controller.hears(['alarmnumber'], ['direct_message'], function(bot, message) {
 function askStateNumberOfAlarms(response, convo) {
 	convo.ask("What state would you like to retrieve data about (OK, INSUFFICIENT_DATA, or ALARM)?", function(response, convo) {
 		convo.say("OK. You would like to retrieve data about state: " + response.text + ".");
-		Alarms.countAlarmsByState(response.text, auth)
-		.then(function (data) {
-			convo.say("Number of alarms in state: " + response.text +
-		    " is " + data + ".");
+		if (response.text === 'OK' || response.text === 'INSUFFICIENT_DATA' || response.text === 'ALARM') {
+			Alarms.countAlarmsByState(response.text, auth)
+			.then(function (data) {
+				convo.say("Number of alarms in state: " + response.text +
+				" is " + data + ".");
+				convo.next();
+			}, function (data) {
+				convo.say("There's been an error retrieving your data. Please"
+				+ " check your credentials and try again.");
+				convo.next();
+			});
+		}
+		else {
+			convo.say("Not a valid input. Try again.");
+			convo.repeat();
 			convo.next();
-		}, function (data) {
-			convo.say("There's been an error retrieving your data. Please"
-			+ " check your credentials and try again.");
-			convo.next();
-		});
+		}
 	});
 }
 
@@ -104,15 +111,22 @@ controller.hears(['queryalarms'], ['direct_message'], function(bot, message) {
 function askStateQueryAlarms(response, convo) {
 	convo.ask("What state would you like to retrieve data about(OK, INSUFFICIENT_DATA, or ALARM)?", function(response, convo) {
 		convo.say("OK. You would like to retrieve data about state: " + response.text + ".");
-		Alarms.queryAlarmsByStateReadably(response.text, auth)
-		.then(function (data) {
-			convo.say(data);
+		if (response.text === 'OK' || response.text === 'INSUFFICIENT_DATA' || response.text === 'ALARM') {
+			Alarms.queryAlarmsByStateReadably(response.text, auth)
+			.then(function (data) {
+				convo.say(data);
+				convo.next();
+			}, function (data) {
+				convo.say("There's been an error retrieving your data. Please"
+				+ " check your credentials and try again.");
+				convo.next();
+			});
+		}
+		else {
+			convo.say("Not a valid input. Try again.");
+			convo.repeat();
 			convo.next();
-		}, function (data) {
-			convo.say("There's been an error retrieving your data. Please"
-			+ " check your credentials and try again.");
-			convo.next();
-		});
+		}
 	});
 }
 
