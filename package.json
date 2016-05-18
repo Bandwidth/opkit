@@ -4,7 +4,7 @@
   "description": "Library of DevOps Functions",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test/*"
+    "test": "grunt"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,10 @@
   "devDependencies": {
     "aws-sdk-mock": "^1.1.0",
     "chai": "^3.5.0",
+    "grunt": "^1.0.1",
+    "grunt-mocha-istanbul": "^4.0.2",
+    "istanbul": "^0.4.3",
+    "lodash": "^3.10.1",
     "mocha": "^2.4.5"
   },
   "dependencies": {

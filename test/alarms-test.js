@@ -2,13 +2,12 @@ var assert = require('chai').assert;
 var opkit = require('../index');
 var alarms = new opkit.Alarms();
 var sinon = require('sinon');
-var AWSMock = require('aws-sdk-mock');
-var AWS = require('aws-promised');
+var AWS = require('aws-sdk-mock');
 
 var auth1 = new opkit.Auth();
 auth1.updateRegion('narnia-1');
 auth1.updateAuthKeys('shiny gold one', 'old rusty one');
-AWSMock.mock('CloudWatch', 'describeAlarms', function(params, callback){
+AWS.mock('CloudWatch', 'describeAlarms', function(params, callback){
 	callback(null, {
 		MetricAlarms: [{
 			StateValue : 'OK',
@@ -57,21 +56,6 @@ describe('Alarms', function(){
 		});
 		it('Should result in the number of alarms in the particular search', function () {
 			assert.equal(result, 1);
-		});
-	});
-	describe('#healthReportByState', function(){
-		before(function () {
-			result = undefined;
-			alarms.healthReportByState(auth1)
-			.then(function (data){
-				result = data;
-			});
-		});
-		it('Should result in a correct health report', function () {
-			assert.equal(result, "Number Of Alarms, By State: \n"+
-			"There are "+'1'+" OK alarms, \n"+
-			"          "+'0'+ " alarming alarms, and \n"+
-			"          "+'0'+" alarms for which there is insufficient data.");
 		});
 	});
 	describe('#queryAlarmsByWatchlist()', function(){
@@ -129,4 +113,49 @@ describe('Alarms', function(){
 		});
 	});
 
+});
+describe('Alarms', function(){
+	describe('#healthReportByState', function(){
+		before(function () {
+			AWS.restore('CloudWatch', 'describeAlarms');
+			AWS.mock('CloudWatch', 'describeAlarms', function(params, callback){
+				callback(null, {
+					MetricAlarms: [{
+						StateValue : 'OK',
+						MetricName : 'MetricName',
+						AlarmDescription: 'AlarmDescription',
+						Namespace : 'Namespace',
+						AlarmName : 'AlarmName'
+					}
+						,
+					{
+						StateValue : 'INSUFFICIENT_DATA',
+						MetricName : 'MetricName',
+						AlarmDescription: 'AlarmDescription',
+						Namespace : 'Namespace',
+						AlarmName : 'AlarmName'
+					}
+						,
+					{
+						StateValue : 'ALARM',
+						MetricName : 'MetricName',
+						AlarmDescription: 'AlarmDescription',
+						Namespace : 'Namespace',
+						AlarmName : 'AlarmName'
+					}]
+				});
+			});
+			result = undefined;
+			alarms.healthReportByState(auth1)
+			.then(function (data){
+				result = data;
+			});
+		});
+		it('Should result in a correct health report', function () {
+			assert.equal(result, "Number Of Alarms, By State: \n"+
+			"There are "+'1'+" OK alarms, \n"+
+			"          "+'1'+ " alarming alarms, and \n"+
+			"          "+'1'+" alarms for which there is insufficient data.");
+		});
+	});
 });
