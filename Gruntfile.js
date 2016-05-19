@@ -20,7 +20,7 @@ module.exports = function(grunt){
 			}
 		},
 		jsdoc : {
-			dist : {
+			default : {
 				src: ['lib/*.js'],
 				options: {
 					destination: 'out'
@@ -30,5 +30,5 @@ module.exports = function(grunt){
 	});
 	grunt.loadNpmTasks('grunt-mocha-istanbul');
 	grunt.loadNpmTasks('grunt-jsdoc');
-	grunt.registerTask('default', ['mocha_istanbul:coverage', 'istanbul_check_coverage', 'jsdoc:dist']);
+	grunt.registerTask('default', ['mocha_istanbul:coverage', 'istanbul_check_coverage', 'jsdoc']);
 };
