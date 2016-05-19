@@ -18,9 +18,17 @@ module.exports = function(grunt){
 					}
 				}
 			}
+		},
+		jsdoc : {
+			dist : {
+				src: ['lib/*.js'],
+				options: {
+					destination: 'out'
+				}
+			}
 		}
 	});
 	grunt.loadNpmTasks('grunt-mocha-istanbul');
-	grunt.registerTask('default', ['mocha_istanbul:coverage', 'istanbul_check_coverage']);
-
+	grunt.loadNpmTasks('grunt-jsdoc');
+	grunt.registerTask('default', ['mocha_istanbul:coverage', 'istanbul_check_coverage', 'jsdoc']);
 };
