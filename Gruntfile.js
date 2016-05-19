@@ -28,8 +28,10 @@ module.exports = function(grunt){
 			}
 		},
 		jshint: {
-			src: ['lib/*.js'],
-			jshintrc: true
+			default : {
+				src: ['lib/*.js'],
+				jshintrc: true
+			}
 		},
 	});
 	grunt.loadNpmTasks('grunt-mocha-istanbul');
