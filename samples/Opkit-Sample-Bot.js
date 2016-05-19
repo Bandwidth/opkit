@@ -86,6 +86,7 @@ function setupPermission(response, convo) {
 	convo.next();
 }
 
+/***Switch the current configuration***/
 controller.hears(['switchConfigurations'],['direct_message','direct_mention','mention'],function(bot,message) {
 	bot.startConversation(message, function(response, convo) {
 		convo.ask("What configuration would you like to switch to?", function(response, convo) {
@@ -100,10 +101,37 @@ controller.hears(['switchConfigurations'],['direct_message','direct_mention','me
 	});
 });
 
+/***Get the user's permission***/
 controller.hears(['myPermissions'],['direct_message','direct_mention','mention'],function(bot,message) {
-	bot.reply(message,"Your current permission: " + mod.getPermission(message.user) + ".");
+	bot.reply(message,"Your current permission: " + mod.getPermission(message.user).toString() + ".");
 });
 
+/***Print the current configuration***/
 controller.hears(['printCurrentConfiguration'],['direct_message','direct_mention','mention'],function(bot,message) {
 	bot.reply(message,"Current configuration: " + mod.configName + ".");
 });
+
+/***Print all configurations***/
+controller.hears(['allConfigurations'],['direct_message','direct_mention','mention'],function(bot,message) {
+	bot.reply(message,"List of configs: " + mod.getConfigurations().toString() + ".");
+});
+
+/***Get data about queue size of a specified SQS queue***/ 
+controller.hears(['queuesize'], ['direct_message','direct_mention','mention'], function(bot, message) {
+	bot.startConversation(message, askURL);
+});
+
+function askURL(response, convo) {
+	convo.ask("What is the name of the SQS Queue you would like to retrieve data about?", function(response, convo) {
+		convo.say("OK. You want to retrieve queue data from this queue: " + response.text + ".");
+		mod.getSQSQueueSizeInt(response.text) 
+		.then(function(data) {
+			convo.say("Number of messages on queue: " + data + ".");
+			convo.next();
+		}, function(data) {
+			convo.say("There's been an error retrieving your data. Please"
+			+ " check your credentials and try again.");
+			convo.next();
+		});
+	});
+}
