@@ -8,7 +8,7 @@ git clone --quiet --branch=gh-pages git@github.com:inetCatapult/opkit.git
 
 cd opkit
 git rm -rf .
-cp -Rf $HOME/out ./doc
-git add -f ./doc/*
+cp -Rf $HOME/out .
+git add -f .
 git commit -m "Generated docs from Travis."
 git push -fq origin gh-pages > /dev/null
