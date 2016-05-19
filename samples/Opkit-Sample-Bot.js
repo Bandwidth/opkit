@@ -82,7 +82,7 @@ function askPrivateKey(response, convo) {
 
 function setupPermission(response, convo) {
 	convo.say("You will be given Read-Only permissions.");
-	mod.addPermission(response.user, 1);
+	mod.addPermission(response.user, "Read-only");
 	convo.next();
 }
 

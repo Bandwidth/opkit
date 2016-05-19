@@ -383,10 +383,10 @@ describe('Opkit', function() {
 		describe('#addPermission', function() {
 			it('should correctly handle permissions', function() {
 				result = undefined;
-				result = opkitObject.addPermission("user", "1");
+				result = opkitObject.addPermission("user", "Read");
 				assert.equal(result, true);
-				opkitObject.addPermission("user", "2");
-				result = opkitObject.addPermission("user", "1");
+				opkitObject.addPermission("user", "Write");
+				result = opkitObject.addPermission("user", "Read");
 				assert.equal(result, false);
 			});
 		});
@@ -394,7 +394,7 @@ describe('Opkit', function() {
 			it('should correctly return a permission', function() {
 				result = undefined;
 				result = opkitObject.getPermission("user");
-				assert.equal(result.toString(), "1,2");
+				assert.equal(result["Read"], result["Write"], true);
 			});
 		});
 		describe('#createAuth', function() {
