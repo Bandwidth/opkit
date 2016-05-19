@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Namespace: Alarms</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Namespace: Alarms</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>Alarms</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="countAlarmsByState"><span class="type-signature"></span>countAlarmsByState<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Queries Cloudwatch alarms that are currently in a particular state.
+Returns a Promise containing the number of alarms in the state.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A string containing the state you'd like to query for (e.g. 'ALARM')</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Auth.html">Auth</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line46">line 46</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="healthReportByState"><span class="type-signature"></span>healthReportByState<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Queries Cloudwatch alarms.
+Returns a Promise containing a string with a health report, detailing the number of alarms in each state.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A string containing the state you'd like to query for (e.g. 'ALARM')</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Auth.html">Auth</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line61">line 61</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="queryAlarmsByPrefix"><span class="type-signature"></span>queryAlarmsByPrefix<span class="signature">(prefix, auth)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Queries Cloudwatch alarms that have names that start with the prefix string.
+Returns a Promise containing a JS object with all of the alarms that have names that begin with the prefix.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>prefix</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A prefix string. All alarms with names that begin with the prefix will be returned.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Auth.html">Auth</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line125">line 125</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="queryAlarmsByPrefixReadably"><span class="type-signature"></span>queryAlarmsByPrefixReadably<span class="signature">(prefix, auth)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Queries Cloudwatch alarms that have names that start with the prefix string.
+Returns a String containing information about all of the alarms that have names that begin with the prefix.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>prefix</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A prefix string. All alarms with names that begin with the prefix will be returned.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Auth.html">Auth</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line137">line 137</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="queryAlarmsByState"><span class="type-signature"></span>queryAlarmsByState<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Queries Cloudwatch alarms that are currently in a particular state.
+Returns a Promise containing a JS object with all of the alarms currently in that state.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A string containing the state you'd like to query for (e.g. 'ALARM')</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Auth.html">Auth</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="queryAlarmsByStateReadably"><span class="type-signature"></span>queryAlarmsByStateReadably<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Queries Cloudwatch alarms that are currently in a particular state.
+Returns a string containing information about the namespace, name, and description of each alarm in the queried state.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A string containing the state you'd like to query for (e.g. 'ALARM')</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Auth.html">Auth</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line26">line 26</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="queryAlarmsByWatchlist"><span class="type-signature"></span>queryAlarmsByWatchlist<span class="signature">(watchlist, auth)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Queries Cloudwatch alarms that have particular names.
+Returns a Promise containing a JS object with all of the alarms that have one of the names on the watchlist.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>watchlist</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An array containing the names of alarms you'd like to query for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Auth.html">Auth</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line92">line 92</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="queryAlarmsByWatchlistReadably"><span class="type-signature"></span>queryAlarmsByWatchlistReadably<span class="signature">(watchlist, auth)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Queries Cloudwatch alarms that have particular names.
+Returns a String containing information about all matching alarms.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>watchlist</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An array containing the names of alarms you'd like to query for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Auth.html">Auth</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line103">line 103</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Alarms.html">Alarms</a></li><li><a href="Auth.html">Auth</a></li><li><a href="SQS.html">SQS</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu May 19 2016 13:29:02 GMT+0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

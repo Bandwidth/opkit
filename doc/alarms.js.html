@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: alarms.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: alarms.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**@namespace Alarms	*/
+
+var AWS = require('aws-promised');
+
+function Alarms(){
+}
+
+/**
+ * Queries Cloudwatch alarms that are currently in a particular state.
+ * Returns a Promise containing a JS object with all of the alarms currently in that state.
+ * @param {string} state - A string containing the state you'd like to query for (e.g. 'ALARM')
+ * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ */
+
+Alarms.prototype.queryAlarmsByState = function(state, auth){
+	var cloudwatch = new AWS.cloudWatch(auth.props);
+	return cloudwatch.describeAlarmsPromised({StateValue: state });
+}
+/**
+ * Queries Cloudwatch alarms that are currently in a particular state.
+ * Returns a string containing information about the namespace, name, and description of each alarm in the queried state.
+ * @param {string} state - A string containing the state you'd like to query for (e.g. 'ALARM')
+ * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ */
+
+Alarms.prototype.queryAlarmsByStateReadably = function(state, auth){
+	return this.queryAlarmsByState(state, auth)
+	.then(function(data){
+		var returnMe = '';
+		var alarms = data.MetricAlarms ;
+		for (var k=0; k&lt;alarms.length; k++){
+			returnMe += alarms[k].Namespace +', ' + 
+			alarms[k].AlarmName + ': ' +
+			alarms[k].AlarmDescription + "\n";
+		}
+		return returnMe;
+	});
+}
+
+/**
+ * Queries Cloudwatch alarms that are currently in a particular state.
+ * Returns a Promise containing the number of alarms in the state.
+ * @param {string} state - A string containing the state you'd like to query for (e.g. 'ALARM')
+ * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ */
+Alarms.prototype.countAlarmsByState = function(state, auth){
+	return this.queryAlarmsByState(state, auth)
+	.then(function(data){
+		var alarms = data.MetricAlarms;
+		return alarms.length;
+	});
+}
+
+/**
+ * Queries Cloudwatch alarms.
+ * Returns a Promise containing a string with a health report, detailing the number of alarms in each state.
+ * @param {string} state - A string containing the state you'd like to query for (e.g. 'ALARM')
+ * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ */
+
+Alarms.prototype.healthReportByState = function(auth){
+	var cloudwatch = new AWS.cloudWatch(auth.props);	
+	return cloudwatch.describeAlarmsPromised({})
+	.then(function(data){
+		var alarms = data.MetricAlarms;
+		var numOK=0, numInsufficient=0, numAlarm=0;
+		console.log(alarms.length);
+		for (var k=0; k&lt;alarms.length; k++){
+			if (alarms[k].StateValue === 'ALARM'){
+				numAlarm++;
+			}
+			else if (alarms[k].StateValue === 'OK'){
+				numOK++;
+			}
+			else{
+				numInsufficient++;
+			}
+		}
+		return "Number Of Alarms, By State: \n"+
+			"There are "+numOK+" OK alarms, \n"+
+			"          "+numAlarm+ " alarming alarms, and \n"+
+			"          "+numInsufficient+" alarms for which there is insufficient data.";
+	});
+}
+
+/**
+ * Queries Cloudwatch alarms that have particular names.
+ * Returns a Promise containing a JS object with all of the alarms that have one of the names on the watchlist.
+ * @param {Array} watchlist - An array containing the names of alarms you'd like to query for.
+ * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ */
+Alarms.prototype.queryAlarmsByWatchlist = function(watchlist, auth){
+	var cloudwatch = new AWS.cloudWatch(auth.props);
+	return cloudwatch.describeAlarmsPromised({AlarmNames: watchlist});
+}
+
+/**
+ * Queries Cloudwatch alarms that have particular names.
+ * Returns a String containing information about all matching alarms.
+ * @param {Array} watchlist - An array containing the names of alarms you'd like to query for.
+ * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ */
+Alarms.prototype.queryAlarmsByWatchlistReadably = function(watchlist, auth){
+	return this.queryAlarmsByWatchlist(watchlist, auth)
+	.then(function(data){
+		var returnMe = '';
+		var alarms = data.MetricAlarms ;
+		for (var k=0; k&lt;alarms.length; k++){
+			returnMe += alarms[k].Namespace +', ' + 
+			alarms[k].AlarmName + ': ' +
+			alarms[k].AlarmDescription + " (" +
+			alarms[k].StateValue + ")\n";
+		}
+		return returnMe;
+	});
+}
+
+/**
+ * Queries Cloudwatch alarms that have names that start with the prefix string.
+ * Returns a Promise containing a JS object with all of the alarms that have names that begin with the prefix.
+ * @param {string} prefix - A prefix string. All alarms with names that begin with the prefix will be returned.
+ * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ */
+
+Alarms.prototype.queryAlarmsByPrefix = function(prefix, auth){
+	var cloudwatch = new AWS.cloudWatch(auth.props);
+	return cloudwatch.describeAlarmsPromised({AlarmNamePrefix: prefix});
+}
+
+/**
+ * Queries Cloudwatch alarms that have names that start with the prefix string.
+ * Returns a String containing information about all of the alarms that have names that begin with the prefix.
+ * @param {string} prefix - A prefix string. All alarms with names that begin with the prefix will be returned.
+ * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ */
+
+Alarms.prototype.queryAlarmsByPrefixReadably = function(prefix, auth){
+	return this.queryAlarmsByPrefix(prefix, auth)
+	.then(function(data){
+		var returnMe = '';
+		var alarms = data.MetricAlarms ;
+		for (var k=0; k&lt;alarms.length; k++){
+			returnMe += alarms[k].Namespace +', ' + 
+			alarms[k].AlarmName + ': ' +
+			alarms[k].AlarmDescription + " (" +
+			alarms[k].StateValue + ")\n";
+		}
+		return returnMe;
+	});
+}
+
+module.exports = Alarms;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Alarms.html">Alarms</a></li><li><a href="Auth.html">Auth</a></li><li><a href="SQS.html">SQS</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu May 19 2016 13:29:02 GMT+0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
