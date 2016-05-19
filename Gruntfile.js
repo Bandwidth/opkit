@@ -21,8 +21,7 @@ module.exports = function(grunt){
 		},
 		jsdoc : {
 			default : {
-				src: 'lib/*.js',
-				dest: 'out/'
+				src: 'lib/*.js'			
 			}
 		}
 	});
