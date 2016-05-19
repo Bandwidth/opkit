@@ -26,10 +26,15 @@ module.exports = function(grunt){
 					destination: 'out'
 				}
 			}
-		}
+		},
+		jshint: {
+			src: ['lib/*.js'],
+			jshintrc: true
+		},
 	});
 	grunt.loadNpmTasks('grunt-mocha-istanbul');
 	grunt.loadNpmTasks('grunt-jsdoc');
-	grunt.registerTask('default', ['mocha_istanbul:coverage', 'istanbul_check_coverage']);
+	grunt.loadNpmTasks('grunt-jslint');
+	grunt.registerTask('default', ['jslint', 'mocha_istanbul:coverage', 'istanbul_check_coverage']);
 	grunt.registerTask('doc', ['jsdoc']);
 };
