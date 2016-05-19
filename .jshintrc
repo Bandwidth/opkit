@@ -1,0 +1,37 @@
+
+{
+  "smarttabs"     : true,
+  "bitwise"       : true,
+  "curly"         : true,
+  "eqeqeq"        : true,
+  "es3"           : false,
+  "forin"         : false,
+  "immed"         : true,
+  "indent"        : 4,
+  "latedef"       : true,
+  "noarg"         : true,
+  "noempty"       : true,
+  "nonew"         : false,
+  "plusplus"      : true,
+  "quotmark"      : "single",
+  "undef"         : true,
+  "strict"        : false,
+  "trailing"      : true,
+  "maxparams"     : 5,
+  "maxdepth"      : 3,
+  "maxstatements" : false,
+  "maxlen"        : 90,
+  "node"          : true,
+  "force"         : false,
+  "ignores"       : [ "node_modules/**/*.js" ],
+  "expr"          : true,
+  "globals"       : {
+    "describe"    : false,
+    "it"          : false,
+    "before"      : false,
+    "beforeEach"  : false,
+    "after"       : false,
+    "afterEach"   : false,
+	"unescape"    : false
+  }
+}
