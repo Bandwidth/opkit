@@ -30,5 +30,5 @@ module.exports = function(grunt){
 	});
 	grunt.loadNpmTasks('grunt-mocha-istanbul');
 	grunt.loadNpmTasks('grunt-jsdoc');
-	grunt.registerTask('default', ['mocha_istanbul:coverage', 'istanbul_check_coverage', 'jsdoc']);
+	grunt.registerTask('default', ['mocha_istanbul:coverage', 'istanbul_check_coverage', 'jsdoc:dist']);
 };
