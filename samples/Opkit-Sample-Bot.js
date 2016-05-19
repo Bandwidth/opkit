@@ -74,7 +74,7 @@ function askPrivateKey(response, convo) {
 	convo.ask("What is the Private Key?", function(response, convo) {
 		convo.say("Got that. The Private Key is " + response.text + ".");
 		mod.updateSecretAccessKey(response.text);
-		mod.makeConfiguration(mod.configName, mod.currentAuth);
+		mod.createAuth(mod.configName, mod.currentAuth);
 		setupPermission(response, convo);
 		convo.next();
 	});
@@ -82,7 +82,7 @@ function askPrivateKey(response, convo) {
 
 function setupPermission(response, convo) {
 	convo.say("You will be given Read-Only permissions.");
-	mod.addPermission(response.user, "READONLY");
+	mod.addPermission(response.user, 1);
 	convo.next();
 }
 
@@ -90,7 +90,7 @@ function setupPermission(response, convo) {
 controller.hears(['switchConfigurations'],['direct_message','direct_mention','mention'],function(bot,message) {
 	bot.startConversation(message, function(response, convo) {
 		convo.ask("What configuration would you like to switch to?", function(response, convo) {
-			if (mod.switchConfig(response.text)) {
+			if (mod.chooseAuth(response.text)) {
 				convo.say("Now in configuration: " + mod.configName + ".");
 			}
 			else {
@@ -113,7 +113,7 @@ controller.hears(['printCurrentConfiguration'],['direct_message','direct_mention
 
 /***Print all configurations***/
 controller.hears(['allConfigurations'],['direct_message','direct_mention','mention'],function(bot,message) {
-	bot.reply(message,"List of configs: " + mod.getConfigurations().toString() + ".");
+	bot.reply(message,"List of configs: " + mod.getAuths().toString() + ".");
 });
 
 /***Get data about queue size of a specified SQS queue***/ 
@@ -135,3 +135,115 @@ function askURL(response, convo) {
 		});
 	});
 }
+
+/***Get data about queue size (non-visible messages) of a specified SQS queue***/ 
+controller.hears(['notvisiblequeue'], ['direct_message','direct_mention','mention'], function(bot, message) {
+	bot.startConversation(message, askURLNotVisible);
+});
+
+function askURLNotVisible(response, convo) {
+	convo.ask("What is the name of the SQS Queue you would like to retrieve data about?", function(response, convo) {
+		convo.say("OK. You want to retrieve queue data from this queue: " + response.text + ".");
+		mod.getSQSQueueSizeNotVisibleInt(response.text)
+		.then(function(data) {
+			convo.say("Number of non-visible messages on queue: " + data + ".");
+			convo.next();
+		}, function(data) {
+			convo.say("There's been an error retrieving your data. Please"
+			+ " check your credentials and try again.");
+			convo.next();
+		});
+	});	
+}
+
+/***List queues with specified prefix of a specific AWS account***/
+controller.hears(['listqueues'], ['direct_message','direct_mention','mention'], function(bot, message) {
+	bot.startConversation(message, getQueueURLPrefixed);
+});
+
+function getQueueURLPrefixed(response, convo) {
+	convo.ask("Specify prefix? (enter null for all queues)", function(response, convo) {
+		if (response.text === 'null') {
+			response.text = '';
+			convo.say("OK. You want to list all queues.");
+		}
+		else {
+			convo.say("OK. The prefix is: " + response.text + ".");
+		}
+		mod.listQueues(response.text)
+		.then(function(data) {
+			convo.say(data.toString());
+			convo.next();
+		}, function(data) {
+			convo.say("There's been an error retrieving your data. Please"
+			+ " check your credentials and try again.");
+			convo.next();
+		});
+	});
+}
+
+/***Get data about alarms of a specified state***/
+controller.hears(['queryalarms'], ['direct_message','direct_mention','mention'], function(bot, message) {
+	bot.startConversation(message, askStateQueryAlarms);
+});
+
+function askStateQueryAlarms(response, convo) {
+	convo.ask("What state would you like to retrieve data about(OK, INSUFFICIENT_DATA, or ALARM)?", function(response, convo) {
+		convo.say("OK. You would like to retrieve data about state: " + response.text + ".");
+		if (response.text === 'OK' || response.text === 'INSUFFICIENT_DATA' || response.text === 'ALARM') {
+			mod.queryAlarmsByStateReadably(response.text)
+			.then(function (data) {
+				convo.say(data);
+				convo.next();
+			}, function (data) {
+				convo.say("There's been an error retrieving your data. Please"
+				+ " check your credentials and try again.");
+				convo.next();
+			});
+		}
+		else {
+			convo.say("Not a valid input. Try again.");
+			convo.repeat();
+			convo.next(); 
+		}
+	});
+}
+
+/***Get number of alarms of a specified state***/
+controller.hears(['alarmnumber'], ['direct_message','direct_mention','mention'], function(bot, message) {
+	bot.startConversation(message, askStateNumberOfAlarms);
+});
+
+function askStateNumberOfAlarms(response, convo) {
+	convo.ask("What state would you like to retrieve data about (OK, INSUFFICIENT_DATA, or ALARM)?", function(response, convo) {
+		convo.say("OK. You would like to retrieve data about state: " + response.text + ".");
+		if (response.text === 'OK' || response.text === 'INSUFFICIENT_DATA' || response.text === 'ALARM') {
+			mod.countAlarmsByState(response.text)
+			.then(function (data) {
+				convo.say("Number of alarms in state: " + response.text +
+				" is " + data + ".");
+				convo.next();
+			}, function (data) {
+				convo.say("There's been an error retrieving your data. Please"
+				+ " check your credentials and try again.");
+				convo.next();
+			});
+		}
+		else {
+			convo.say("Not a valid input. Try again.");
+			convo.repeat();
+			convo.next();
+		}
+	});
+}
+
+/***Get an overall health report***/
+controller.hears(['health'], ['direct_message','direct_mention','mention'], function(bot, message){
+	mod.healthReportByState()
+	.then(function (data){
+		bot.reply(message, data)
+	}, function (data) {
+		bot.reply(message, "There's been an error retrieving your data. Please"
+		+ " check your credentials and try again.");
+	});
+});
