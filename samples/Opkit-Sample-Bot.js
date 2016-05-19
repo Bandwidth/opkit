@@ -89,7 +89,12 @@ function setupPermission(response, convo) {
 controller.hears(['switchConfigurations'],['direct_message','direct_mention','mention'],function(bot,message) {
 	bot.startConversation(message, function(response, convo) {
 		convo.ask("What configuration would you like to switch to?", function(response, convo) {
-			convo.say(mod.switchConfig(response.text));
+			if (mod.switchConfig(response.text)) {
+				convo.say("Now in configuration: " + mod.configName + ".");
+			}
+			else {
+				convo.say("Error. No such configuration exists.");
+			}
 			convo.next();
 		});
 	});
