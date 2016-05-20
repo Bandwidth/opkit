@@ -8,7 +8,7 @@ node THISFILE
 */
 "use strict";
 
-const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
+const SLACK_BOT_TOKEN = process.env.token;
 
 var Opkit = require('../index');
 var mod = new Opkit();
