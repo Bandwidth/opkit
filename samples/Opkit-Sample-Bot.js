@@ -8,6 +8,8 @@ node THISFILE
 */
 "use strict";
 
+const SLACK_BOT_TOKEN = process.env.token;
+
 var Opkit = require('../index');
 var mod = new Opkit();
 
@@ -19,7 +21,7 @@ if (!process.env.token) {
 var controller = mod.makeBot();
 
 controller.spawn({
-	token: process.env.token
+	token: SLACK_BOT_TOKEN
 }).startRTM(function(err) {
 	if (err) {
 		throw new Error(err);

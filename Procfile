@@ -1,0 +1,1 @@
+worker: node samples/Opkit-Sample-Bot.js
