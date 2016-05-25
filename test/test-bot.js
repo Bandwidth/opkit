@@ -30,19 +30,32 @@ describe('Bot', function(){
 			assert.equal(bot.commands.twelve(), 12);
 		});
 		it ("should present a userHasAuthorizationTo function that returns true by default", function(){
-			assert.isOk(bot.commands.userHasAuthorizationTo('1', '2'));
+			bot.commands.userHasAuthorizationTo('1', '2', function(auth){
+				callbackResult = auth;
+			});
+			assert.isOk(callbackResult);		
 		});
 		it ("should present a userHasAuthorizationTo function that returns true if\n"+
 			"only some environment variables are set", function(){
-			process.env.amazonId = '12';			
-			assert.isOk(bot.commands.userHasAuthorizationTo('1', '2'));
+			process.env.amazonId = '12';	
+			var callbackResult;
+			bot.commands.userHasAuthorizationTo('1', '2', function(auth){
+				callbackResult = auth;
+			});
+			assert.isOk(callbackResult);
 			process.env.amazonSecret = '12';
-			assert.isOk(bot.commands.userHasAuthorizationTo('1', '2'));
+			bot.commands.userHasAuthorizationTo('1', '2', function(auth){
+				callbackResult = auth;
+			});
+			assert.isOk(callbackResult);
 		});
 		it ("should present a userHasAuthorizatioNTo function that returns an auth\n"+
 			"if all environment variables are set", function(){
 			process.env.amazonRegion = '12';
-			assert.equal(bot.commands.userHasAuthorizationTo('1', '2').props.accessKeyId, '12');			
+			bot.commands.userHasAuthorizationTo('1', '2', function(auth){
+				callbackResult = auth;
+			});
+			assert.equal(callbackResult.props.region, '12');		
 		});
 	});
 	describe('Constructor', function(){
@@ -129,8 +142,8 @@ describe('Bot', function(){
 		});
 		it("should deny access for unauthorized users", function(){
 			var mock = sinon.mock(bot.rtm);
-			bot.commands.userHasAuthorizationTo = function(user, command){
-				return false;
+			bot.commands.userHasAuthorizationTo = function(user, command, callback){
+				callback(false);
 			};
 			bot.onEventsMessage({
 				text : "mister sendsTwelve"
