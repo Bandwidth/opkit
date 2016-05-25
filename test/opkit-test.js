@@ -424,12 +424,5 @@ describe('Opkit', function() {
 				assert.equal(result, false);
 			});
 		});
-		describe('#makeBot', function() {
-			it('should correctly make a bot', function() {
-				result = undefined;
-				result = opkitObject.makeBot().debug;
-				assert.notEqual(result, undefined);
-			});
-		});
 	});
 });
