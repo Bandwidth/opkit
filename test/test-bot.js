@@ -8,8 +8,9 @@ var returnsTwelve = function(message, bot, auth){
 	return 12;
 };
 
-var sendsTwelve = function(message, bot, auth){
+var sendsTwelve = function(message, bot, auth, callback){
 	bot.sendMessage('12');
+	callback("Success.");
 };
 
 describe('Bot', function(){
