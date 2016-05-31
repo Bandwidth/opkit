@@ -25,44 +25,76 @@ AWSMock.mock('EC2', 'describeInstances', function(params, callback) {
 	callback(null, data);
 });
 
+AWSMock.mock('EC2', 'waitFor', function(string, params, callback) {
+	callback(null, "Success");
+});
+
 describe('EC2', function() {
 	describe('#start', function() {
 		var result = undefined;
 		before(function() {
 			result = undefined;
-			return ecInstance.start('tag', auth1)
+			return ecInstance.start('Name', 'My-EC2', auth1)
 			.then(function(data) {
 				result = data;
 			});
 		});
 		it("starting an EC2 instance works", function() {
-			assert.equal(result, 2);
+			assert.equal(result, "Success");
+		});
+	});
+
+	describe('#startByName', function() {
+		var result = undefined;
+		before(function() {
+			result = undefined;
+			return ecInstance.startByName('My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});
+		});
+		it("starting an EC2 instance works", function() {
+			assert.equal(result, "Success");
 		});
 	});
 
 	describe('#stop', function() {
 		before(function() {
 			result = undefined;
-			return ecInstance.stop('tag', auth1)
+			return ecInstance.stop('Name', 'My-EC2', auth1)
 			.then(function(data) {
 				result = data;
 			});
 		});
 		it("stopping an EC2 instance works", function() {
-			assert.equal(result, 9);
+			assert.equal(result, "Success");
+		});
+	});
+
+	describe('#stopByName', function() {
+		var result = undefined;
+		before(function() {
+			result = undefined;
+			return ecInstance.stopByName('My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});
+		});
+		it("starting an EC2 instance works", function() {
+			assert.equal(result, "Success");
 		});
 	});
 
 	describe('#getInstanceID', function() {
 		before (function() {
 			result = undefined;
-			return ecInstance.getInstanceID('tag', auth1)
+			return ecInstance.getInstanceID('tag', 'My-EC2', auth1)
 			.then(function(data) {
 				result = data;
 			});
 		});
 		it("getting an instance ID of a specified EC2 instance works", function() {
-			assert.equal(result, 'ExampleId');
+			assert.equal(result[0], 'ExampleId');
 		});
 	});
 });
