@@ -9,6 +9,9 @@ var auth1 = new opkit.Auth();
 auth1.updateRegion('narnia-1');
 auth1.updateAuthKeys('shiny gold one', 'old rusty one');
 
+var result;
+var spy;
+
 AWSMock.mock('EC2', 'startInstances', function(params, callback) {
 	var data = 2;
 	callback(null, data);
@@ -30,8 +33,8 @@ AWSMock.mock('EC2', 'waitFor', function(string, params, callback) {
 });
 
 describe('EC2', function() {
+
 	describe('#start', function() {
-		var result = undefined;
 		before(function() {
 			result = undefined;
 			return ecInstance.start('Name', 'My-EC2', auth1)
@@ -45,9 +48,10 @@ describe('EC2', function() {
 	});
 
 	describe('#startByName', function() {
-		var result = undefined;
 		before(function() {
+			spy = undefined;
 			result = undefined;
+			spy = sinon.spy(ecInstance, "start");
 			return ecInstance.startByName('My-EC2', auth1)
 			.then(function(data) {
 				result = data;
@@ -55,6 +59,7 @@ describe('EC2', function() {
 		});
 		it("starting an EC2 instance works", function() {
 			assert.equal(result, "Success");
+			assert.equal(spy.calledWithExactly('Name', 'My-EC2', auth1),true);
 		});
 	});
 
@@ -72,9 +77,10 @@ describe('EC2', function() {
 	});
 
 	describe('#stopByName', function() {
-		var result = undefined;
 		before(function() {
+			spy = undefined;
 			result = undefined;
+			spy = sinon.spy(ecInstance, 'stop');
 			return ecInstance.stopByName('My-EC2', auth1)
 			.then(function(data) {
 				result = data;
@@ -82,6 +88,7 @@ describe('EC2', function() {
 		});
 		it("starting an EC2 instance works", function() {
 			assert.equal(result, "Success");
+			assert.equal(spy.calledWithExactly('Name', 'My-EC2', auth1),true);
 		});
 	});
 
