@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: Alarms</title>
+    <title>JSDoc: Namespace: EC2</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: Alarms</h1>
+    <h1 class="page-title">Namespace: EC2</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2>Alarms</h2>
+        <h2>EC2</h2>
         
     
 </header>
@@ -70,7 +70,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line1">line 1</a>
+        <a href="ec2.js.html">ec2.js</a>, <a href="ec2.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -106,15 +106,14 @@
 
     
 
-    <h4 class="name" id="countAlarmsByState"><span class="type-signature"></span>countAlarmsByState<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getInstanceID"><span class="type-signature"></span>getInstanceID<span class="signature">(tagName, value, auth)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Queries Cloudwatch alarms that are currently in a particular state.
-Returns a Promise containing the number of alarms in the state.
+    Get instance IDs of specified EC2 instances.
 </div>
 
 
@@ -150,7 +149,7 @@ Returns a Promise containing the number of alarms in the state.
 
         <tr>
             
-                <td class="name"><code>state</code></td>
+                <td class="name"><code>tagName</code></td>
             
 
             <td class="type">
@@ -166,146 +165,14 @@ Returns a Promise containing the number of alarms in the state.
 
             
 
-            <td class="description last">A string containing the state you'd like to query for (e.g. 'ALARM')</td>
+            <td class="description last">Name tag (Examples: Name, Environment, etc).</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>auth</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Auth.html">Auth</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line45">line 45</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="healthReportByState"><span class="type-signature"></span>healthReportByState<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Queries Cloudwatch alarms.
-Returns a Promise containing a string with a health report, detailing the number of alarms in each state.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>state</code></td>
+                <td class="name"><code>value</code></td>
             
 
             <td class="type">
@@ -321,7 +188,7 @@ Returns a Promise containing a string with a health report, detailing the number
 
             
 
-            <td class="description last">A string containing the state you'd like to query for (e.g. 'ALARM')</td>
+            <td class="description last">Actual value of tag (Example: opkit-test-johndoe)</td>
         </tr>
 
     
@@ -344,7 +211,7 @@ Returns a Promise containing a string with a health report, detailing the number
 
             
 
-            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+            <td class="description last">The Auth object to be used for the AWS query.</td>
         </tr>
 
     
@@ -385,7 +252,7 @@ Returns a Promise containing a string with a health report, detailing the number
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line60">line 60</a>
+        <a href="ec2.js.html">ec2.js</a>, <a href="ec2.js.html#line77">line 77</a>
     </li></ul></dd>
     
 
@@ -408,6 +275,16 @@ Returns a Promise containing a string with a health report, detailing the number
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Array of instance IDs of the specified EC2 instances.
+</div>
+
+
+
+    
 
 
 
@@ -416,15 +293,14 @@ Returns a Promise containing a string with a health report, detailing the number
 
     
 
-    <h4 class="name" id="queryAlarmsByPrefix"><span class="type-signature"></span>queryAlarmsByPrefix<span class="signature">(prefix, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="listInstances"><span class="type-signature"></span>listInstances<span class="signature">(tagName, value, auth)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Queries Cloudwatch alarms that have names that start with the prefix string.
-Returns a Promise containing a JS object with all of the alarms that have names that begin with the prefix.
+    Get info about specified EC2 instances.
 </div>
 
 
@@ -460,7 +336,7 @@ Returns a Promise containing a JS object with all of the alarms that have names 
 
         <tr>
             
-                <td class="name"><code>prefix</code></td>
+                <td class="name"><code>tagName</code></td>
             
 
             <td class="type">
@@ -476,146 +352,14 @@ Returns a Promise containing a JS object with all of the alarms that have names 
 
             
 
-            <td class="description last">A prefix string. All alarms with names that begin with the prefix will be returned.</td>
+            <td class="description last">Name tag (Examples: Name, Environment, etc).</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>auth</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Auth.html">Auth</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line123">line 123</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="queryAlarmsByPrefixReadably"><span class="type-signature"></span>queryAlarmsByPrefixReadably<span class="signature">(prefix, auth)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Queries Cloudwatch alarms that have names that start with the prefix string.
-Returns a String containing information about all of the alarms that have names that begin with the prefix.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>prefix</code></td>
+                <td class="name"><code>value</code></td>
             
 
             <td class="type">
@@ -631,7 +375,7 @@ Returns a String containing information about all of the alarms that have names 
 
             
 
-            <td class="description last">A prefix string. All alarms with names that begin with the prefix will be returned.</td>
+            <td class="description last">Actual value of tag (Example: opkit-test-johndoe)</td>
         </tr>
 
     
@@ -654,7 +398,7 @@ Returns a String containing information about all of the alarms that have names 
 
             
 
-            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+            <td class="description last">The Auth object to be used for the AWS query.</td>
         </tr>
 
     
@@ -695,7 +439,7 @@ Returns a String containing information about all of the alarms that have names 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line135">line 135</a>
+        <a href="ec2.js.html">ec2.js</a>, <a href="ec2.js.html#line114">line 114</a>
     </li></ul></dd>
     
 
@@ -718,6 +462,16 @@ Returns a String containing information about all of the alarms that have names 
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Array containing info about the specified EC2 instances.
+</div>
+
+
+
+    
 
 
 
@@ -726,15 +480,14 @@ Returns a String containing information about all of the alarms that have names 
 
     
 
-    <h4 class="name" id="queryAlarmsByState"><span class="type-signature"></span>queryAlarmsByState<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="start"><span class="type-signature"></span>start<span class="signature">(tagName, value, auth)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Queries Cloudwatch alarms that are currently in a particular state.
-Returns a Promise containing a JS object with all of the alarms currently in that state.
+    Starts EC2 instances with the specified tag.
 </div>
 
 
@@ -770,7 +523,7 @@ Returns a Promise containing a JS object with all of the alarms currently in tha
 
         <tr>
             
-                <td class="name"><code>state</code></td>
+                <td class="name"><code>tagName</code></td>
             
 
             <td class="type">
@@ -786,146 +539,14 @@ Returns a Promise containing a JS object with all of the alarms currently in tha
 
             
 
-            <td class="description last">A string containing the state you'd like to query for (e.g. 'ALARM')</td>
+            <td class="description last">Name tag (Examples: Name, Environment, etc).</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>auth</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Auth.html">Auth</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line15">line 15</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="queryAlarmsByStateReadably"><span class="type-signature"></span>queryAlarmsByStateReadably<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Queries Cloudwatch alarms that are currently in a particular state.
-Returns a string containing information about the namespace, name, and description of each alarm in the queried state.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>state</code></td>
+                <td class="name"><code>value</code></td>
             
 
             <td class="type">
@@ -941,7 +562,7 @@ Returns a string containing information about the namespace, name, and descripti
 
             
 
-            <td class="description last">A string containing the state you'd like to query for (e.g. 'ALARM')</td>
+            <td class="description last">Actual value of tag (Example: opkit-test-johndoe)</td>
         </tr>
 
     
@@ -964,7 +585,7 @@ Returns a string containing information about the namespace, name, and descripti
 
             
 
-            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+            <td class="description last">The Auth object to be used for the AWS query.</td>
         </tr>
 
     
@@ -1005,7 +626,7 @@ Returns a string containing information about the namespace, name, and descripti
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line26">line 26</a>
+        <a href="ec2.js.html">ec2.js</a>, <a href="ec2.js.html#line16">line 16</a>
     </li></ul></dd>
     
 
@@ -1036,15 +657,14 @@ Returns a string containing information about the namespace, name, and descripti
 
     
 
-    <h4 class="name" id="queryAlarmsByWatchlist"><span class="type-signature"></span>queryAlarmsByWatchlist<span class="signature">(watchlist, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="startByName"><span class="type-signature"></span>startByName<span class="signature">(value, auth)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Queries Cloudwatch alarms that have particular names.
-Returns a Promise containing a JS object with all of the alarms that have one of the names on the watchlist.
+    Starts EC2 instances with the specified name.
 </div>
 
 
@@ -1080,13 +700,13 @@ Returns a Promise containing a JS object with all of the alarms that have one of
 
         <tr>
             
-                <td class="name"><code>watchlist</code></td>
+                <td class="name"><code>value</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array</span>
+<span class="param-type">string</span>
 
 
             
@@ -1096,7 +716,7 @@ Returns a Promise containing a JS object with all of the alarms that have one of
 
             
 
-            <td class="description last">An array containing the names of alarms you'd like to query for.</td>
+            <td class="description last">Actual value of tag (Example: opkit-test-johndoe)</td>
         </tr>
 
     
@@ -1119,7 +739,7 @@ Returns a Promise containing a JS object with all of the alarms that have one of
 
             
 
-            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+            <td class="description last">The Auth object to be used for the AWS query.</td>
         </tr>
 
     
@@ -1160,7 +780,7 @@ Returns a Promise containing a JS object with all of the alarms that have one of
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line91">line 91</a>
+        <a href="ec2.js.html">ec2.js</a>, <a href="ec2.js.html#line36">line 36</a>
     </li></ul></dd>
     
 
@@ -1191,15 +811,14 @@ Returns a Promise containing a JS object with all of the alarms that have one of
 
     
 
-    <h4 class="name" id="queryAlarmsByWatchlistReadably"><span class="type-signature"></span>queryAlarmsByWatchlistReadably<span class="signature">(watchlist, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="stop"><span class="type-signature"></span>stop<span class="signature">(tagName, value, auth)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Queries Cloudwatch alarms that have particular names.
-Returns a String containing information about all matching alarms.
+    Stops EC2 instances with the specified tag.
 </div>
 
 
@@ -1235,13 +854,13 @@ Returns a String containing information about all matching alarms.
 
         <tr>
             
-                <td class="name"><code>watchlist</code></td>
+                <td class="name"><code>tagName</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array</span>
+<span class="param-type">string</span>
 
 
             
@@ -1251,7 +870,30 @@ Returns a String containing information about all matching alarms.
 
             
 
-            <td class="description last">An array containing the names of alarms you'd like to query for.</td>
+            <td class="description last">Name tag (Examples: Name, Environment, etc).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Actual value of tag (Example: opkit-test-johndoe)</td>
         </tr>
 
     
@@ -1274,7 +916,7 @@ Returns a String containing information about all matching alarms.
 
             
 
-            <td class="description last">An auth object containing the keys you'd like to use and the region to which you'd like to connect.</td>
+            <td class="description last">The Auth object to be used for the AWS query.</td>
         </tr>
 
     
@@ -1315,7 +957,161 @@ Returns a String containing information about all matching alarms.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line102">line 102</a>
+        <a href="ec2.js.html">ec2.js</a>, <a href="ec2.js.html#line46">line 46</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="stopByName"><span class="type-signature"></span>stopByName<span class="signature">(value, auth)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Stops EC2 instances with the specified name.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Actual value of tag (Example: opkit-test-johndoe)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>auth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Auth.html">Auth</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The Auth object to be used for the AWS query.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ec2.js.html">ec2.js</a>, <a href="ec2.js.html#line66">line 66</a>
     </li></ul></dd>
     
 
