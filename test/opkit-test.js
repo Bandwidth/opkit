@@ -140,7 +140,7 @@ describe('Opkit', function() {
 			});
 			
 			it('Should result in the correct human-readable string', function () {
-				assert.equal(result, 'Namespace, AlarmName: AlarmDescription\n');
+				assert.equal(result, 'Namespace: AlarmDescription\n');
 			});
 		});
 		
@@ -216,8 +216,7 @@ describe('Opkit', function() {
 				});
 			});		
 			it('Should result in a neat string with the correct AlarmName', function () {
-				assert.equal(result, 'Namespace' +', ' + 
-				'AlarmName' + ': ' +
+				assert.equal(result, 'Namespace' + ': ' +
 				'AlarmDescription' + " (" +
 				'OK' + ")\n");
 			});
@@ -269,8 +268,7 @@ describe('Opkit', function() {
 				});
 			});		
 			it('Should result in a neat string with the correct AlarmName', function () {
-				assert.equal(result, 'Namespace' +', ' + 
-				'AlarmName' + ': ' +
+				assert.equal(result, 'Namespace' + ': ' +
 				'AlarmDescription' + " (" +
 				'OK' + ")\n");
 			});
