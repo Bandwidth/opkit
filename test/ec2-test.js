@@ -24,7 +24,7 @@ AWSMock.mock('EC2', 'stopInstances', function(params, callback) {
 
 AWSMock.mock('EC2', 'describeInstances', function(params, callback) {
 	var data = {};
-	data.Reservations = [{Instances : [{InstanceId : 'ExampleId'}]}];
+	data.Reservations = [{Instances : [{InstanceId : 'ExampleId', Tags : [{Key : 'Name', Value : 'Tag'}], State : {Name : 'Testing'}}]}];
 	callback(null, data);
 });
 
@@ -102,6 +102,38 @@ describe('EC2', function() {
 		});
 		it("getting an instance ID of a specified EC2 instance works", function() {
 			assert.equal(result[0], 'ExampleId');
+		});
+	});
+
+	describe('#listInstances', function() {
+		before (function() {
+			result = undefined;
+			return ecInstance.listInstances('tag', 'My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});
+		});
+		it("getting data about a specified EC2 instance works", function() {
+			assert.equal(JSON.stringify(result[0]), '{"Name":"Tag","State":"Testing","id":"ExampleId"}');
+		});
+	});
+
+	describe('#listInstances without a name tag', function() {
+		before (function() {
+			AWSMock.restore('EC2', 'describeInstances');
+			AWSMock.mock('EC2', 'describeInstances', function(params, callback) {
+				var data = {};
+				data.Reservations = [{Instances : [{InstanceId : 'ExampleId', Tags : [{Key : 'NotName', Value : 'Tag'}], State : {Name : 'Testing'}}]}];
+				callback(null, data);
+			});
+			result = undefined;
+			return ecInstance.listInstances('tag', 'My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});
+		});
+		it("getting data about a specified EC2 instance without a name works", function() {
+			assert.equal(JSON.stringify(result[0]), '{"State":"Testing","id":"ExampleId"}');
 		});
 	});
 });
