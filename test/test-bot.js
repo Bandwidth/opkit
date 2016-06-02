@@ -1,6 +1,5 @@
 var assert = require('chai').assert;
-var opkit = require('../index');
-var opkitObject = new opkit();
+var Opkit = require('../index');
 var sinon = require('sinon');
 var Promise = require('bluebird');
 var bot; 
@@ -10,28 +9,22 @@ var returnsTwelve = function(message, bot, auth){
 };
 
 var sendsTwelve = function(message, bot, auth){
-	return new Promise(function(resolve, reject){
-		bot.sendMessage('12', message.channel);
-		resolve("Bot successfully sent the string literal '12'.");
-	});
+	bot.sendMessage('12', message.channel);
+	return Promise.resolve("Bot successfully sent the string literal '12'.");
 };
 
 var userHasAuthorizationTo = function(message, bot, auth){
-	return new Promise(function(resolve, reject){
-		resolve(true);
-	});
+	return Promise.resolve(true);
 };
 
 var failsToSendTwelve = function(message, bot, auth){
-	return new Promise(function(resolve, reject){
-		reject("Bot couldn't send '12' for some reason.");
-	});
+	return Promise.reject("Bot couldn't send '12' for some reason.");
 };
 
 describe('Bot', function(){
 	describe('Constructor', function(){
 		before(function(){
-			bot = opkitObject.makeBot('mister', 
+			bot = new Opkit.Bot('mister', 
 				{
 					twelve : returnsTwelve
 				},
@@ -88,13 +81,14 @@ describe('Bot', function(){
 	});
 	describe('Constructor', function(){
 		before(function(){
-			bot = opkitObject.makeBot('mister', 
+			bot = new Opkit.Bot('mister', 
 				{
+					twelve : returnsTwelve,
 					userHasAuthorizationTo : returnsTwelve
 				},
 				{
 					variable : 0
-			});		
+			});	
 		});
 		it("shouldn't override extant userHasAuthorizationTo function", function(){
 			assert.equal(bot.commands.userHasAuthorizationTo('1', '2'), 12)
@@ -102,9 +96,9 @@ describe('Bot', function(){
 	});
 	describe('start', function(){
 		before(function(){
-			bot = opkitObject.makeBot('mister', 
+			bot = new Opkit.Bot('mister', 
 				{
-					userHasAuthorizationTo : returnsTwelve
+					twelve : returnsTwelve
 				},
 				{
 					variable : 0
@@ -119,9 +113,9 @@ describe('Bot', function(){
 	});
 	describe('sendMessage', function(){
 		before(function(){
-			bot = opkitObject.makeBot('mister', 
+			bot = new Opkit.Bot('mister', 
 				{
-					userHasAuthorizationTo : returnsTwelve
+					twelve : returnsTwelve
 				},
 				{
 					variable : 0
@@ -136,7 +130,7 @@ describe('Bot', function(){
 	});
 	describe('onEventsMessage', function(){
 		before(function(){
-			bot = opkitObject.makeBot('mister', 
+			bot = new Opkit.Bot('mister', 
 				{
 					sendsTwelve : sendsTwelve
 				},
@@ -174,9 +168,7 @@ describe('Bot', function(){
 		it("should deny access for unauthorized users", function(){
 			var mock = sinon.mock(bot.rtm);
 			bot.commands.userHasAuthorizationTo = function(user, command){
-				return new Promise(function(resolve, reject){
-					reject("Access denied.");
-				});
+				return Promise.reject('Access denied.');
 
 			};
 			bot.dataStore = {
@@ -196,9 +188,7 @@ describe('Bot', function(){
 		it("should error if the userHasAuthorizationTo errors", function(){
 			var mock = sinon.mock(bot.rtm);
 			bot.commands.userHasAuthorizationTo = function(user, command){
-				return new Promise(function(resolve, reject){
-					reject(new Error());
-				});
+				return Promise.reject("db broke");
 			};
 			bot.onEventsMessage({
 				text : "mister sendsTwelve",
@@ -211,14 +201,10 @@ describe('Bot', function(){
 		it("should catch errors thrown by the commands it calls", function(){
 			var mock = sinon.mock(bot.rtm);
 			bot.commands.userHasAuthorizationTo = function(user, command){
-				return new Promise(function(resolve, reject){
-					resolve(true);
-				});
+				return Promise.resolve(true);
 			};
 			bot.commands.sendsTwelve = function(message, bot, auth){
-				return new Promise(function(resolve, reject){
-					reject("Bot broke something.");
-				});
+				return Promise.reject('Bot broke something.');
 			};
 			bot.onEventsMessage({
 				text : "mister sendsTwelve",
