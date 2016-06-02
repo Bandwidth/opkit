@@ -39,6 +39,7 @@
   "dependencies": {
     "aws-promised": "^2.13.0",
     "aws-sdk": "^2.3.10",
+    "bluebird": "^3.4.0",
     "slack-client": "^2.0.6",
     "winston": "^2.2.0"
   }
