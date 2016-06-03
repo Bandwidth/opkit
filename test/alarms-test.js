@@ -3,7 +3,7 @@ var opkit = require('../index');
 var alarms = new opkit.Alarms();
 var sinon = require('sinon');
 var AWS = require('aws-sdk-mock');
-Promise = require('bluebird');
+var Promise = require('bluebird');
 var auth1 = new opkit.Auth();
 auth1.updateRegion('narnia-1');
 auth1.updateAuthKeys('shiny gold one', 'old rusty one');
