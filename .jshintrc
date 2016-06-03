@@ -15,7 +15,7 @@
   "plusplus"      : true,
   "quotmark"      : "single",
   "undef"         : true,
-  "strict"        : false,
+  "strict"        : "implied",
   "trailing"      : true,
   "maxparams"     : 5,
   "maxdepth"      : 3,

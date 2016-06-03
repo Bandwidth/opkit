@@ -3,7 +3,7 @@ var opkit = require('../index');
 var alarms = new opkit.Alarms();
 var sinon = require('sinon');
 var AWS = require('aws-sdk-mock');
-
+var Promise = require('bluebird');
 var auth1 = new opkit.Auth();
 auth1.updateRegion('narnia-1');
 auth1.updateAuthKeys('shiny gold one', 'old rusty one');
@@ -36,14 +36,13 @@ describe('Alarms', function(){
 	});
 	describe('#queryAlarmsByStateReadably', function(){
 		before(function() {
-			result = undefined;
+		});
+		it('Should result in the correct human-readable string', function (done) {
 			alarms.queryAlarmsByStateReadably('OK', auth1)
 			.then(function (data){
-				result = data;
+				assert.equal(data, 'Namespace: AlarmDescription\n');
+				done();
 			});
-		});
-		it('Should result in the correct human-readable string', function () {
-			assert.equal(result, 'Namespace: AlarmDescription\n');
 		})
 	});
 	describe('#countAlarmsByState', function(){
