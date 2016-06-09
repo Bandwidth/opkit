@@ -200,6 +200,22 @@ describe('Bot', function(){
 				bot.sendMessage.verify();
 			});
 		});
+		it ("should work if the command fails (rejects promise)", function(){
+			bot.authorizationFunction = function(message, bot, auth){
+				return Promise.resolve(['A', 'C', 'D']);
+			};
+			bot.sendMessage = sinon.mock().never();
+			bot.commands.twelve.command = function(message, bot, auth){
+				return Promise.reject("Bot failed to send the string literal '12'.");
+			};
+			return bot.onEventsMessage({
+				text : "opkit twelve",
+				user : "user"
+			})
+			.then(function (data){
+				bot.sendMessage.verify();
+			});
+		});
 		it ("should reject if access is denied", function(){
 			bot.authorizationFunction = function(message, bot, auth){
 				return Promise.resolve(['A', 'C', 'F']);
