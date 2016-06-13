@@ -3,6 +3,31 @@ var Opkit = require('../index');
 var sinon = require('sinon');
 var Promise = require('bluebird');
 
+var pattern = function(message, bot, auths){
+	return (message.text === 'boogie');
+};
+var logic = function(message, bot, auths){
+	bot.sendMessage('You know I can boogie down', message.channel);
+	if (message.user === 'user') {
+		bot.sendMessage('Specially for you', message.channel);		
+	} else {
+		return Promise.reject();	
+	} 
+	return Promise.resolve();
+};
+
+var otherPattern = function(message, bot, auths){
+	return (message.text === 'opkit twelve');
+};
+var otherLogic = function(message, bot, auths){
+	bot.sendMessage('Twelve, from the special handler', message.channel);
+	if (message.user === 'user') {
+		return Promise.resolve();
+	} else {
+		return Promise.reject();	
+	} 
+};
+
 var sendsTwelve = function(message, bot, auth){
 	bot.sendMessage('12', message.channel);
 	return Promise.resolve("Bot successfully sent the string literal '12'.");
@@ -60,6 +85,26 @@ describe('Bot', function(){
 			});
 		});		
 	});
+
+	describe('Adding handlers', function(){
+		beforeEach(function(){
+			bot = new Opkit.Bot(
+				'opkit',
+				[sendsTwelveObject],
+				{ variable : 'variable'},
+				authorizationFunction
+			);
+		});	
+		it('should successfully add a special handler', function(){
+			bot.addHandler(pattern, logic);
+			assert.equal(bot.handlers.length, 1);
+		});
+		it('should successfully add a oneoff special handler', function(){
+			bot.addOneOffHandler(pattern, logic);
+			assert.equal(bot.oneoffHandlers.length, 1);
+		});		
+	});
+
 	describe('sendMessage', function(){
 		before(function(){
 			bot = new Opkit.Bot(
@@ -140,6 +185,63 @@ describe('Bot', function(){
 				bot.sendMessage.verify();
 			});
 		});	
+		it ("should call a special handler if defined", function(){
+			bot.addHandler(pattern, logic);
+			bot.addHandler(otherPattern, otherLogic);
+			bot.sendMessage = sinon.mock().twice();
+			return bot.onEventsMessage({
+				text : "boogie",
+				user : "user"
+			})
+			.then(function (data){
+				bot.sendMessage.verify();
+			});		
+		});
+		it ("should call handlers' logic", function(){
+			bot.sendMessage = sinon.mock().once();
+			return bot.onEventsMessage({
+				text : "boogie",
+				user : "notUser"
+			})
+			.then(function (data){
+				bot.sendMessage.verify();
+			});		
+		});
+		it ("should call oneoff handlers once if defined", function(){
+			bot = new Opkit.Bot(
+				'opkit',
+				[sendsTwelveObject],
+				{ variable : 'variable'},
+				authorizationFunction
+			);
+			bot.addOneOffHandler(pattern, logic);
+			bot.addOneOffHandler(otherPattern, otherLogic);
+			bot.sendMessage = sinon.mock().exactly(2);
+			return bot.onEventsMessage({
+				text : "boogie",
+				user : "user"
+			})
+			.then(function (data){
+				return bot.onEventsMessage({
+					text : "boogie",
+					user : "user"
+				}).then(function(){
+					bot.sendMessage.verify();
+				});
+			});		
+		});
+		it ("should call oneoff handlers' logic", function(){
+			bot.addOneOffHandler(pattern, logic);
+			bot.addOneOffHandler(otherPattern, otherLogic);
+			bot.sendMessage = sinon.mock().exactly(1);
+			return bot.onEventsMessage({
+				text : "boogie",
+				user : "notUser"
+			})
+			.then(function (data){
+				bot.sendMessage.verify();
+			});		
+		});
 	});
 
 	describe('onEventsMessage - controlled functions', function(){
