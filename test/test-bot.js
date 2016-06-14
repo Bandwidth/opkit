@@ -286,7 +286,7 @@ describe('Bot', function(){
 				throw new Error();
 			})
 			.catch(function (){
-				bot.sendMessage.verify();		
+				bot.sendMessage.verify();
 			});
 		});
 		it ("should work if it does have that command - matching multiple roles", function(){
