@@ -216,7 +216,7 @@ describe('Bot', function(){
 			);
 			bot.addOneOffHandler(pattern, logic);
 			bot.addOneOffHandler(otherPattern, otherLogic);
-			bot.sendMessage = sinon.mock().exactly(2);
+			bot.sendMessage = sinon.mock().twice();
 			return bot.onEventsMessage({
 				text : "boogie",
 				user : "user"
@@ -266,16 +266,16 @@ describe('Bot', function(){
 			});
 			bot.sendMessage.verify();			
 		});
-		it('should send a hello message if just the name of the bot is entered', function() {
-			bot.sendMessage = sinon.mock().once();
-			return bot.onEventsMessage({
-				text : "opkit",
-				user : "user"
-			})
-			.then(function(data) { 
-				bot.sendMessage.verify();
-			});
-		});
+		it('should send a hello message if just the name of the bot is entered', function() {		
+ 			bot.sendMessage = sinon.mock().once();		
+ 			return bot.onEventsMessage({		
+ 				text : "opkit",		
+ 				user : "user"		
+ 			})		
+ 			.then(function(data) { 		
+ 				bot.sendMessage.verify();		
+ 			});		
+ 		});
 		it ("should reject on a command it doesn't have", function(){
 			bot.sendMessage = sinon.mock().once();
 			return bot.onEventsMessage({
@@ -286,7 +286,7 @@ describe('Bot', function(){
 				throw new Error();
 			})
 			.catch(function (){
-				bot.sendMessage.verify();
+				bot.sendMessage.verify();				
 			});
 		});
 		it ("should work if it does have that command - matching multiple roles", function(){
