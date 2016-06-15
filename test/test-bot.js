@@ -152,9 +152,16 @@ describe('Bot', function(){
 		it('should return a match when an actual match occurs', function(){
 			return bot.messageParser(['testbot', 'send', 'me', 'twelve'], bot)
 			.then(function(data){
-				assert.equal(data, sendsTwelveObject);
+				assert.equal(data.command, sendsTwelveObject);
 			});
 		});
+		it('should return a match with the correct args', function(){
+			return bot.messageParser(['testbot', 'send', 'me', 'twelve' ,'please'], bot)
+			.then(function(data){
+				assert.equal(data.args[0], 'please');
+				assert.equal(data.args.length, 1);
+			});
+		});		
 		it('should not return a match when there is no match', function(){
 			return bot.messageParser(['testbot', 'provide', 'me', 'twelve'], bot)
 			.then(function (data){
@@ -312,8 +319,10 @@ describe('Bot', function(){
 			});
 		});
 		it ("should work if it does have that command - matching multiple roles", function(){
-			bot.messageParser = sinon.mock().resolves(sendsTwelveObject);
-			bot.sendMessage = sinon.mock().once();
+			bot.messageParser = sinon.mock().resolves({
+				command : sendsTwelveObject,
+				args : []
+			});			bot.sendMessage = sinon.mock().once();
 			return bot.onEventsMessage({
 				text : "opkit twelve",
 				user : "user"
@@ -323,8 +332,10 @@ describe('Bot', function(){
 			});
 		});
 		it ("should work if it does have that command - matching single role", function(){
-			bot.messageParser = sinon.mock().resolves(sendsTwelveObject);
-			bot.authorizationFunction = function(message, bot, auth){
+			bot.messageParser = sinon.mock().resolves({
+				command : sendsTwelveObject,
+				args : []
+			});			bot.authorizationFunction = function(message, bot, auth){
 				return Promise.resolve(['A', 'C', 'D']);
 			};
 			bot.sendMessage = sinon.mock().once();
@@ -337,7 +348,10 @@ describe('Bot', function(){
 			});
 		});
 		it ("should work if the command fails (rejects promise)", function(){
-			bot.messageParser = sinon.mock().resolves(sendsTwelveObject);
+			bot.messageParser = sinon.mock().resolves({
+				command : sendsTwelveObject,
+				args : []
+			});
 			bot.authorizationFunction = function(message, bot, auth){
 				return Promise.resolve(['A', 'C', 'D']);
 			};
@@ -354,7 +368,10 @@ describe('Bot', function(){
 			});
 		}); 
 		it ("should reject if access is denied", function(){
-			bot.messageParser = sinon.mock().resolves(sendsTwelveObject);
+			bot.messageParser = sinon.mock().resolves({
+				command : sendsTwelveObject,
+				args : []
+			});
 			bot.authorizationFunction = function(message, bot, auth){
 				return Promise.resolve(['A', 'E', 'F']);
 			};
