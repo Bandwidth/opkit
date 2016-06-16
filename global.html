@@ -101,7 +101,89 @@
 
     
 
-    <h4 class="name" id="OpkitBot"><span class="type-signature"></span>OpkitBot<span class="signature">(name:, commands:, state:, opkit:)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="dataFormatter"><span class="type-signature"></span>dataFormatter<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Helper function to format data returned by AWS EC2 queries.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ec2.js.html">ec2.js</a>, <a href="ec2.js.html#line196">line 196</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="OpkitBot"><span class="type-signature"></span>OpkitBot<span class="signature">(name:, Object<span class="signature-attributes">opt</span>, function(message, bot, auth)<span class="signature-attributes">opt</span>, String<span class="signature-attributes">opt</span>, String<span class="signature-attributes">opt</span>, state:, authFunction)</span><span class="type-signature"></span></h4>
 
     
 
@@ -132,6 +214,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -157,6 +241,14 @@
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -167,24 +259,113 @@
 
         <tr>
             
-                <td class="name"><code>commands:</code></td>
+                <td class="name"><code>Object</code></td>
             
 
             <td class="type">
             
+            </td>
+
+            
+                <td class="attributes">
                 
-<span class="param-type">Object</span>
+                    &lt;optional><br>
+                
 
+                
 
+                
+                </td>
+            
+
+            
+
+            <td class="description last">cmds: each object should look like</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>function(message, bot, auth)</code></td>
+            
+
+            <td class="type">
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">each key is a word to listen for; each value is a function
-taking parameters message and bot.</td>
+            <td class="description last">cmds.command: Will be called when the command is run.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>String</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">names : The keywords that should be listened for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>String</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">roles: An optional list of roles. If present, whenever the command is run, the authorizationFunction is run, and the lists of roles compared.
+}</td>
         </tr>
 
     
@@ -204,6 +385,14 @@ taking parameters message and bot.</td>
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -214,23 +403,31 @@ taking parameters message and bot.</td>
 
         <tr>
             
-                <td class="name"><code>opkit:</code></td>
+                <td class="name"><code>authFunction</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Opkit</span>
+<span class="param-type">function</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">should be `this`</td>
+            <td class="description last">: function(user) which returns a list of roles to match against commands.</td>
         </tr>
 
     
@@ -271,7 +468,7 @@ taking parameters message and bot.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bot.js.html">bot.js</a>, <a href="bot.js.html#line18">line 18</a>
+        <a href="bot.js.html">bot.js</a>, <a href="bot.js.html#line22">line 22</a>
     </li></ul></dd>
     
 
@@ -313,13 +510,13 @@ taking parameters message and bot.</td>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Alarms.html">Alarms</a></li><li><a href="Auth.html">Auth</a></li><li><a href="EC2.html">EC2</a></li><li><a href="SQS.html">SQS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#OpkitBot">OpkitBot</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Alarms.html">Alarms</a></li><li><a href="Auth.html">Auth</a></li><li><a href="EC2.html">EC2</a></li><li><a href="SQS.html">SQS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#dataFormatter">dataFormatter</a></li><li><a href="global.html#OpkitBot">OpkitBot</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jun 07 2016 19:42:58 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Jun 16 2016 12:55:24 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
