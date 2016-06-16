@@ -136,38 +136,4 @@ describe('EC2', function() {
 			assert.equal(JSON.stringify(result[0]), '{"State":"Testing","id":"ExampleId"}');
 		});
 	});
-
-	describe('#getInstancesStatus', function() {
-		before (function() {
-			result = undefined;
-			return ecInstance.getInstancesStatus('tag', 'My-EC2', 'running', auth1)
-			.then(function(data) {
-				result = data;
-			});
-		});
-		it('getting data about instances based on state works', function() {
-			assert.equal(JSON.stringify(result[0]), '{"State":"Testing","id":"ExampleId"}');
-		});
-	});
-
-	describe('#getInstancesStopped', function() {
-		it('Calls getInstancesStatus with the right arguments', function() { 
-			spy = sinon.spy(ecInstance, 'getInstancesStatus');
-			return ecInstance.getInstancesStopped('tag', 'My-EC2', auth1)
-			.then(function() {
-				assert.equal(spy.calledWith('tag', 'My-EC2', 'stopped', auth1), true);
-				ecInstance.getInstancesStatus.restore();
-			});
-		});
-	});
-
-	describe('#getInstancesStarted', function() {
-		it('Calls getInstancesStatus with the right arguments', function() { 
-			spy = sinon.spy(ecInstance, 'getInstancesStatus');
-			return ecInstance.getInstancesStarted('tag', 'My-EC2', auth1)
-			.then(function() {
-				assert.equal(spy.calledWith('tag', 'My-EC2', 'running', auth1), true);
-			});
-		});
-	});
 });
