@@ -34,12 +34,14 @@
     "istanbul": "^0.4.3",
     "lodash": "^3.10.1",
     "mocha": "^2.4.5",
-    "sinon": "^1.17.4"
+    "sinon": "^1.17.4",
+    "sinon-as-promised": "^4.0.0"
   },
   "dependencies": {
     "aws-promised": "^2.13.0",
     "aws-sdk": "^2.3.10",
     "bluebird": "^3.4.0",
+    "natural": "^0.4.0",
     "slack-client": "^2.0.6",
     "winston": "^2.2.0"
   }
