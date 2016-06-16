@@ -30,7 +30,38 @@ module.exports = function(grunt){
 		jshint: {
 			default : {
 				src: ['lib/*.js'],
-				jshintrc: true
+				options : {
+				  "smarttabs"     : true,
+				  "bitwise"       : true,
+				  "curly"         : true,
+				  "eqeqeq"        : true,
+				  "es3"           : false,
+				  "forin"         : false,
+				  "immed"         : true,
+				  "indent"        : 4,
+				  "noarg"         : true,
+				  "noempty"       : true,
+				  "nonew"         : false,
+				  "trailing"      : true,
+				  "maxparams"     : 5,
+				  "maxdepth"      : 4,
+				  "maxstatements" : false,
+				  "maxlen"        : 120,
+				  "node"          : true,
+				  "quotmark"      : false,
+				  "force"         : false,
+				  "ignores"       : [ "node_modules/**/*.js" ],
+				  "expr"          : true,
+				  "globals"       : {
+				    "describe"    : false,
+				    "it"          : false,
+				    "before"      : false,
+				    "beforeEach"  : false,
+				    "after"       : false,
+				    "afterEach"   : false,
+					"unescape"    : false
+				  }
+				}
 			}
 		},
 	});
