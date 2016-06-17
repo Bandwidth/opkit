@@ -1,7 +1,6 @@
 var assert = require('chai').assert;
 var sinon = require('sinon');
 var mongoose = require('mongoose');
-var mockgoose = require('mockgoose');
 var fs = require('fs');
 var Promise = require('bluebird');
 var result;
