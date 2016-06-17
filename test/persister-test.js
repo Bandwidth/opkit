@@ -1,7 +1,7 @@
 var assert = require('chai').assert;
 var sinon = require('sinon');
 var mongoose = require('mongoose');
-var fs = require('fs');
+var fsp = require('fs-promise');
 var Promise = require('bluebird');
 var result;
 
@@ -37,6 +37,14 @@ var mongooseStub = sinon.stub(mongoose, 'createConnection', function() {
 	return returnMe;
 });
 
+var writeStub = sinon.stub(fsp, 'writeFile', function(path, data) {
+	return Promise.resolve('Saved.');
+});
+
+var readStub = sinon.stub(fsp, 'readFile', function(path, encoding) {
+	return Promise.resolve('{"data":1}');
+});
+
 var opkit = require('../index');
 var defaultPersisterFactory = opkit.Persister;
 var mongoPersisterFactory = opkit.MongoPersister;
@@ -51,43 +59,28 @@ describe('Persisters', function() {
 		var persister;
 
 		it('Successfully returns a persister object', function() {
-			return defaultPersisterFactory()
+			return defaultPersisterFactory('somepath')
 			.then(function(returnedPersister) {
 				persister = returnedPersister;
 				assert.isOk(persister);
 			});
 		});
 		it('Successfully returns a persister object using a specified filepath', function() {
-			return defaultPersisterFactory('filepath.txt')
-			.then(function(returnedPersister) {
-				assert.isOk(returnedPersister);
+			return defaultPersisterFactory()
+			.catch(function(err) {
+				assert.equal(err, "No filepath specified.");
 			});
 		});
 		it('Successfully attempts to save data', function() {
-			sinon.stub(fs, 'writeFile', function(path, data, callback) {
-				callback(null, 'Saved.');
-			});
 			return persister.save({obj: 1})
 			.then(function(data) {
 				assert.equal(data, 'Saved.');
 			});
 		});
 		it('Successfully attempts to retrieve data', function() {
-			sinon.stub(fs, 'readFile', function(path, encoding, callback) {
-				callback(null, '{"data":1}');
-			});
 			return persister.retrieve()
 			.then(function(data) {
 				assert.isOk(data);
-			});
-		});
-		it('Accepts a plugin persister', function() {
-			return mongoPersisterFactory({num : Number}, 'notauri', 'somecollection')
-			.then(function(returnedPersister) {
-				return defaultPersisterFactory(null, returnedPersister)
-			})
-			.then(function(finalPersister) {
-				assert.isOk(finalPersister);
 			});
 		});
 	});
