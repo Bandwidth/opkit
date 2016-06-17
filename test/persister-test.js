@@ -45,6 +45,13 @@ var readStub = sinon.stub(fsp, 'readFile', function(path, encoding) {
 	return Promise.resolve('{"data":1}');
 });
 
+var validateStub = sinon.stub(fsp, 'access', function(path, state) {
+	if (path !== 'existingpath.txt') {
+		return Promise.reject('File does not exist.');
+	}
+	return Promise.resolve('File exists.');
+});
+
 var opkit = require('../index');
 var defaultPersisterFactory = opkit.Persister;
 var mongoPersisterFactory = opkit.MongoPersister;
@@ -65,16 +72,49 @@ describe('Persisters', function() {
 				assert.isOk(persister);
 			});
 		});
-		it('Successfully returns a persister object using a specified filepath', function() {
+		it('Does not return a persister if no filepath is specified.', function() {
 			return defaultPersisterFactory()
 			.catch(function(err) {
 				assert.equal(err, "No filepath specified.");
+			});
+		});
+		it('Does not let the user save if the persister has not been started', function() {
+			return persister.save({obj : 2})
+			.catch(function(err) {
+				assert.equal(err, 'Error: Persister not initialized.');
+			});
+		});
+		it('Does not let the user retrieve if the persister has not been started', function() {
+			return persister.retrieve()
+			.catch(function(err) {
+				assert.equal(err, 'Error: Persister not initialized.');
+			});
+		});
+		it('Does not let the persister initialize if the file already exists', function() {
+			return defaultPersisterFactory('existingpath.txt')
+			.then(function(returnedPersister) {
+				return returnedPersister.start();
+			})
+			.catch(function(err) {
+				assert.equal(err, 'File already exists.');
+			});
+		})
+		it('The persister successfully initializes', function() {
+			return persister.start()
+			.then(function(data) {
+				assert.equal(data, 'No problems accessing filepath.')
 			});
 		});
 		it('Successfully attempts to save data', function() {
 			return persister.save({obj: 1})
 			.then(function(data) {
 				assert.equal(data, 'Saved.');
+			});
+		});
+		it('Should not save data that is not an object', function() {
+			return persister.save(3)
+			.catch(function(err) {
+				assert.equal(err, 'Error: Not a valid object.');
 			});
 		});
 		it('Successfully attempts to retrieve data', function() {
