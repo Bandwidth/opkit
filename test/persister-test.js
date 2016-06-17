@@ -81,6 +81,15 @@ describe('Persisters', function() {
 				assert.isOk(data);
 			});
 		});
+		it('Accepts a plugin persister', function() {
+			return mongoPersisterFactory({num : Number}, 'notauri', 'somecollection')
+			.then(function(returnedPersister) {
+				return defaultPersisterFactory(null, returnedPersister)
+			})
+			.then(function(finalPersister) {
+				assert.isOk(finalPersister);
+			});
+		});
 	});
 
 	describe('Mongo Persister', function() {
