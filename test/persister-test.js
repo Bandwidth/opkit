@@ -141,7 +141,20 @@ describe('Persisters', function() {
 				});
 			});
 		});
-
+		describe('Persister not started', function() {
+			it('Does not let the user save if the persister has not been started', function() {
+				return persister.save({bool : 32})
+				.catch(function(err) {
+					assert.equal(err, 'Error: Persister not initialized.');
+				});
+			});
+			it('Does not let the user retrieve if the persister has not been started', function() {
+				return persister.retrieve()
+				.catch(function(err) {
+					assert.equal(err, 'Error: Persister not initialized.');
+				});
+			});
+		});
 		describe('Saving Data', function() {
 			it('Successfully attempts to save data', function() {
 				return persister.start()
