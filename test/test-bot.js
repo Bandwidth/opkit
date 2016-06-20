@@ -39,12 +39,32 @@ var authorizationFunction = function(message, bot, auth){
 
 var sendsTwelveObject = {
 	command : sendsTwelve,
-	names : ['twelve', 'sendstwelve'],
+	names : ['twelve', 'basicallyTwelve'],
+	name : 'twelve',
 	syntax : [	['give', 'me', 'twelve'],
 				['send', 'me', 'twelve'],
 				['send', 'twelve'],
 				['give', 'me', 'a', 'number'],
-				'twelve']
+				'twelve'],
+	package : 'numbers'
+}
+
+var otherObject = {
+	command : sendsTwelve,
+	name : 'totesnotTwelve',
+	syntax : ['give', 'me', 'totesnotTwelve'],
+	package : 'numbers'
+}
+
+var mockPersister = {
+	save : function(brain, package){
+		return Promise.resolve(true);
+	},
+	recover : function(package){
+		return Promise.resolve({
+			data : 'some_data'
+		});
+	}
 }
 
 var failsToSendTwelve = function(message, bot, auth){
@@ -58,14 +78,13 @@ describe('Bot', function(){
 		before(function(){
 			bot = new Opkit.Bot(
 				'opkit',
-				[sendsTwelveObject],
-				{ variable : 'variable'}
+				[sendsTwelveObject, otherObject],
+				mockPersister
 			);
 		});
 		it('should result in a properly initialized name and commands', function(){
 			assert.equal(bot.name, 'opkit');
 			assert.isOk(bot.commands.twelve);
-			assert.isOk(bot.commands.sendstwelve);
 		});
 		it('should provide a default authorization function', function(){
 			bot.authorizationFunction('user')
@@ -79,7 +98,7 @@ describe('Bot', function(){
 			bot = new Opkit.Bot(
 				'opkit',
 				[sendsTwelveObject],
-				{ variable : 'variable'},
+				mockPersister,
 				authorizationFunction
 			);
 		});
@@ -89,6 +108,12 @@ describe('Bot', function(){
 				assert.equal(data.length, 3);
 			});
 		});		
+		it('should expose the recover method', function(){
+			return bot.recover('package')
+			.then(function(data){
+				assert.isOk(data);
+			});
+		});
 	});
 
 	describe('Adding handlers', function(){
@@ -96,7 +121,7 @@ describe('Bot', function(){
 			bot = new Opkit.Bot(
 				'opkit',
 				[sendsTwelveObject],
-				{ variable : 'variable'},
+				mockPersister,
 				authorizationFunction
 			);
 		});	
@@ -115,7 +140,7 @@ describe('Bot', function(){
 			bot = new Opkit.Bot(
 				'opkit',
 				[sendsTwelveObject],
-				{ variable : 'variable'},
+				mockPersister,
 				authorizationFunction
 			);
 		});
@@ -130,7 +155,7 @@ describe('Bot', function(){
 			bot = new Opkit.Bot(
 				'opkit',
 				[sendsTwelveObject],
-				{ variable : 'variable'},
+				mockPersister,
 				authorizationFunction
 			);
 		});
@@ -145,7 +170,7 @@ describe('Bot', function(){
 			bot = new Opkit.Bot(
 				'opkit',
 				[sendsTwelveObject],
-				{ variable : 'variable'},
+				mockPersister,
 				authorizationFunction
 			);
 		});
@@ -176,7 +201,7 @@ describe('Bot', function(){
 			bot = new Opkit.Bot(
 				'opkit',
 				[sendsTwelveObject],
-				{ variable : 'variable'},
+				mockPersister,
 				authorizationFunction
 			);
 		});  
@@ -239,7 +264,7 @@ describe('Bot', function(){
 			bot = new Opkit.Bot(
 				'opkit',
 				[sendsTwelveObject],
-				{ variable : 'variable'},
+				mockPersister,
 				authorizationFunction
 			);
 			bot.addOneOffHandler(pattern, logic);
@@ -292,7 +317,7 @@ describe('Bot', function(){
 			bot = new Opkit.Bot(
 				'opkit',
 				[sendsTwelveObject],
-				{ variable : 'variable'},
+				mockPersister,
 				authorizationFunction
 			);
 		});
