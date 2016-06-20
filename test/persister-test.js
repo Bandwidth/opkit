@@ -53,8 +53,8 @@ var validateStub = sinon.stub(fsp, 'access', function(path, state) {
 });
 
 var opkit = require('../index');
-var defaultPersisterFactory = opkit.Persister;
-var mongoPersisterFactory = opkit.MongoPersister;
+var defaultPersisterFunc = opkit.Persister;
+var mongoPersisterFunc = opkit.MongoPersister;
 
 describe('Persisters', function() {
 
@@ -66,14 +66,14 @@ describe('Persisters', function() {
 		var persister;
 
 		it('Successfully returns a persister object', function() {
-			return defaultPersisterFactory('somepath')
+			return defaultPersisterFunc('somepath')
 			.then(function(returnedPersister) {
 				persister = returnedPersister;
 				assert.isOk(persister);
 			});
 		});
 		it('Does not return a persister if no filepath is specified.', function() {
-			return defaultPersisterFactory()
+			return defaultPersisterFunc()
 			.catch(function(err) {
 				assert.equal(err, "No filepath specified.");
 			});
@@ -91,7 +91,7 @@ describe('Persisters', function() {
 			});
 		});
 		it('Does not let the persister initialize if the file already exists', function() {
-			return defaultPersisterFactory('existingpath.txt')
+			return defaultPersisterFunc('existingpath.txt')
 			.then(function(returnedPersister) {
 				return returnedPersister.start();
 			})
@@ -134,7 +134,7 @@ describe('Persisters', function() {
 				var schema = {
 					num : Number,
 				};
-				return mongoPersisterFactory(schema, 'notauri', 'collection')
+				return mongoPersisterFunc(schema, 'notauri', 'collection')
 				.then(function(returnedPersister) {
 					persister = returnedPersister;
 					assert.isOk(persister);
