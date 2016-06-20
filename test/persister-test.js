@@ -62,7 +62,7 @@ describe('Persisters', function() {
 				assert.equal(err, 'Error: Persister not initialized.');
 			});
 		});
-		it('Does not let the user retrieve if the persister has not been started', function() {
+		it('Does not let the user recover if the persister has not been started', function() {
 			return persister.recover()
 			.catch(function(err) {
 				assert.equal(err, 'Error: Persister not initialized.');
@@ -95,7 +95,7 @@ describe('Persisters', function() {
 				assert.equal(err, 'Error: Object is not serializable.');
 			});
 		});
-		it('Successfully attempts to retrieve data', function() {
+		it('Successfully attempts to recover data', function() {
 			return persister.recover()
 			.then(function(data) {
 				assert.isOk(data);
@@ -104,9 +104,7 @@ describe('Persisters', function() {
 	});
 
 	describe('Mongo Persister', function() {
-
 		var persister;
-
 		describe('Calling the Constructor', function() { 
 			it('Successfully returns a persister object', function() {
 				persister = new mongoPersisterFunc('notauri');
@@ -120,7 +118,7 @@ describe('Persisters', function() {
 					assert.equal(err, 'Error: Persister not initialized.');
 				});
 			});
-			it('Does not let the user retrieve if the persister has not been started', function() {
+			it('Does not let the user recover if the persister has not been started', function() {
 				return persister.recover()
 				.catch(function(err) {
 					assert.equal(err, 'Error: Persister not initialized.');
@@ -149,7 +147,7 @@ describe('Persisters', function() {
 			});
 		});
 		describe('Retrieving Data', function() {
-			it('Successfully retrieves data', function() {
+			it('Successfully recovers data', function() {
 				return persister.recover()
 				.then(function(data) {
 					assert.equal(data, 1);
