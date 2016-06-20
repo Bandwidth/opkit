@@ -22,14 +22,14 @@ var mongooseStub = sinon.stub(mongoose, 'createConnection', function() {
 
 		constructorToReturn.find = function(args) {
 			return {
-				sort : function(args) {
-					return {
-						exec : function() {
-							return Promise.resolve(['1']);
-						}
-					};
+				exec : function() {
+					return Promise.resolve(['1']);
 				}
 			};
+		}
+
+		constructorToReturn.remove = function(args) {
+			return Promise.resolve('Removed.');
 		}
 
 		return constructorToReturn;
@@ -129,16 +129,13 @@ describe('Persisters', function() {
 
 		var persister;
 
-		describe('Calling the Factory Method', function() { 
+		describe('Calling the Constructor', function() { 
 			it('Successfully returns a persister object', function() {
 				var schema = {
 					num : Number,
 				};
-				return mongoPersisterFunc(schema, 'notauri', 'collection')
-				.then(function(returnedPersister) {
-					persister = returnedPersister;
-					assert.isOk(persister);
-				});
+				persister = new mongoPersisterFunc(schema, 'notauri', 'collection');
+				assert.isOk(persister);
 			});
 		});
 		describe('Persister not started', function() {
