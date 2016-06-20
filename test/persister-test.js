@@ -45,11 +45,12 @@ var readStub = sinon.stub(fsp, 'readFile', function(path, encoding) {
 	return Promise.resolve('{"data":1}');
 });
 
-var validateStub = sinon.stub(fsp, 'access', function(path, state) {
-	if (path !== 'existingpath.txt') {
-		return Promise.reject('File does not exist.');
+var validateStub = sinon.stub(fsp, 'open', function(path, encoding) {
+	console.log(path);
+	if (path !== 'existingpathsomeFile.dat') {
+		return Promise.resolve(true);
 	}
-	return Promise.resolve('File exists.');
+	return Promise.reject(false);
 });
 
 var opkit = require('../index');
@@ -65,18 +66,9 @@ describe('Persisters', function() {
 	describe('Default Persister', function() {
 		var persister;
 
-		it('Successfully returns a persister object', function() {
-			return defaultPersisterFunc('somepath')
-			.then(function(returnedPersister) {
-				persister = returnedPersister;
-				assert.isOk(persister);
-			});
-		});
-		it('Does not return a persister if no filepath is specified.', function() {
-			return defaultPersisterFunc()
-			.catch(function(err) {
-				assert.equal(err, "No filepath specified.");
-			});
+		it('Successfully creates a persister object', function() {
+			persister = new defaultPersisterFunc('/folderpath/')
+			assert.isOk(persister);
 		});
 		it('Does not let the user save if the persister has not been started', function() {
 			return persister.save({obj : 2})
@@ -90,19 +82,17 @@ describe('Persisters', function() {
 				assert.equal(err, 'Error: Persister not initialized.');
 			});
 		});
-		it('Does not let the persister initialize if the file already exists', function() {
-			return defaultPersisterFunc('existingpath.txt')
-			.then(function(returnedPersister) {
-				return returnedPersister.start();
-			})
+		it('Does not let the persister initialize if the user does not have sufficient permissions', function() {
+			var otherPersister = new defaultPersisterFunc('existingpath');
+			return otherPersister.start()
 			.catch(function(err) {
-				assert.equal(err, 'File already exists.');
+				assert.equal(err, 'User does not have permissions to write to that folder.');
 			});
 		})
 		it('The persister successfully initializes', function() {
 			return persister.start()
 			.then(function(data) {
-				assert.equal(data, 'No problems accessing filepath.')
+				assert.equal(data, 'User has permissions to write to that file.')
 			});
 		});
 		it('Successfully attempts to save data', function() {
