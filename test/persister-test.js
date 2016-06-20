@@ -87,14 +87,6 @@ describe('Persisters', function() {
 				assert.equal(data, 'Saved.');
 			});
 		});
-		it('Should not save data that is not serializable', function() {
-			return persister.save({func: function() {
-				return 1;
-			}})
-			.catch(function(err) {
-				assert.equal(err, 'Error: Object is not serializable.');
-			});
-		});
 		it('Successfully attempts to recover data', function() {
 			return persister.recover()
 			.then(function(data) {
@@ -133,16 +125,6 @@ describe('Persisters', function() {
 				})
 				.then(function(data) {
 					assert.equal(data, 'Saved.');
-				});
-			});
-		});
-		describe('Saving Invalid Data', function() {
-			it('Does not save the data', function() {
-				return persister.save({bool : function() {
-					return false;
-				}})
-				.catch(function(err) {
-					assert.equal(err, "Error: Object is not serializable.");
 				});
 			});
 		});
