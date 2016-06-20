@@ -1,40 +1,26 @@
 var assert = require('chai').assert;
 var sinon = require('sinon');
-var mongoose = require('mongoose');
+var MongoDB = require('mongodb-bluebird');
 var fsp = require('fs-promise');
 var Promise = require('bluebird');
 var result;
 
-var mongooseStub = sinon.stub(mongoose, 'createConnection', function() {
-	var returnMe = {};
-	returnMe.model = function(args){
-		var constructorToReturn = function(state){
-			this.bool = 1;
-			this._id = 124897234;
-
-			// and so on
-			// if we want to call this as a constructor
-			// we call as constructor on line 36 of mongopersister.			
-		}
-		constructorToReturn.prototype.save = function(args){
-			return Promise.resolve('Saved.');
-		}
-
-		constructorToReturn.find = function(args) {
+var mongoStub = sinon.stub(MongoDB, 'connect', function() {
+	return Promise.resolve({
+		collection : function() {
 			return {
-				exec : function() {
-					return Promise.resolve(['1']);
+				remove : function() {
+					return Promise.resolve('Removed.');
+				},
+				insert : function() {
+					return Promise.resolve('Inserted.');
+				},
+				find : function() {
+					return Promise.resolve(1);
 				}
 			};
 		}
-
-		constructorToReturn.remove = function(args) {
-			return Promise.resolve('Removed.');
-		}
-
-		return constructorToReturn;
-	}
-	return returnMe;
+	});
 });
 
 var writeStub = sinon.stub(fsp, 'writeFile', function(path, data) {
@@ -77,7 +63,7 @@ describe('Persisters', function() {
 			});
 		});
 		it('Does not let the user retrieve if the persister has not been started', function() {
-			return persister.retrieve()
+			return persister.recover()
 			.catch(function(err) {
 				assert.equal(err, 'Error: Persister not initialized.');
 			});
@@ -101,14 +87,16 @@ describe('Persisters', function() {
 				assert.equal(data, 'Saved.');
 			});
 		});
-		it('Should not save data that is not an object', function() {
-			return persister.save(3)
+		it('Should not save data that is not serializable', function() {
+			return persister.save({func: function() {
+				return 1;
+			}})
 			.catch(function(err) {
-				assert.equal(err, 'Error: Not a valid object.');
+				assert.equal(err, 'Error: Object is not serializable.');
 			});
 		});
 		it('Successfully attempts to retrieve data', function() {
-			return persister.retrieve()
+			return persister.recover()
 			.then(function(data) {
 				assert.isOk(data);
 			});
@@ -121,22 +109,19 @@ describe('Persisters', function() {
 
 		describe('Calling the Constructor', function() { 
 			it('Successfully returns a persister object', function() {
-				var schema = {
-					num : Number,
-				};
-				persister = new mongoPersisterFunc(schema, 'notauri', 'collection');
+				persister = new mongoPersisterFunc('notauri');
 				assert.isOk(persister);
 			});
 		});
 		describe('Persister not started', function() {
 			it('Does not let the user save if the persister has not been started', function() {
-				return persister.save({bool : 32})
+				return persister.save({bool : 32}, 'somecollection')
 				.catch(function(err) {
 					assert.equal(err, 'Error: Persister not initialized.');
 				});
 			});
 			it('Does not let the user retrieve if the persister has not been started', function() {
-				return persister.retrieve()
+				return persister.recover()
 				.catch(function(err) {
 					assert.equal(err, 'Error: Persister not initialized.');
 				});
@@ -153,19 +138,19 @@ describe('Persisters', function() {
 				});
 			});
 		});
-
 		describe('Saving Invalid Data', function() {
 			it('Does not save the data', function() {
-				return persister.save({bool : 'a'})
+				return persister.save({bool : function() {
+					return false;
+				}})
 				.catch(function(err) {
-					assert.equal(err, "Error: Object and schema do not match up.");
+					assert.equal(err, "Error: Object is not serializable.");
 				});
 			});
 		});
-
 		describe('Retrieving Data', function() {
 			it('Successfully retrieves data', function() {
-				return persister.retrieve()
+				return persister.recover()
 				.then(function(data) {
 					assert.equal(data, 1);
 				});
