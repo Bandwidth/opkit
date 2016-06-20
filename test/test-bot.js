@@ -229,7 +229,9 @@ describe('Bot', function(){
 		}); 
 		it ("should work if it does have that command", function(){
 			bot.sendMessage = sinon.mock().once();
-			bot.messageParser = sinon.mock().resolves(sendsTwelveObject);
+			bot.messageParser = sinon.mock().resolves({
+				command :sendsTwelveObject
+			});
 			return bot.onEventsMessage({
 				text : "opkit twelve",
 				user : "user"
@@ -347,7 +349,8 @@ describe('Bot', function(){
 			bot.messageParser = sinon.mock().resolves({
 				command : sendsTwelveObject,
 				args : []
-			});			bot.sendMessage = sinon.mock().once();
+			});			
+			bot.sendMessage = sinon.mock().once();
 			return bot.onEventsMessage({
 				text : "opkit twelve",
 				user : "user"
