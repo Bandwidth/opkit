@@ -124,7 +124,7 @@ describe('Persisters', function() {
 					return persister.save({bool : 1})
 				})
 				.then(function(data) {
-					assert.equal(data, 'Saved.');
+					assert.equal(data, 'Inserted.');
 				});
 			});
 		});
@@ -147,7 +147,6 @@ describe('Persisters', function() {
 				};
 				return persister.recover('no collection')
 				.then(function(data) {
-					console.log(data);
 					assert.isOk(data);
 				});
 			});
