@@ -15,7 +15,7 @@ var mongoStub = sinon.stub(MongoDB, 'connect', function() {
 				insert : function() {
 					return Promise.resolve('Inserted.');
 				},
-				find : function() {
+				find : function(args) {
 					return Promise.resolve([1]);
 				}
 			};
@@ -133,6 +133,22 @@ describe('Persisters', function() {
 				return persister.recover()
 				.then(function(data) {
 					assert.equal(data, 1);
+				});
+			});
+		});
+		describe('If no data is available an empty object is returned', function() {
+			it('Returns an empty JavaScript object', function() {
+				persister.db.collection = function() {
+					return {
+						find : function() {
+							return Promise.resolve([]);
+						}
+					};
+				};
+				return persister.recover('no collection')
+				.then(function(data) {
+					console.log(data);
+					assert.isOk(data);
 				});
 			});
 		});
