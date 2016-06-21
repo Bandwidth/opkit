@@ -31,9 +31,9 @@ var readStub = sinon.stub(fsp, 'readFile', function(path, encoding) {
 	return Promise.resolve('{"data":1}');
 });
 
-var validateStub = sinon.stub(fsp, 'open', function(path, encoding) {
+var validateStub = sinon.stub(fsp, 'emptyDir', function(path, encoding) {
 	console.log(path);
-	if (path !== 'existingpathsomeFile.dat') {
+	if (path !== './inaccessiblePath') {
 		return Promise.resolve(true);
 	}
 	return Promise.reject(false);
@@ -53,7 +53,7 @@ describe('Persisters', function() {
 		var persister;
 
 		it('Successfully creates a persister object', function() {
-			persister = new defaultPersisterFunc('/folderpath/')
+			persister = new defaultPersisterFunc('./folderpath')
 			assert.isOk(persister);
 		});
 		it('Does not let the user save if the persister has not been started', function() {
@@ -69,7 +69,7 @@ describe('Persisters', function() {
 			});
 		});
 		it('Does not let the persister initialize if the user does not have sufficient permissions', function() {
-			var otherPersister = new defaultPersisterFunc('existingpath');
+			var otherPersister = new defaultPersisterFunc('./inaccessiblePath');
 			return otherPersister.start()
 			.catch(function(err) {
 				assert.equal(err, 'User does not have permissions to write to that folder.');
