@@ -27,6 +27,10 @@ var writeStub = sinon.stub(fsp, 'writeFile', function(path, data) {
 	return Promise.resolve('Saved.');
 });
 
+var ensureStub = sinon.stub(fsp, 'ensureFile', function(path) {
+	return Promise.resolve(true);
+});
+
 var readStub = sinon.stub(fsp, 'readFile', function(path, encoding) {
 	return Promise.resolve('{"data":1}');
 });
