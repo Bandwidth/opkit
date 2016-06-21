@@ -97,6 +97,16 @@ describe('Persisters', function() {
 				assert.isOk(data);
 			});
 		});
+		it('Successfully handles reading a blank file', function() {
+			readStub.restore();
+			readStub = sinon.stub(fsp, 'readFile', function(path, encoding) {
+				return Promise.resolve('');
+			});
+			return persister.recover()
+			.then(function(data) {
+				assert.isOk(data);
+			});
+		});
 	});
 
 	describe('Mongo Persister', function() {
