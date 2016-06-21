@@ -27,6 +27,8 @@
   "devDependencies": {
     "aws-sdk-mock": "^1.1.0",
     "chai": "^3.5.0",
+    "fs-extra": "^0.30.0",
+    "fs-extra-promise": "^0.4.0",
     "grunt": "^1.0.1",
     "grunt-contrib-jshint": "^1.0.0",
     "grunt-jsdoc": "^2.0.0",

@@ -208,7 +208,7 @@ describe('Bot', function(){
 		it("shouldn't respond to messages not addressed to it", function(){
 			bot.sendMessage = sinon.mock().never();
 			bot.onEventsMessage({
-				text : "I really enjoyed that Nickelback concert.",
+				text : "I really enjoyed that Nickelback concert-show.",
 				user : "That guy we all know"
 			});
 			bot.sendMessage.verify();			
