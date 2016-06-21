@@ -16,7 +16,7 @@ var mongoStub = sinon.stub(MongoDB, 'connect', function() {
 					return Promise.resolve('Inserted.');
 				},
 				find : function() {
-					return Promise.resolve(1);
+					return Promise.resolve([1]);
 				}
 			};
 		}
