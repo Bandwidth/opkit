@@ -53,7 +53,7 @@ This command would cause the bot to respond to each message that says 'examplebo
 
 `brain` provides a place to store state variables. These variables are 'scoped' to the script; that is, all commands with the same script share a brain. If you put all of your new commands into the same script, they will all be able to view each others' contributions to the state, while presenting no risk of interfering with commands from other scripts. The brain is populated from the persister (the local filesystem or MongoDB) before each command is run, and saved to the persister after each command is run.
 
-Once you've put your commands into an array, the next choice is that of your persister. `Opkit.Persister` saves to a folder on the filesystem in a human-readable JSON format, while `Opkit.MongoPersister` saves to a MongoDB database. The constructors for each persister take a folder or a Mongo URI, respectively. After building a persisster, simply run the constructor and start the bot:
+Once you've put your commands into an array, the next choice is that of your persister. `Opkit.Persister` saves to a folder on the filesystem in a human-readable JSON format, while `Opkit.MongoPersister` saves to a MongoDB database. The constructors for each persister take a folder or a Mongo URI, respectively. After building a persister, simply run the constructor and start the bot:
 
 ```javascript
 
