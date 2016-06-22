@@ -53,6 +53,15 @@ var redisStub = sinon.stub(redis, 'createClient', function() {
 		},
 		hkeysAsync : function() {
 			return Promise.resolve([1]);
+		},
+		end : function() {
+			return Promise.resolve('Connection exited.');
+		},
+		onAsync : function(str) {
+			if (str === 'error') {
+				return Promise.reject('Error.');
+			}
+			return Promise.resolve();
 		}
 	};
 })
@@ -230,6 +239,14 @@ describe('Persisters', function() {
 				return persister.recover('not a collection')
 				.then(function(data) {
 					assert.isOk(data);
+				});
+			});
+		});
+		describe('The client quits on an error', function() {
+			it ('Exits on an error', function() {
+				return persister.client.onAsync('error')
+				.catch(function(err) {
+					assert.equal(err, 'Error.');
 				});
 			});
 		});
