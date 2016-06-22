@@ -64,6 +64,9 @@ var mockPersister = {
 		return Promise.resolve({
 			data : 'some_data'
 		});
+	},
+	start : function(){
+		return Promise.resolve(true);
 	}
 }
 
@@ -161,8 +164,10 @@ describe('Bot', function(){
 		});
 		it('it should call bot.rtm.start', function(){
 			bot.rtm.start = sinon.mock().once();
-			bot.start();
-			bot.rtm.start.verify();
+			return bot.start()
+			.then(function(){
+				bot.rtm.start.verify();
+			});
 		});
 	});
 	describe('message parser', function(){
