@@ -43,9 +43,11 @@ var sayHello = {
 
 ```
 
-This command would cause the bot to respond to each message that says 'examplebot hello' or 'examplebot say hello'. The actual logic is contained in the function at 'command'. That function ought to take four arguments: 
+This command would cause the bot to respond to each message that says 'examplebot hello' or 'examplebot say hello'. The `name` field allows you to access the command at `bot.commands.hello`, if need be. `syntax` provides an array of possible syntaxes that can be used to call the command. Here, the bot will respond to both `hello` and `say hello`. 
 
-`message` has the contents of the message as provided by Slack. The three most useful fields are `message.text`, which contains a string of message text, `message.channel`, which is the channel ID of the incoming message, and `message.user`, which is the user ID of the user sending the message. 
+The actual logic is contained in the function at 'command'. That function ought to take four arguments: 
+
+`message` has the contents of the message as provided by Slack; three useful fields are `message.text`, which contains a string of message text, `message.channel`, which is the channel ID of the incoming message, and `message.user`, which is the user ID of the user sending the message. `message.args` contains the arguments provided to the command from the message; that is, it is an array of words that came after the command; it is useful if a command has multiple `syntax`es of varying length.
 
 `bot` has the actual bot that called the script. In cases where there are multiple bots listening in the same channel, each will have different `sendMessage` commands (as well as different access to the Slack RTM API methods, all of which are accessible at bot.rtm.) 
 
@@ -61,7 +63,7 @@ var commands = [sayHello];
 var Opkit = require('opkit');
 var Persiter = new Opkit.Persister('~/bot-state');
 var myBot = new Opkit.bot('mybot', commands, Persister);
-mybot.start();
+myBot.start();
 ```
 This bot will listen to all messages that begin with its name, so if you taught it the command above, messaging it `mybot hello` will elicit a response!
 
