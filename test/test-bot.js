@@ -39,7 +39,6 @@ var authorizationFunction = function(message, bot, auth){
 
 var sendsTwelveObject = {
 	command : sendsTwelve,
-	names : ['twelve', 'basicallyTwelve'],
 	name : 'twelve',
 	syntax : [	['give', 'me', 'twelve'],
 				['send', 'me', 'twelve'],
@@ -213,8 +212,9 @@ describe('Bot', function(){
 			});
 		});		
 		it('should not return a match when there is no match', function(){
-			return bot.messageParser(['testbot', 'provide', 'me', 'twelve'], bot)
+			return bot.messageParser(['testbot', 'provide', 'me', 'thirteen'], bot)
 			.then(function (data){
+				console.log(data);				
 				throw new Error();
 			})
 			.catch(function (){});
@@ -338,7 +338,7 @@ describe('Bot', function(){
 		before(function(){
 			sendsTwelveObject = {
 				command : sendsTwelve,
-				names : ['twelve', 'sendstwelve'],
+				name : 'twelve',
 				roles : [['A', 'B'], 'D']
 			}
 			bot = new Opkit.Bot(
