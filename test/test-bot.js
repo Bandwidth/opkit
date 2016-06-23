@@ -73,6 +73,8 @@ var failsToSendTwelve = function(message, bot, auth){
 
 var bot;
 
+var clock = sinon.useFakeTimers();
+
 describe('Bot', function(){
 	describe('3-argument Constructor', function(){
 		before(function(){
@@ -133,6 +135,18 @@ describe('Bot', function(){
 			bot.addOneOffHandler(pattern, logic);
 			assert.equal(bot.oneoffHandlers.length, 1);
 		});		
+		it('should successfully add a special handler with lifetime', function(){
+			bot.addHandler(pattern, logic, 2);
+			assert.equal(bot.handlers.length, 1);
+			clock.tick(2500);
+			assert.equal(bot.handlers.length, 0);			
+		});
+		it('should successfully add a oneoff special handler', function(){
+			bot.addOneOffHandler(pattern, logic, 2);
+			assert.equal(bot.oneoffHandlers.length, 1);
+			clock.tick(2500);
+			assert.equal(bot.oneoffHandlers.length, 0);	
+		})
 	});
 
 	describe('sendMessage', function(){
