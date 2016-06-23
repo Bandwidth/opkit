@@ -2,6 +2,7 @@ var assert = require('chai').assert;
 var Opkit = require('../index');
 var sinon = require('sinon');
 var Promise = require('bluebird');
+var _ = require('lodash');
 require('sinon-as-promised')(Promise);
 var pattern = function(message, bot, auths){
 	return (message.text === 'boogie');
@@ -139,21 +140,31 @@ describe('Bot', function(){
 		});		
 		it('should successfully add a special handler with lifetime', function(){
 			bot.addHandler(pattern, logic, 2, sinon.stub());
-			bot.addHandler(pattern, logic, 5);
-			assert.equal(bot.handlers.length, 2);
+			bot.addHandler(pattern, logic, 2);
+			var handler = bot.addHandler(pattern, logic, 5);
+			assert.equal(bot.handlers.length, 3);
 			clock.tick(2500);
-			assert.equal(bot.handlers.length, 1);		
-			clock.tick(3000);	
-			assert.equal(bot.handlers.length, 0);		
+			assert.equal(bot.handlers.length, 1);
+			_.pull(bot.handlers, handler);
+			clock.tick(300);	
+			assert.equal(bot.handlers.length, 0);	
+			clock.tick(5000);	
+			handler = bot.addHandler(pattern, logic, 5, sinon.stub());
+			_.pull(bot.handlers, handler);
 		});
 		it('should successfully add a oneoff special handler', function(){
 			bot.addOneOffHandler(pattern, logic, 2, sinon.stub());
-			bot.addOneOffHandler(pattern, logic, 5);			
-			assert.equal(bot.oneoffHandlers.length, 2);
+			bot.addOneOffHandler(pattern, logic, 2);
+			var handler = bot.addOneOffHandler(pattern, logic, 5);			
+			assert.equal(bot.oneoffHandlers.length, 3);
 			clock.tick(2500);
 			assert.equal(bot.oneoffHandlers.length, 1);	
-			clock.tick(3000);	
+			clock.tick(300);	
+			_.pull(bot.oneoffHandlers, handler);
 			assert.equal(bot.oneoffHandlers.length, 0);	
+			clock.tick(5000);
+			handler = bot.addOneOffHandler(pattern, logic, 5, sinon.stub());
+			_.pull(bot.oneoffHandlers, handler);
 		})
 	});
 
