@@ -298,6 +298,18 @@ describe('Bot', function(){
 				bot.sendMessage.verify();
 			});		
 		});
+		it ("shouldn't call handlers that don't match", function(){
+			bot.handlers = [];
+			bot.addHandler(otherPattern, otherLogic);
+			bot.sendMessage = sinon.mock().never();
+			return bot.onEventsMessage({
+				text : "boogie",
+				user : "user"
+			})
+			.then(function (data){
+				bot.sendMessage.verify();
+			});		
+		});
 		it ("should call oneoff handlers once if defined", function(){
 			bot = new Opkit.Bot(
 				'opkit',
