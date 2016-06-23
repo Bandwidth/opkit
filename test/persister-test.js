@@ -109,6 +109,12 @@ describe('Persisters', function() {
 				assert.equal(data, 'User has permissions to write to that file.')
 			});
 		});
+		it('The persister cannot be initialized multiple times', function() {
+			return persister.start()
+			.catch(function(err) {
+				assert.equal(err, 'Error: Persister already initialized.');
+			});
+		});
 		it('Successfully attempts to save data', function() {
 			return persister.save({obj: 1})
 			.then(function(data) {
@@ -174,6 +180,14 @@ describe('Persisters', function() {
 				});
 			});
 		});
+		describe('The persister cannot be started multiple times', function() {
+			it('Does not allow the user to initialize the persister twice', function() {
+				return persister.start()
+				.catch(function(err) {
+					assert.equal(err, 'Error: Persister already initialized.');
+				});
+			});
+		});
 		describe('If no data is available an empty object is returned', function() {
 			it('Returns an empty JavaScript object', function() {
 				persister.db.collection = function() {
@@ -190,6 +204,7 @@ describe('Persisters', function() {
 			});
 		});
 	});
+
 	describe('Redis Persister', function() {
 		var persister;
 		describe('Calling the Constructor', function() {
@@ -228,6 +243,14 @@ describe('Persisters', function() {
 				return persister.recover('collec')
 				.then(function(data) {
 					assert.equal(data, 1);
+				});
+			});
+		});
+		describe('The persister cannot be started multiple times', function() {
+			it('Does not allow the user to initialize the persister twice', function() {
+				return persister.start()
+				.catch(function(err) {
+					assert.equal(err, 'Error: Persister already initialized.');
 				});
 			});
 		});
