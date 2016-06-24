@@ -83,9 +83,15 @@ describe('Postgres Persister', function() {
 			persister.db.result = function(str) {
 				return Promise.reject({code : '42P01'});
 			};
+			persister.db.none = function(str) {
+				this.result = function(str) {
+					return Promise.resolve('Deleted.');
+				};
+				return Promise.resolve('Query Complete.');
+			};
 			return persister.save({bool : 21}, 'collec')
-			.catch(function(err) {
-				assert.isOk(err);
+			.then(function(data) {
+				assert.equal(data, 'Query Complete.');
 			});
 		});
 		it('Does not save data on an unknown error', function() {
@@ -94,7 +100,7 @@ describe('Postgres Persister', function() {
 			};
 			return persister.save({bool : 15}, 'collec')
 			.catch(function(err) {
-				assert.isOk(err);
+				assert.equal(err.code, 'somethingelse');
 			});
 		});
 	});
@@ -118,18 +124,27 @@ describe('Postgres Persister', function() {
 			persister.db.any = function(str) {
 				return Promise.reject({code : '42P01'});
 			};
+			persister.db.none = function(str) {
+				this.any = function(str) {
+					return Promise.resolve([]);
+				};
+				return Promise.resolve('Query Complete.');
+			};
 			return persister.recover()
-			.catch(function(err) {
-				assert.isOk(err);
+			.then(function(data) {
+				assert.isOk(data);
 			});
 		});
 		it('Does not recover data on an unknown error', function() {
 			persister.db.any = function(str) {
 				return Promise.reject({code : 'somethingelse'});
 			};
+			persister.db.none = function(str) {
+				return Promise.resolve('Query Complete.');
+			};
 			return persister.recover()
 			.catch(function(err) {
-				assert.isOk(err);
+				assert.equal(err.code, 'somethingelse');
 			});
 		});
 	});
