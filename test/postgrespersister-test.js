@@ -14,7 +14,8 @@ mock('pg-promise', function() {
 			},
 			any : function(str) {
 				return Promise.resolve([{info : "1"}]);
-			}
+			},
+			config : connection
 		};
 	};
 });
@@ -111,6 +112,15 @@ describe('Postgres Persister', function() {
 			.catch(function(err) {
 				assert.equal(err, 'Error: Persister already initialized.');
 			});
+		});
+	});
+	describe('Configuration', function() {
+		it('The URL was properly parsed', function() {
+			assert.equal(persister.db.config.user, 'username');
+			assert.equal(persister.db.config.password, 'password');
+			assert.equal(persister.db.config.host, 'host');
+			assert.equal(persister.db.config.port, '5432');
+			assert.equal(persister.db.config.database, 'database');
 		});
 	});
 });
