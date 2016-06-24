@@ -105,6 +105,33 @@ describe('Postgres Persister', function() {
 				assert.equal(data, 1);
 			});
 		});
+		it('Returns an empty object if there is no data', function() {
+			persister.db.any = function(str) {
+				return Promise.resolve([]);
+			};
+			return persister.recover()
+			.then(function(data) {
+				assert.isOk(data);
+			});
+		});
+		it('Still works if the table has not been created', function() {
+			persister.db.any = function(str) {
+				return Promise.reject({code : '42P01'});
+			};
+			return persister.recover()
+			.catch(function(err) {
+				assert.isOk(err);
+			});
+		});
+		it('Does not recover data on an unknown error', function() {
+			persister.db.any = function(str) {
+				return Promise.reject({code : 'somethingelse'});
+			};
+			return persister.recover()
+			.catch(function(err) {
+				assert.isOk(err);
+			});
+		});
 	});
 	describe('Does not let the user start the persister twice', function(){
 		it('Returns an error message', function() {
