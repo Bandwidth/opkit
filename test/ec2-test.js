@@ -32,6 +32,10 @@ AWSMock.mock('EC2', 'waitFor', function(string, params, callback) {
 	callback(null, "Success");
 });
 
+AWSMock.mock('EC2', 'getConsoleOutput', function(params, callback) {
+	callback(null, {Timestamp : 1, Output : 'dGVzdA=='});
+});
+
 describe('EC2', function() {
 
 	describe('#start', function() {
@@ -167,6 +171,37 @@ describe('EC2', function() {
 			return ecInstance.getInstancesStarted('tag', 'My-EC2', auth1)
 			.then(function() {
 				assert.equal(spy.calledWith('tag', 'My-EC2', 'running', auth1), true);
+			});
+		});
+	});
+
+	describe('#getLogs', function() {
+		it('Successfully retrieves logs', function() {
+			return ecInstance.getLogs('tag', 'My-EC2', auth1)
+			.then(function(data) {
+				assert.equal(data, 'Timestamp: 1\ntest');
+			});
+		});
+		it('Does not retrieve logs if more than one instance is specified', function() {
+			AWSMock.restore('EC2', 'describeInstances');
+			AWSMock.mock('EC2', 'describeInstances', function(params, callback) {
+				var data = {};
+				data.Reservations = [{Instances : [{InstanceId : 'ExampleId', Tags : [{Key : 'NotName', Value : 'Tag'}], State : {Name : 'Testing'}},
+													{InstanceId : 'OtherId', Tags : [{Key : 'OtherName', Value : 'Tag'}], State : {Name : 'Testing'}}]}];
+				callback(null, data);
+			});
+			return ecInstance.getLogs('tag', 'My-EC2', auth1)
+			.catch(function(err) {
+				assert.equal(err, 'More than one instance specified.');
+			});
+		});
+	});
+
+	describe('#reboot', function() {
+		it('Successfully reboots the specified instances', function() {
+			return ecInstance.reboot('tag', 'My-EC2', auth1)
+			.then(function(data) {
+				assert.equal(data, 'Success');
 			});
 		});
 	});
