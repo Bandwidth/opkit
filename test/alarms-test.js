@@ -35,12 +35,16 @@ describe('Alarms', function(){
 		});
 	});
 	describe('#queryAlarmsByStateReadably', function(){
-		it('Should result in the correct human-readable string', function () {
-			return alarms.queryAlarmsByStateReadably('OK', auth1)
+		before(function () {
+			result = undefined;
+			alarms.queryAlarmsByStateReadably('OK', auth1)
 			.then(function (data){
-				assert.isOk(data);
+				result = data;
 			});
-		})
+		});
+		it('Should result in the correct human-readable string', function () {
+			assert.isOk(result);
+		});
 	});
 	describe('#countAlarmsByState', function(){
 		before(function () {
