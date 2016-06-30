@@ -8,6 +8,7 @@ var AWS = require('aws-promised');
 describe('EC2', function() {
 
 	var auth1;
+	var result;
 	var spy;
 
 	before(function() {
@@ -41,123 +42,197 @@ describe('EC2', function() {
 		});
 	});
 
-	beforeEach(function() {
+	afterEach(function() {
+		result = undefined;
 		spy = undefined;
 	});
 
-	it("starting an EC2 instance works", function() {
-		return ecInstance.start('Name', 'My-EC2', auth1)
-		.then(function(data) {
-			assert.equal(data, "Success")
+	describe("start", function() {
+		before(function() {
+			return ecInstance.start('Name', 'My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});			
+		});
+
+		it("starting an EC2 instance works", function() {
+			assert.equal(result, "Success");
 		});
 	});
 
-	it("starting an EC2 instance by name works", function() {
-		spy = sinon.spy(ecInstance, "start");
-		return ecInstance.startByName('My-EC2', auth1)
-		.then(function(data) {
-			assert.equal(data, "Success");
+	describe("startByName", function() {
+		before(function() {
+			spy = sinon.spy(ecInstance, "start");
+			return ecInstance.startByName('My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});			
+		});
+
+		it("starting an EC2 instance by name works", function() {
+			assert.equal(spy.calledWithExactly('Name', 'My-EC2', auth1),true);			
+		});
+	});
+
+	describe("stop", function() {
+		before(function() {
+			return ecInstance.stop('Name', 'My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});
+		});
+
+		it("stopping an EC2 instance works", function() {
+			assert.equal(result, "Success");
+		});
+	});
+
+	describe("stopByName", function() {
+		before(function() {
+			spy = sinon.spy(ecInstance, 'stop');
+			return ecInstance.stopByName('My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});			
+		});
+
+		it("stopping an EC2 instance by name works", function() {
 			assert.equal(spy.calledWithExactly('Name', 'My-EC2', auth1),true);
 		});
 	});
 
-	it("stopping an EC2 instance works", function() {
-		return ecInstance.stop('Name', 'My-EC2', auth1)
-		.then(function(data) {
-			assert.equal(data, "Success");
+	describe("getInstanceID", function() {
+		before(function() {
+			return ecInstance.getInstanceID('tag', 'My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});
+		});
+
+		it("getting the instance ID of a specified EC2 instance works", function() {
+			assert.equal(result[0], 'ExampleId');
 		});
 	});
 
-	it("stopping an EC2 instance by name works", function() {
-		spy = sinon.spy(ecInstance, 'stop');
-		return ecInstance.stopByName('My-EC2', auth1)
-		.then(function(data) {
-			assert.equal(data, "Success");
-			assert.equal(spy.calledWithExactly('Name', 'My-EC2', auth1),true);
+	describe("listInstances", function() {
+		before(function() {
+			return ecInstance.listInstances('tag', 'My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});
 		});
-	});
 
-	it("getting an instance ID of a specified EC2 instance works", function() {
-		return ecInstance.getInstanceID('tag', 'My-EC2', auth1)
-		.then(function(data) {
-			assert.equal(data[0], 'ExampleId');
-		});
-	});
-
-	it("listing instances works", function() {
-		return ecInstance.listInstances('tag', 'My-EC2', auth1)
-		.then(function(data) {
-			assert.equal(JSON.stringify(data[0]), 
+		it("listing instances works", function() {
+			assert.equal(JSON.stringify(result[0]), 
 							'{"Name":"Tag","State":"Testing","id":"ExampleId"}');
 		});
 	});
 
-	it("listing instances without a name tag works", function() {
-		AWSMock.restore('EC2', 'describeInstances');
-		AWSMock.mock('EC2', 'describeInstances', function(params, callback) {
-			var data = {};
-			data.Reservations = [{Instances : [{InstanceId : 'ExampleId', 
-									Tags : [{Key : 'NotName', Value : 'Tag'}], State : {Name : 'Testing'}}]}];
-			callback(null, data);
+	describe("listInstances without a name tag", function() {
+		before(function() {
+			AWSMock.restore('EC2', 'describeInstances');
+			AWSMock.mock('EC2', 'describeInstances', function(params, callback) {
+				var data = {};
+				data.Reservations = [{Instances : [{InstanceId : 'ExampleId', 
+										Tags : [{Key : 'NotName', Value : 'Tag'}], State : {Name : 'Testing'}}]}];
+				callback(null, data);
+			});
+			return ecInstance.listInstances('tag', 'My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});
 		});
-		return ecInstance.listInstances('tag', 'My-EC2', auth1)
-		.then(function(data) {
-			assert.equal(JSON.stringify(data[0]), 
+
+		it("listing instances without a name tag works", function() {
+			assert.equal(JSON.stringify(result[0]), 
 							'{"State":"Testing","id":"ExampleId"}');
 		});
 	});
 
-	it("getting data about instances based on state works", function() {
-		return ecInstance.getInstancesStatus('tag', 'My-EC2', 'running', auth1)
-		.then(function(data) {
-			assert.equal(JSON.stringify(data[0]), '{"State":"Testing","id":"ExampleId"}');
+	describe("getInstancesStatus", function() {
+		before(function() {
+			return ecInstance.getInstancesStatus('tag', 'My-EC2', 'running', auth1)
+			.then(function(data) {
+				result = data;
+			});
+		});
+
+		it("getting data about instances based on state works", function() {
+			assert.equal(JSON.stringify(result[0]), '{"State":"Testing","id":"ExampleId"}');
 		});
 	});
 
-	it("getting data about stopped instances works", function() {
-		spy = sinon.spy(ecInstance, 'getInstancesStatus');
-		return ecInstance.getInstancesStopped('tag', 'My-EC2', auth1)
-		.then(function() {
-			assert.equal(spy.calledWith('tag', 'My-EC2', 'stopped', auth1), true);
+	describe("getInstancesStopped", function() {
+		before(function() {
+			spy = sinon.spy(ecInstance, 'getInstancesStatus');
+			return ecInstance.getInstancesStopped('tag', 'My-EC2', auth1);
+		});
+
+		after(function() {
 			ecInstance.getInstancesStatus.restore();
 		});
+
+		it("getting data about stopped instances works", function() {
+			assert.equal(spy.calledWith('tag', 'My-EC2', 'stopped', auth1), true);
+		});
 	});
 
-	it("getting data about started instances works", function() {
-		spy = sinon.spy(ecInstance, 'getInstancesStatus');
-		return ecInstance.getInstancesStarted('tag', 'My-EC2', auth1)
-		.then(function() {
+	describe("getInstancesStarted", function() {
+		before(function() {
+			spy = sinon.spy(ecInstance, 'getInstancesStatus');
+			return ecInstance.getInstancesStarted('tag', 'My-EC2', auth1);
+		});
+
+		it("getting data about started instances works", function() {
 			assert.equal(spy.calledWith('tag', 'My-EC2', 'running', auth1), true);
 		});
 	});
 
-	it("getting logs about an instance works", function() {
-		return ecInstance.getLogs('tag', 'My-EC2', auth1)
-		.then(function(data) {
-			assert.equal(data, 'Timestamp: 1\ntest');
+	describe("getLogs", function() {
+		before(function() {
+			return ecInstance.getLogs('tag', 'My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});
+		});
+
+		it("getting logs about an instance works", function() {
+			assert.equal(result, 'Timestamp: 1\ntest');
 		});
 	});
 
-	it("does not retrieve logs if more than one instance is specified", function() {
-		AWSMock.restore('EC2', 'describeInstances');
-		AWSMock.mock('EC2', 'describeInstances', function(params, callback) {
-			var data = {};
-			data.Reservations = [{Instances : [{InstanceId : 'ExampleId', 
-												Tags : [{Key : 'NotName', Value : 'Tag'}], State : {Name : 'Testing'}},
-												{InstanceId : 'OtherId', 
-													Tags : [{Key : 'OtherName', Value : 'Tag'}], State : {Name : 'Testing'}}]}];
-			callback(null, data);
+	describe("getLogs with multiple instances", function() {
+		before(function() {
+			AWSMock.restore('EC2', 'describeInstances');
+			AWSMock.mock('EC2', 'describeInstances', function(params, callback) {
+				var data = {};
+				data.Reservations = [{Instances : [{InstanceId : 'ExampleId', 
+													Tags : [{Key : 'NotName', Value : 'Tag'}], State : {Name : 'Testing'}},
+													{InstanceId : 'OtherId', 
+														Tags : [{Key : 'OtherName', Value : 'Tag'}], State : {Name : 'Testing'}}]}];
+				callback(null, data);
+			});
+			return ecInstance.getLogs('tag', 'My-EC2', auth1)
+			.catch(function(err) {
+				result = err;
+			});
 		});
-		return ecInstance.getLogs('tag', 'My-EC2', auth1)
-		.catch(function(err) {
-			assert.equal(err, 'More than one instance specified.');
+
+		it("does not retrieve logs if more than one instance is specified", function() {
+			assert.equal(result, 'More than one instance specified.');
 		});
 	});
 
-	it("rebooting instances works", function() {
-		return ecInstance.reboot('tag', 'My-EC2', auth1)
-		.then(function(data) {
-			assert.equal(data, 'Success');
-		});		
+	describe("reboot", function() {
+		before(function() {
+			return ecInstance.reboot('tag', 'My-EC2', auth1)
+			.then(function(data) {
+				result = data;
+			});	
+		});
+
+		it("rebooting instances works", function() {
+			assert.equal(result, 'Success');
+		});
 	});
 });
