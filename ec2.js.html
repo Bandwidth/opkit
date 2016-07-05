@@ -107,21 +107,18 @@ EC2.prototype.getInstanceID = function(tagName, value, auth) {
 
 	var ec2 = new AWS.ec2(auth.props);
 
-	return ec2.describeInstancesPromised(
-		{
-			Filters: [ 	
-				{
-					Name : 'tag:' + tagName,
-					Values : [
-						value
-					]
-				}
-			]
-		}
-	)
+	return ec2.describeInstancesPromised({
+		Filters: [ 	
+			{
+				Name : 'tag:' + tagName,
+				Values : [
+					value
+				]
+			}
+		]
+	})
 	.then(function(data) {
 		var instanceArray = [];
-
 		var reservations = data.Reservations;
 		for (var reservation in reservations) {
 			var instances = reservations[reservation].Instances;
@@ -144,43 +141,158 @@ EC2.prototype.listInstances = function(tagName, value, auth) {
 
 	var ec2 = new AWS.ec2(auth.props);
 
-	return ec2.describeInstancesPromised(
-		{
-			Filters: [ 	
-				{
-					Name : 'tag:' + tagName,
-					Values : [
-						value
-					]
-				}
-			]
-		}
-	)
-	.then(function(data) {
-		var instanceInfoArray = [];
-		var instanceInfoObject = {};
-
-		var reservations = data.Reservations;
-		for (var reservation in reservations) {
-			var instances = reservations[reservation].Instances;
-			for (var instance in instances) {
-				var tags = instances[instance].Tags;
-				for (var tag in tags) {
-					if (tags[tag].Key === 'Name') {
-						instanceInfoObject = _.assign(instanceInfoObject,
-						{Name: tags[tag].Value});
-					}
-				}
-				instanceInfoObject = _.assign(instanceInfoObject,
-					{State: instances[instance].State.Name},
-					{id: instances[instance].InstanceId});
-				instanceInfoArray.push(instanceInfoObject);
-				instanceInfoObject = {};
+	return ec2.describeInstancesPromised({
+		Filters: [ 	
+			{
+				Name : 'tag:' + tagName,
+				Values : [
+					value
+				]
 			}
-		}
-		return Promise.resolve(instanceInfoArray);
+		]
+	})
+	.then(function(data) {
+		return dataFormatter(data);
 	});
 };
+
+/**
+ * Get info about specified EC2 instances which are stopped.
+ * @param {string} tagName - Name tag (Examples: Name, Environment, etc).
+ * @param {string} value - Actual value of tag (Example: opkit-test-johndoe)
+ * @param {Auth} auth - The Auth object to be used for the AWS query.
+ * @returns Promise resolving to an array containing info about the specified EC2 instances.
+ */
+EC2.prototype.getInstancesStopped = function(tagName, value, auth) {
+	return this.getInstancesStatus(tagName, value, 'stopped', auth);
+};
+
+/**
+ * Get info about specified EC2 instances which are running.
+ * @param {string} tagName - Name tag (Examples: Name, Environment, etc).
+ * @param {string} value - Actual value of tag (Example: opkit-test-johndoe)
+ * @param {Auth} auth - The Auth object to be used for the AWS query.
+ * @returns Promise resolving to an array containing info about the specified EC2 instances.
+ */
+EC2.prototype.getInstancesStarted = function(tagName, value, auth) {
+	return this.getInstancesStatus(tagName, value, 'running', auth);
+};
+
+/**
+ * Get info about specified EC2 instances in a specified state.
+ * @param {string} tagName - Name tag (Examples: Name, Environment, etc).
+ * @param {string} value - Actual value of tag (Example: opkit-test-johndoe)
+ * @param {state} - State of instances (running, stopped, etc.)
+ * @param {Auth} auth - The Auth object to be used for the AWS query.
+ * @returns Promise resolving to an array containing info about the specified EC2 instances.
+ */
+EC2.prototype.getInstancesStatus = function(tagName, value, state, auth) {
+
+	var ec2 = new AWS.ec2(auth.props);
+
+	return ec2.describeInstancesPromised({
+		Filters: [ 	
+			{
+				Name : 'tag:' + tagName,
+				Values : [
+					value
+				]
+			},
+			{
+				Name : 'instance-state-name',
+				Values : [
+					state
+				]
+			}
+		]
+	})
+	.then(function(data) {
+		return dataFormatter(data);
+	});
+};
+
+/**
+ * Get info about logs of a specified EC2 instance.
+ * @param {string} tagName - Name tag (Examples: Name, Environment, etc).
+ * @param {string} value - Actual value of tag (Example: opkit-test-johndoe)
+ * @param {Auth} auth - The Auth object to be used for the AWS query.
+ * @returns Promise resolving to a String with the proper log.
+ */
+EC2.prototype.getLogs = function(tagName, value, auth) {
+	var ec2 = new AWS.ec2(auth.props);
+	var instancesArray = [];
+
+	return this.getInstanceID(tagName, value, auth)
+	.then(function(data) {
+		instancesArray = data;
+		if (instancesArray.length === 1) {
+			return ec2.getConsoleOutputPromised({InstanceId : instancesArray[0]});
+		} else if (instancesArray.length > 1) {
+			return Promise.reject('More than one instance specified.');
+		} else {
+			return Promise.reject('No instances available.');
+		}
+	})
+	.then(function(output) {
+		var buf = new Buffer(output.Output, 'base64');
+		return Promise.resolve('Timestamp: ' + output.Timestamp + '\n' + buf.toString());
+	});
+};
+
+/**
+ * Reboots EC2 instances with the specified tag.
+ * @param {string} tagName - Name tag (Examples: Name, Environment, etc).
+ * @param {string} value - Actual value of tag (Example: opkit-test-johndoe)
+ * @param {Auth} auth - The Auth object to be used for the AWS query.
+ */
+EC2.prototype.reboot = function(tagName, value, auth) {
+
+	var ec2 = new AWS.ec2(auth.props);
+	var instancesArray;
+
+	return this.getInstanceID(tagName, value, auth)
+	.then(function(data) {
+		instancesArray = data;
+		return ec2.stopInstancesPromised({InstanceIds: data});
+	})
+	.then(function(data) {
+		return ec2.waitForPromised('instanceStopped', {InstanceIds: instancesArray});
+	})
+	.then(function(data) {
+		return ec2.startInstancesPromised({InstanceIds: instancesArray});
+	})
+	.then(function(data) {
+		return ec2.waitForPromised('instanceRunning', {InstanceIds: instancesArray});
+	});
+};
+
+/**
+ * Helper function to format data returned by AWS EC2 queries.
+ */
+function dataFormatter(data) {
+	var instanceInfoArray = [];
+	var instanceInfoObject = {};
+
+	var reservations = data.Reservations;
+	for (var reservation in reservations) {
+		var instances = reservations[reservation].Instances;
+		for (var instance in instances) {
+			var tags = instances[instance].Tags;
+			for (var tag in tags) {
+				if (tags[tag].Key === 'Name') {
+					instanceInfoObject = _.assign(instanceInfoObject,
+					{Name: tags[tag].Value});
+				}
+			}
+			instanceInfoObject = _.assign(instanceInfoObject,
+				{State: instances[instance].State.Name},
+				{id: instances[instance].InstanceId});
+			instanceInfoArray.push(instanceInfoObject);
+			instanceInfoObject = {};
+		}
+	}
+	return Promise.resolve(instanceInfoArray);
+}
 
 module.exports = EC2;</code></pre>
         </article>
@@ -192,13 +304,13 @@ module.exports = EC2;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Alarms.html">Alarms</a></li><li><a href="Auth.html">Auth</a></li><li><a href="EC2.html">EC2</a></li><li><a href="SQS.html">SQS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#OpkitBot">OpkitBot</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Alarms.html">Alarms</a></li><li><a href="Auth.html">Auth</a></li><li><a href="EC2.html">EC2</a></li><li><a href="SQS.html">SQS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addHandler">addHandler</a></li><li><a href="global.html#addOneOffHandler">addOneOffHandler</a></li><li><a href="global.html#dataFormatter">dataFormatter</a></li><li><a href="global.html#OpkitBot">OpkitBot</a></li><li><a href="global.html#start">start</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Jun 22 2016 13:21:59 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jul 05 2016 14:18:40 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

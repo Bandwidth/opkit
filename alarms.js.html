@@ -37,7 +37,7 @@ function Alarms(){
  * Queries Cloudwatch alarms that are currently in a particular state.
  * Returns a Promise containing a JS object with all of the alarms currently in that state.
  * @param {string} state - A string containing the state you'd like to query for (e.g. 'ALARM')
- * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ * @param {Auth} auth - An auth object made using the keys and region you'd like to use..
  */
 
 Alarms.prototype.queryAlarmsByState = function(state, auth){
@@ -46,9 +46,9 @@ Alarms.prototype.queryAlarmsByState = function(state, auth){
 };
 /**
  * Queries Cloudwatch alarms that are currently in a particular state.
- * Returns a Promise that resolves to a string containing information about the namespace, name, and description of each alarm in the queried state.
+ * Returns a Promise that resolves to a string containing information about each alarm in the queried state.
  * @param {string} state - A string containing the state you'd like to query for (e.g. 'ALARM')
- * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ * @param {Auth} auth - An auth object made using the keys and region you'd like to use..
  */
 
 Alarms.prototype.queryAlarmsByStateReadably = function(state, auth){
@@ -57,7 +57,7 @@ Alarms.prototype.queryAlarmsByStateReadably = function(state, auth){
 		var returnMe = '';
 		var alarms = data.MetricAlarms ;
 		for (var k=0; k&lt;alarms.length; k++){
-			returnMe += alarms[k].Namespace +': ' + 
+			returnMe += '*'+alarms[k].Namespace +'*: ' + 
 			alarms[k].AlarmDescription + "\n";
 		}
 		return Promise.resolve(returnMe);
@@ -68,7 +68,7 @@ Alarms.prototype.queryAlarmsByStateReadably = function(state, auth){
  * Queries Cloudwatch alarms that are currently in a particular state.
  * Returns a Promise containing the number of alarms in the state.
  * @param {string} state - A string containing the state you'd like to query for (e.g. 'ALARM')
- * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ * @param {Auth} auth - An auth object made using the keys and region you'd like to use..
  */
 Alarms.prototype.countAlarmsByState = function(state, auth){
 	return this.queryAlarmsByState(state, auth)
@@ -82,7 +82,7 @@ Alarms.prototype.countAlarmsByState = function(state, auth){
  * Queries Cloudwatch alarms.
  * Returns a Promise containing a string with a health report, detailing the number of alarms in each state.
  * @param {string} state - A string containing the state you'd like to query for (e.g. 'ALARM')
- * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ * @param {Auth} auth - An auth object made using the keys and region you'd like to use..
  */
 
 Alarms.prototype.healthReportByState = function(auth){
@@ -91,7 +91,6 @@ Alarms.prototype.healthReportByState = function(auth){
 	.then(function(data){
 		var alarms = data.MetricAlarms;
 		var numOK=0, numInsufficient=0, numAlarm=0;
-		console.log(alarms.length);
 		for (var k=0; k&lt;alarms.length; k++){
 			if (alarms[k].StateValue === 'ALARM'){
 				numAlarm++;
@@ -103,10 +102,10 @@ Alarms.prototype.healthReportByState = function(auth){
 				numInsufficient++;
 			}
 		}
-		return Promise.resolve("Number Of Alarms, By State: \n"+
-			"There are "+numOK+" OK alarms, \n"+
-			"          "+numAlarm+ " alarming alarms, and \n"+
-			"          "+numInsufficient+" alarms for which there is insufficient data.");
+		return Promise.resolve("*Number Of Alarms, By State:* \n"+
+			"There are *"+numOK+"* OK alarms, \n"+
+			"          *"+numAlarm+ "* alarming alarms, and \n"+
+			"          *"+numInsufficient+"* alarms for which there is insufficient data.");
 	});
 };
 
@@ -114,7 +113,7 @@ Alarms.prototype.healthReportByState = function(auth){
  * Queries Cloudwatch alarms that have particular names.
  * Returns a Promise containing a JS object with all of the alarms that have one of the names on the watchlist.
  * @param {Array} watchlist - An array containing the names of alarms you'd like to query for.
- * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ * @param {Auth} auth - An auth object made using the keys and region you'd like to use..
  */
 Alarms.prototype.queryAlarmsByWatchlist = function(watchlist, auth){
 	var cloudwatch = new AWS.cloudWatch(auth.props);
@@ -125,7 +124,7 @@ Alarms.prototype.queryAlarmsByWatchlist = function(watchlist, auth){
  * Queries Cloudwatch alarms that have particular names.
  * Returns a promise resolving to a string containing information about all matching alarms.
  * @param {Array} watchlist - An array containing the names of alarms you'd like to query for.
- * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ * @param {Auth} auth - An auth object made using the keys and region you'd like to use..
  */
 Alarms.prototype.queryAlarmsByWatchlistReadably = function(watchlist, auth){
 	return this.queryAlarmsByWatchlist(watchlist, auth)
@@ -133,7 +132,7 @@ Alarms.prototype.queryAlarmsByWatchlistReadably = function(watchlist, auth){
 		var returnMe = '';
 		var alarms = data.MetricAlarms ;
 		for (var k=0; k&lt;alarms.length; k++){
-			returnMe += alarms[k].Namespace +': ' + 
+			returnMe += '*' +alarms[k].Namespace +'*: ' + 
 			alarms[k].AlarmDescription + " (" +
 			alarms[k].StateValue + ")\n";
 		}
@@ -145,7 +144,7 @@ Alarms.prototype.queryAlarmsByWatchlistReadably = function(watchlist, auth){
  * Queries Cloudwatch alarms that have names that start with the prefix string.
  * Returns a Promise containing a JS object with all of the alarms that have names that begin with the prefix.
  * @param {string} prefix - A prefix string. All alarms with names that begin with the prefix will be returned.
- * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ * @param {Auth} auth - An auth object made using the keys and region you'd like to use..
  */
 
 Alarms.prototype.queryAlarmsByPrefix = function(prefix, auth){
@@ -157,7 +156,7 @@ Alarms.prototype.queryAlarmsByPrefix = function(prefix, auth){
  * Queries Cloudwatch alarms that have names that start with the prefix string.
  * Returns a String containing information about all of the alarms that have names that begin with the prefix.
  * @param {string} prefix - A prefix string. All alarms with names that begin with the prefix will be returned.
- * @param {Auth} auth - An auth object containing the keys you'd like to use and the region to which you'd like to connect.
+ * @param {Auth} auth - An auth object made using the keys and region you'd like to use..
  */
 
 Alarms.prototype.queryAlarmsByPrefixReadably = function(prefix, auth){
@@ -166,7 +165,7 @@ Alarms.prototype.queryAlarmsByPrefixReadably = function(prefix, auth){
 		var returnMe = '';
 		var alarms = data.MetricAlarms ;
 		for (var k=0; k&lt;alarms.length; k++){
-			returnMe += alarms[k].Namespace +': ' + 
+			returnMe += '*' +alarms[k].Namespace +'*: ' + 
 			alarms[k].AlarmDescription + " (" +
 			alarms[k].StateValue + ")\n";
 		}
@@ -184,13 +183,13 @@ module.exports = Alarms;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Alarms.html">Alarms</a></li><li><a href="Auth.html">Auth</a></li><li><a href="EC2.html">EC2</a></li><li><a href="SQS.html">SQS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#OpkitBot">OpkitBot</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Alarms.html">Alarms</a></li><li><a href="Auth.html">Auth</a></li><li><a href="EC2.html">EC2</a></li><li><a href="SQS.html">SQS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addHandler">addHandler</a></li><li><a href="global.html#addOneOffHandler">addOneOffHandler</a></li><li><a href="global.html#dataFormatter">dataFormatter</a></li><li><a href="global.html#OpkitBot">OpkitBot</a></li><li><a href="global.html#start">start</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Jun 22 2016 13:21:59 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jul 05 2016 14:18:40 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
