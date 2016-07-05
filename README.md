@@ -8,7 +8,7 @@ README v0.01 / 11 MAY 2016
 Opkit is a devops bot framework for Slack. It aims to provide an easy-to-use and resource-light way to set up a bot, optimized for rapid deployment onto a cloud hosting provider. We've found that simple bots made using this framework run comfortably on even very small instances (like Heroku's hobby tier). It's optimized for use with AWS, and includes helpful methods that provide information on things like SQS queue sizes and Cloudwatch alarms.
 
 
-It has many features which are useful for configuring the bot to control mission-critical interfaces, including sophisticated access control and automatic persistence to disk or MongoDB (with Redis and others in the works).
+It has many features which are useful for configuring the bot to control mission-critical interfaces, including sophisticated access control and automatic persistence to disk, MongoDB, Redis, and Postgres.
 
 ## Usage
 
@@ -22,7 +22,7 @@ You may need to run this command as root.
 
 ### Getting Started
 
-There is an example script at examples/example.js in the repository. You'll need to set an environment variable for your slack token, which can be obtained through the Custom Integrations panel on Slack. (The example script expects the environment variable to be named `token`. Run it with `node example.sh`.
+There is an example script at examples/example.js in the repository. You'll need to set an environment variable for your slack token, which can be obtained through the Custom Integrations panel on Slack. (The example script expects the environment variable to be named `token`. Run it with `node example.js`.
 
 ### Configuration
 
@@ -55,13 +55,13 @@ The actual logic is contained in the function at 'command'. That function ought 
 
 `brain` provides a place to store state variables. These variables are 'scoped' to the script; that is, all commands with the same script share a brain. If you put all of your new commands into the same script, they will all be able to view each others' contributions to the state, while presenting no risk of interfering with commands from other scripts. The brain is populated from the persister (the local filesystem or MongoDB) before each command is run, and saved to the persister after each command is run.
 
-Once you've put your commands into an array, the next choice is that of your persister. `Opkit.Persister` saves to a folder on the filesystem in a human-readable JSON format, while `Opkit.MongoPersister` saves to a MongoDB database. The constructors for each persister take a folder or a Mongo URI, respectively. After building a persister, simply run the constructor and start the bot:
+Once you've put your commands into an array, the next choice is that of your persister. Opkit currently offers four complete persisters, while also offering you the ability to write your own. `Opkit.FilePersister` saves to a folder on the filesystem in a human-readable JSON format, `Opkit.MongoPersister` saves to a MongoDB database, `Opkit.RedisPersister` saves to Redis, and `Opkit.PostgresPersister` saves to Postgres. The constructors for each persister take a folder, a Mongo URI, a Redis URL, or a Postgres URL, respectively. After building a persister, simply run the constructor and start the bot:
 
 ```javascript
 
 var commands = [sayHello];
 var Opkit = require('opkit');
-var Persiter = new Opkit.Persister('~/bot-state');
+var Persiter = new Opkit.FilePersister('~/bot-state');
 var myBot = new Opkit.bot('mybot', commands, Persister);
 myBot.start();
 ```
