@@ -3,11 +3,11 @@ var sinon = require('sinon');
 var fsp = require('fs-promise');
 var Promise = require('bluebird');
 
-describe('Default Persister', function() {
+describe('File Persister', function() {
 
 	var persister;
 	var result;
-	var defaultPersisterFunc;
+	var filePersisterFunc;
 	var readStub;
 
 	before(function() {
@@ -31,7 +31,7 @@ describe('Default Persister', function() {
 		});
 
 		var opkit = require('../index');
-		defaultPersisterFunc = opkit.Persister;
+		filePersisterFunc = opkit.FilePersister;
 	});
 
 	afterEach(function() {
@@ -40,7 +40,7 @@ describe('Default Persister', function() {
 
 	describe('Constructor', function() {
 		before(function() {
-			persister = new defaultPersisterFunc('./folderpath');
+			persister = new filePersisterFunc('./folderpath');
 		});
 
 		it('Successfully creates a persister object', function() {
@@ -78,7 +78,7 @@ describe('Default Persister', function() {
 
 	describe('Initialization', function() {
 		before(function() {
-			var otherPersister = new defaultPersisterFunc('./inaccessiblePath');
+			var otherPersister = new filePersisterFunc('./inaccessiblePath');
 			return otherPersister.start()
 			.catch(function(err) {
 				result = err;
