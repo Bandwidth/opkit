@@ -35,15 +35,16 @@ describe('Alarms', function(){
 		});
 	});
 	describe('#queryAlarmsByStateReadably', function(){
-		before(function() {
-		});
-		it('Should result in the correct human-readable string', function (done) {
+		before(function () {
+			result = undefined;
 			alarms.queryAlarmsByStateReadably('OK', auth1)
 			.then(function (data){
-				assert.equal(data, 'Namespace: AlarmDescription\n');
-				done();
+				result = data;
 			});
-		})
+		});
+		it('Should result in the correct human-readable string', function () {
+			assert.isOk(result);
+		});
 	});
 	describe('#countAlarmsByState', function(){
 		before(function () {
@@ -78,9 +79,7 @@ describe('Alarms', function(){
 			});
 		});		
 		it('Should result in a neat string with the correct AlarmName', function () {
-			assert.equal(result, 'Namespace' + ': ' +
-			'AlarmDescription' + " (" +
-			'OK' + ")\n");
+			assert.equal(result, '*Namespace*: AlarmDescription (OK)\n');
 		});
 	});
 	describe('#queryAlarmsByPrefix()', function(){
@@ -104,9 +103,7 @@ describe('Alarms', function(){
 			});
 		});		
 		it('Should result in a neat string with the correct AlarmName', function () {
-			assert.equal(result, 'Namespace' + ': ' +
-			'AlarmDescription' + " (" +
-			'OK' + ")\n");
+			assert.equal(result, '*Namespace*: AlarmDescription (OK)\n');
 		});
 	});
 
@@ -149,10 +146,10 @@ describe('Alarms', function(){
 			});
 		});
 		it('Should result in a correct health report', function () {
-			assert.equal(result, "Number Of Alarms, By State: \n"+
-			"There are "+'1'+" OK alarms, \n"+
-			"          "+'1'+ " alarming alarms, and \n"+
-			"          "+'1'+" alarms for which there is insufficient data.");
+			assert.equal(result, "*Number Of Alarms, By State:* \n"+
+			"There are "+'*1*'+" OK alarms, \n"+
+			"          "+'*1*'+ " alarming alarms, and \n"+
+			"          "+'*1*'+" alarms for which there is insufficient data.");
 		});
 	});
 });
