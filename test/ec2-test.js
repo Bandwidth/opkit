@@ -223,6 +223,23 @@ describe('EC2', function() {
 		});
 	});
 
+	describe("getLogs with no instances", function() {
+		before(function() {
+			AWSMock.restore('EC2', 'describeInstances');
+			AWSMock.mock('EC2', 'describeInstances', function(params, callback) {
+				callback(null, {});
+			});
+			return ecInstance.getLogs('tag', 'My-EC2', auth1)
+			.catch(function(err) {
+				result = err;
+			});
+		});
+
+		it("does not retrieve logs if no instances are specified", function() {
+			assert.equal(result, 'No instances available.');
+		});
+	});
+
 	describe("reboot", function() {
 		before(function() {
 			return ecInstance.reboot('tag', 'My-EC2', auth1)
