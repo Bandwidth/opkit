@@ -300,11 +300,28 @@ describe('Bot', function(){
 				assert.deepEqual(result.args, ['please']);
 			});
 		});
-		describe('#case with no match', function(){
+		describe('#case with no match (JW distance high; likely typo)', function(){
 			var result;
 			
 			before(function(){
-				return bot.messageParser(['testbot', 'provide', 'me', 'thirteen'], bot)
+				return bot.messageParser(['testbot', 'send', 'me', 'twilve'], bot)
+				.then(function(){
+					result = 'Match';
+				})
+				.catch(function(){
+					result = 'No match';
+				});
+			});
+
+			it('should not return a match when there is no match', function(){
+				assert.equal(result, 'No match');
+			});
+		});
+		describe('#case with no match (JW distance low; unlikely typo)', function(){
+			var result;
+			
+			before(function(){
+				return bot.messageParser(['testbot', 'fdasfdsfsdaf', 'fdsfdsdf', 'fdafdfdfdfdfdfdfdfdfdfdfd'], bot)
 				.then(function(){
 					result = 'Match';
 				})
