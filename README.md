@@ -77,6 +77,10 @@ There is more thorough documentation available at the Javadoc page; documentatio
 
 Simply run `npm test`.
 
+##Contributing
+
+See our [contributing guidelines](CONTRIBUTING.md).
+
 ## Contacts
 
 Illirik Smirnov (ismirnov@bandwidth.com)
