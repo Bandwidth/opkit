@@ -73,6 +73,10 @@ You'll need to ensure that your Slack API token is stored at the environment var
 
 There is more thorough documentation available at the Javadoc page; documentation is automagically generated and posted to http://inetcatapult.github.io/opkit/index.html with each update. Look at our example scripts, too!
 
+##Running Tests Locally
+
+Simply run `npm test`.
+
 ## Contacts
 
 Illirik Smirnov (ismirnov@bandwidth.com)
