@@ -5,35 +5,27 @@ var sinon = require('sinon');
 var AWS = require('aws-sdk-mock');
 var Promise = require('bluebird');
 var auth1 = new opkit.Auth();
+auth1.updateRegion('narnia-1');
+auth1.updateAuthKeys('shiny gold one', 'old rusty one');
+AWS.mock('CloudWatch', 'describeAlarms', function(params, callback){
+	callback(null, {
+		MetricAlarms: [{
+			StateValue : 'OK',
+			MetricName : 'MetricName',
+			AlarmDescription: 'AlarmDescription',
+			Namespace : 'Namespace',
+			AlarmName : 'AlarmName'
+		}]
+	});
+});
 
 var result;
 
 describe('Alarms', function(){
-
-	before(function() {
-		auth1.updateRegion('narnia-1');
-		auth1.updateAuthKeys('shiny gold one', 'old rusty one');
-		AWS.mock('CloudWatch', 'describeAlarms', function(params, callback){
-			callback(null, {
-				MetricAlarms: [{
-					StateValue : 'OK',
-					MetricName : 'MetricName',
-					AlarmDescription: 'AlarmDescription',
-					Namespace : 'Namespace',
-					AlarmName : 'AlarmName'
-				}]
-			});
-		});
-	});
-
-	after(function() {
-		AWS.restore('CloudWatch', 'describeAlarms');
-	});
-
 	describe('#queryAlarmsByState()', function(){
 		before(function() {
 			result = undefined;
-			return alarms.queryAlarmsByState('OK', auth1)
+			alarms.queryAlarmsByState('OK', auth1)
 			.then(function (data){
 				result = data.MetricAlarms[0].StateValue;
 			});
@@ -45,7 +37,7 @@ describe('Alarms', function(){
 	describe('#queryAlarmsByStateReadably', function(){
 		before(function () {
 			result = undefined;
-			return alarms.queryAlarmsByStateReadably('OK', auth1)
+			alarms.queryAlarmsByStateReadably('OK', auth1)
 			.then(function (data){
 				result = data;
 			});
@@ -57,7 +49,7 @@ describe('Alarms', function(){
 	describe('#countAlarmsByState', function(){
 		before(function () {
 			result = undefined;
-			return alarms.countAlarmsByState('OK', auth1)
+			alarms.countAlarmsByState('OK', auth1)
 			.then(function (data){
 				result = data;
 			});
@@ -69,7 +61,7 @@ describe('Alarms', function(){
 	describe('#queryAlarmsByWatchlist()', function(){
 		before(function() {
 			result = undefined;
-			return alarms.queryAlarmsByWatchlist(['AlarmName'], auth1)
+			alarms.queryAlarmsByWatchlist(['AlarmName'], auth1)
 			.then(function (data){
 				result = data.MetricAlarms[0].AlarmName;
 			});
@@ -81,7 +73,7 @@ describe('Alarms', function(){
 	describe('#queryAlarmsByWatchlistReadably()', function(){
 		before(function() {
 			result = undefined;
-			return alarms.queryAlarmsByWatchlistReadably(['AlarmName'], auth1)
+			alarms.queryAlarmsByWatchlistReadably(['AlarmName'], auth1)
 			.then(function (data){
 				result = data;
 			});
@@ -93,7 +85,7 @@ describe('Alarms', function(){
 	describe('#queryAlarmsByPrefix()', function(){
 		before(function() {
 			result = undefined;
-			return alarms.queryAlarmsByPrefix('Alarm', auth1)
+			alarms.queryAlarmsByPrefix('Alarm', auth1)
 			.then(function (data){
 				result = data.MetricAlarms[0].AlarmName;
 			});
@@ -105,7 +97,7 @@ describe('Alarms', function(){
 	describe('#queryAlarmsByPrefixReadably()', function(){
 		before(function() {
 			result = undefined;
-			return alarms.queryAlarmsByPrefixReadably('Alarm', auth1)
+			alarms.queryAlarmsByPrefixReadably('Alarm', auth1)
 			.then(function (data){
 				result = data;
 			});
@@ -118,12 +110,8 @@ describe('Alarms', function(){
 });
 describe('Alarms', function(){
 	describe('#healthReportByState', function(){
-
-		after(function() {
-			AWS.restore('CloudWatch', 'describeAlarms');
-		});
-
 		before(function () {
+			AWS.restore('CloudWatch', 'describeAlarms');
 			AWS.mock('CloudWatch', 'describeAlarms', function(params, callback){
 				callback(null, {
 					MetricAlarms: [{
@@ -131,7 +119,7 @@ describe('Alarms', function(){
 						MetricName : 'MetricName',
 						AlarmDescription: 'AlarmDescription',
 						Namespace : 'Namespace',
-						AlarmName : 'AlarmNamey'
+						AlarmName : 'AlarmName'
 					}
 						,
 					{
@@ -152,7 +140,7 @@ describe('Alarms', function(){
 				});
 			});
 			result = undefined;
-			return alarms.healthReportByState(auth1)
+			alarms.healthReportByState(auth1)
 			.then(function (data){
 				result = data;
 			});
@@ -163,47 +151,5 @@ describe('Alarms', function(){
 			"          "+'*1*'+ " alarming alarms, and \n"+
 			"          "+'*1*'+" alarms for which there is insufficient data.");
 		});
-	});
-});
-describe('Alarms Paginated Response', function() {
-
-	after(function() {
-		AWS.restore('CloudWatch', 'describeAlarms');
-	});
-
-	before(function() {
-		AWS.mock('CloudWatch', 'describeAlarms', function(params, callback){
-			if (!params.NextToken) {
-				callback(null, {
-					MetricAlarms: [{
-						StateValue : 'OK',
-						MetricName : 'MetricName',
-						AlarmDescription: 'AlarmDescription',
-						Namespace : 'Namespace',
-						AlarmName : 'AlarmName'
-					}],
-					NextToken : 'next'
-				});
-			} else {
-				callback(null, {
-					MetricAlarms: [{
-						StateValue : 'OK',
-						MetricName : 'MetricName2',
-						AlarmDescription: 'AlarmDescription2',
-						Namespace : 'Namespace2',
-						AlarmName : 'AlarmName2'
-					}],
-				});
-			}
-		});
-		result = undefined;
-		return alarms.getAllAlarms(auth1)
-		.then(function(data) {
-			result = data;
-		});
-	});
-
-	it('Should properly retrieve the alarms', function() {
-		assert.isOk(result);
 	});
 });
