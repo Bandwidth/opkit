@@ -87,7 +87,7 @@ describe('Alarms', function(){
 			});
 		});		
 		it('Should result in a neat string with the correct AlarmName', function () {
-			assert.equal(result, '*Namespace*: AlarmDescription (OK)\n');
+			assert.equal(result, '*OK*: AlarmName\n');
 		});
 	});
 	describe('#queryAlarmsByPrefix()', function(){
@@ -111,10 +111,9 @@ describe('Alarms', function(){
 			});
 		});		
 		it('Should result in a neat string with the correct AlarmName', function () {
-			assert.equal(result, '*Namespace*: AlarmDescription (OK)\n');
+			assert.equal(result, '*OK*: AlarmName\n');
 		});
 	});
-
 });
 describe('Alarms', function(){
 	describe('#healthReportByState', function(){
