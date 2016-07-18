@@ -106,7 +106,7 @@
 
     
 
-    <h4 class="name" id="countAlarmsByState"><span class="type-signature"></span>countAlarmsByState<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="countAlarmsByState"><span class="type-signature"></span>countAlarmsByState<span class="signature">(state, auth, ignore)</span><span class="type-signature"></span></h4>
 
     
 
@@ -189,7 +189,30 @@ Returns a Promise containing the number of alarms in the state.
 
             
 
-            <td class="description last">An auth object made using the keys and region you'd like to use..</td>
+            <td class="description last">An auth object made using the keys and region you'd like to use.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignore</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional list of names of alarms to ignore.</td>
         </tr>
 
     
@@ -230,7 +253,7 @@ Returns a Promise containing the number of alarms in the state.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line45">line 45</a>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line79">line 79</a>
     </li></ul></dd>
     
 
@@ -261,7 +284,185 @@ Returns a Promise containing the number of alarms in the state.
 
     
 
-    <h4 class="name" id="healthReportByState"><span class="type-signature"></span>healthReportByState<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getAllAlarms"><span class="type-signature"></span>getAllAlarms<span class="signature">(auth, params, ignore)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Retrive all CloudWatch Alarms.
+Returns a Promise containing a JS object with all configured alarms.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>auth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Auth.html">Auth</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An auth object made using the keys and region you'd like to use.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Additional AWS Filters.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignore</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional list of names of alarms to ignore.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line16">line 16</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="healthReportByState"><span class="type-signature"></span>healthReportByState<span class="signature">(auth, params, ignore)</span><span class="type-signature"></span></h4>
 
     
 
@@ -305,29 +506,6 @@ Returns a Promise containing a string with a health report, detailing the number
 
         <tr>
             
-                <td class="name"><code>state</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">A string containing the state you'd like to query for (e.g. 'ALARM')</td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>auth</code></td>
             
 
@@ -344,7 +522,53 @@ Returns a Promise containing a string with a health report, detailing the number
 
             
 
-            <td class="description last">An auth object made using the keys and region you'd like to use..</td>
+            <td class="description last">An auth object made using the keys and region you'd like to use.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Additional AWS Filters.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignore</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional list of names of alarms to ignore.</td>
         </tr>
 
     
@@ -385,7 +609,7 @@ Returns a Promise containing a string with a health report, detailing the number
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line60">line 60</a>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -416,7 +640,7 @@ Returns a Promise containing a string with a health report, detailing the number
 
     
 
-    <h4 class="name" id="queryAlarmsByPrefix"><span class="type-signature"></span>queryAlarmsByPrefix<span class="signature">(prefix, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="queryAlarmsByPrefix"><span class="type-signature"></span>queryAlarmsByPrefix<span class="signature">(prefix, auth, ignore)</span><span class="type-signature"></span></h4>
 
     
 
@@ -499,7 +723,30 @@ Returns a Promise containing a JS object with all of the alarms that have names 
 
             
 
-            <td class="description last">An auth object made using the keys and region you'd like to use..</td>
+            <td class="description last">An auth object made using the keys and region you'd like to use.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignore</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional list of names of alarms to ignore.</td>
         </tr>
 
     
@@ -540,7 +787,7 @@ Returns a Promise containing a JS object with all of the alarms that have names 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line122">line 122</a>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line156">line 156</a>
     </li></ul></dd>
     
 
@@ -571,7 +818,7 @@ Returns a Promise containing a JS object with all of the alarms that have names 
 
     
 
-    <h4 class="name" id="queryAlarmsByPrefixReadably"><span class="type-signature"></span>queryAlarmsByPrefixReadably<span class="signature">(prefix, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="queryAlarmsByPrefixReadably"><span class="type-signature"></span>queryAlarmsByPrefixReadably<span class="signature">(prefix, auth, ignore)</span><span class="type-signature"></span></h4>
 
     
 
@@ -654,7 +901,30 @@ Returns a String containing information about all of the alarms that have names 
 
             
 
-            <td class="description last">An auth object made using the keys and region you'd like to use..</td>
+            <td class="description last">An auth object made using the keys and region you'd like to use.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignore</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional list of names of alarms to ignore.</td>
         </tr>
 
     
@@ -695,7 +965,7 @@ Returns a String containing information about all of the alarms that have names 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line134">line 134</a>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line168">line 168</a>
     </li></ul></dd>
     
 
@@ -726,7 +996,7 @@ Returns a String containing information about all of the alarms that have names 
 
     
 
-    <h4 class="name" id="queryAlarmsByState"><span class="type-signature"></span>queryAlarmsByState<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="queryAlarmsByState"><span class="type-signature"></span>queryAlarmsByState<span class="signature">(state, auth, ignore)</span><span class="type-signature"></span></h4>
 
     
 
@@ -809,7 +1079,30 @@ Returns a Promise containing a JS object with all of the alarms currently in tha
 
             
 
-            <td class="description last">An auth object made using the keys and region you'd like to use..</td>
+            <td class="description last">An auth object made using the keys and region you'd like to use.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignore</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional list of names of alarms to ignore.</td>
         </tr>
 
     
@@ -850,7 +1143,7 @@ Returns a Promise containing a JS object with all of the alarms currently in tha
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line15">line 15</a>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line48">line 48</a>
     </li></ul></dd>
     
 
@@ -881,7 +1174,7 @@ Returns a Promise containing a JS object with all of the alarms currently in tha
 
     
 
-    <h4 class="name" id="queryAlarmsByStateReadably"><span class="type-signature"></span>queryAlarmsByStateReadably<span class="signature">(state, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="queryAlarmsByStateReadably"><span class="type-signature"></span>queryAlarmsByStateReadably<span class="signature">(state, auth, ignore)</span><span class="type-signature"></span></h4>
 
     
 
@@ -964,7 +1257,30 @@ Returns a Promise that resolves to a string containing information about each al
 
             
 
-            <td class="description last">An auth object made using the keys and region you'd like to use..</td>
+            <td class="description last">An auth object made using the keys and region you'd like to use.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignore</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional list of names of alarms to ignore.</td>
         </tr>
 
     
@@ -1005,7 +1321,7 @@ Returns a Promise that resolves to a string containing information about each al
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line26">line 26</a>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line59">line 59</a>
     </li></ul></dd>
     
 
@@ -1036,7 +1352,7 @@ Returns a Promise that resolves to a string containing information about each al
 
     
 
-    <h4 class="name" id="queryAlarmsByWatchlist"><span class="type-signature"></span>queryAlarmsByWatchlist<span class="signature">(watchlist, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="queryAlarmsByWatchlist"><span class="type-signature"></span>queryAlarmsByWatchlist<span class="signature">(watchlist, auth, ignore)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1119,7 +1435,30 @@ Returns a Promise containing a JS object with all of the alarms that have one of
 
             
 
-            <td class="description last">An auth object made using the keys and region you'd like to use..</td>
+            <td class="description last">An auth object made using the keys and region you'd like to use.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignore</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional list of names of alarms to ignore.</td>
         </tr>
 
     
@@ -1160,7 +1499,7 @@ Returns a Promise containing a JS object with all of the alarms that have one of
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line90">line 90</a>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line124">line 124</a>
     </li></ul></dd>
     
 
@@ -1191,7 +1530,7 @@ Returns a Promise containing a JS object with all of the alarms that have one of
 
     
 
-    <h4 class="name" id="queryAlarmsByWatchlistReadably"><span class="type-signature"></span>queryAlarmsByWatchlistReadably<span class="signature">(watchlist, auth)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="queryAlarmsByWatchlistReadably"><span class="type-signature"></span>queryAlarmsByWatchlistReadably<span class="signature">(watchlist, auth, ignore)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1274,7 +1613,30 @@ Returns a promise resolving to a string containing information about all matchin
 
             
 
-            <td class="description last">An auth object made using the keys and region you'd like to use..</td>
+            <td class="description last">An auth object made using the keys and region you'd like to use.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignore</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional list of names of alarms to ignore.</td>
         </tr>
 
     
@@ -1315,7 +1677,7 @@ Returns a promise resolving to a string containing information about all matchin
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line101">line 101</a>
+        <a href="alarms.js.html">alarms.js</a>, <a href="alarms.js.html#line135">line 135</a>
     </li></ul></dd>
     
 
@@ -1363,7 +1725,7 @@ Returns a promise resolving to a string containing information about all matchin
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Jul 15 2016 18:50:46 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Jul 18 2016 19:37:25 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
