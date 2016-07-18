@@ -114,6 +114,30 @@ describe('Alarms', function(){
 			assert.equal(result, '*OK*: AlarmName\n');
 		});
 	});
+	describe('#getAllAlarms with an ignore list', function(){
+		before(function() {
+			result = undefined;
+			return alarms.getAllAlarms(auth1, {}, ['AlarmName'])
+			.then(function (data){
+				result = data;
+			})
+		});
+		it('Should retrieve no results', function () {
+			assert.isOk(result);
+		});
+	});
+	describe('#getAllAlarms ignore a non-existent alarm', function(){
+		before(function() {
+			result = undefined;
+			return alarms.getAllAlarms(auth1, {}, ['SomeOtherAlarm'])
+			.then(function (data){
+				result = data;
+			});
+		});
+		it('Should retrieve no results', function () {
+			assert.isOk(result);
+		});
+	});
 });
 describe('Alarms', function(){
 	describe('#healthReportByState', function(){
