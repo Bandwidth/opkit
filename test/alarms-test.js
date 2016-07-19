@@ -2,9 +2,11 @@ var assert = require('chai').assert;
 var opkit = require('../index');
 var alarms = new opkit.Alarms();
 var sinon = require('sinon');
-var AWS = require('aws-sdk-mock');
+require('sinon-as-promised');
+var AWSMock = require('aws-sdk-mock');
 var Promise = require('bluebird');
 var auth1 = new opkit.Auth();
+var AWS = require('aws-promised');
 
 var result;
 
@@ -13,7 +15,7 @@ describe('Alarms', function(){
 	before(function() {
 		auth1.updateRegion('narnia-1');
 		auth1.updateAuthKeys('shiny gold one', 'old rusty one');
-		AWS.mock('CloudWatch', 'describeAlarms', function(params, callback){
+		AWSMock.mock('CloudWatch', 'describeAlarms', function(params, callback){
 			callback(null, {
 				MetricAlarms: [{
 					StateValue : 'OK',
@@ -27,7 +29,7 @@ describe('Alarms', function(){
 	});
 
 	after(function() {
-		AWS.restore('CloudWatch', 'describeAlarms');
+		AWSMock.restore('CloudWatch', 'describeAlarms');
 	});
 
 	describe('#queryAlarmsByState()', function(){
@@ -138,16 +140,11 @@ describe('Alarms', function(){
 			assert.isOk(result);
 		});
 	});
-});
-describe('Alarms', function(){
 	describe('#healthReportByState', function(){
 
-		after(function() {
-			AWS.restore('CloudWatch', 'describeAlarms');
-		});
-
 		before(function () {
-			AWS.mock('CloudWatch', 'describeAlarms', function(params, callback){
+			AWSMock.restore('CloudWatch', 'describeAlarms');
+			AWSMock.mock('CloudWatch', 'describeAlarms', function(params, callback){
 				callback(null, {
 					MetricAlarms: [{
 						StateValue : 'OK',
@@ -187,46 +184,63 @@ describe('Alarms', function(){
 			"          "+'*1*'+" alarms for which there is insufficient data.");
 		});
 	});
-});
-describe('Alarms Paginated Response', function() {
+	describe('Alarms Paginated Response', function() {
 
-	after(function() {
-		AWS.restore('CloudWatch', 'describeAlarms');
-	});
-
-	before(function() {
-		AWS.mock('CloudWatch', 'describeAlarms', function(params, callback){
-			if (!params.NextToken) {
-				callback(null, {
-					MetricAlarms: [{
-						StateValue : 'OK',
-						MetricName : 'MetricName',
-						AlarmDescription: 'AlarmDescription',
-						Namespace : 'Namespace',
-						AlarmName : 'AlarmName'
-					}],
-					NextToken : 'next'
-				});
-			} else {
-				callback(null, {
-					MetricAlarms: [{
-						StateValue : 'OK',
-						MetricName : 'MetricName2',
-						AlarmDescription: 'AlarmDescription2',
-						Namespace : 'Namespace2',
-						AlarmName : 'AlarmName2'
-					}],
-				});
-			}
+		before(function() {
+			AWSMock.restore('CloudWatch', 'describeAlarms');
+			AWSMock.mock('CloudWatch', 'describeAlarms', function(params, callback){
+				if (!params.NextToken) {
+					callback(null, {
+						MetricAlarms: [{
+							StateValue : 'OK',
+							MetricName : 'MetricName',
+							AlarmDescription: 'AlarmDescription',
+							Namespace : 'Namespace',
+							AlarmName : 'AlarmName'
+						}],
+						NextToken : 'next'
+					});
+				} else {
+					callback(null, {
+						MetricAlarms: [{
+							StateValue : 'OK',
+							MetricName : 'MetricName2',
+							AlarmDescription: 'AlarmDescription2',
+							Namespace : 'Namespace2',
+							AlarmName : 'AlarmName2'
+						}],
+					});
+				}
+			});
+			result = undefined;
+			return alarms.getAllAlarms(auth1)
+			.then(function(data) {
+				result = data;
+			});
 		});
-		result = undefined;
-		return alarms.getAllAlarms(auth1)
-		.then(function(data) {
-			result = data;
+
+		it('Should properly retrieve the alarms', function() {
+			assert.isOk(result);
 		});
 	});
+	describe('Alarms getMetricStatistics', function() {
+		before(function() {
+			sinon.stub(AWS, 'cloudWatch', function(auth) {
+				this.getMetricStatisticsPromised = function(params) {
+					return Promise.resolve([{Timestamp : 'time', Sum : 2, Unit : 'none'}])
+				}
+			});
+			return alarms.getMetricStatistics(auth1, {Namespace : 'Namespace',
+														MetricName : 'Metric',
+														Period : 60,
+														Statistics : ['Statistics']}, 10, 1)
+			.then(function(data) {
+				result = data;
+			});
+		});
 
-	it('Should properly retrieve the alarms', function() {
-		assert.isOk(result);
+		it('Should properly retrieve statistics', function() {
+			assert.isOk(result);
+		});
 	});
 });
