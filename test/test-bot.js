@@ -5,81 +5,88 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 require('sinon-as-promised')(Promise);
 
-var pattern = function(message, bot, auths){
-	return (message.text === 'boogie');
-};
-var logic = function(message, bot, auths){
-	bot.sendMessage('You know I can boogie down', message.channel);
-	if (message.user === 'user') {
-		bot.sendMessage('Specially for you', message.channel);		
-	} else {
-		return Promise.reject();	
-	} 
-	return Promise.resolve();
-};
-
-var otherPattern = function(message, bot, auths){
-	return (message.text === 'opkit twelve');
-};
-var otherLogic = function(message, bot, auths){
-	bot.sendMessage('Twelve, from the special handler', message.channel);
-	if (message.user === 'user') {
-		return Promise.resolve();
-	} else {
-		return Promise.reject();	
-	} 
-};
-
-var sendsTwelve = function(message, bot, auth){
-	bot.sendMessage('12', message.channel);
-	return Promise.resolve("Bot successfully sent the string literal '12'.");
-};
-
-var authorizationFunction = function(message, bot, auth){
-	return Promise.resolve(['A', 'B', 'C']);
-};
-
-var sendsTwelveObject = {
-	command : sendsTwelve,
-	name : 'twelve',
-	syntax : [	['give', 'me', 'twelve'],
-				['send', 'me', 'twelve'],
-				['send', 'twelve'],
-				['give', 'me', 'a', 'number'],
-				'twelve'],
-	package : 'numbers'
-}
-
-var otherObject = {
-	command : sendsTwelve,
-	name : 'totesnotTwelve',
-	syntax : ['give', 'me', 'totesnotTwelve'],
-	package : 'numbers'
-}
-
-var mockPersister = {
-	save : function(brain, package){
-		return Promise.resolve(true);
-	},
-	recover : function(package){
-		return Promise.resolve({
-			data : 'some_data'
-		});
-	},
-	start : function(){
-		return Promise.resolve(true);
-	}
-}
-
-var failsToSendTwelve = function(message, bot, auth){
-	return Promise.reject("Bot couldn't send '12' for some reason.");
-};
-
-var bot;
-
-var clock = sinon.useFakeTimers();
-
 describe('Bot', function(){
+
+	var pattern = function(message, bot, auths){
+		return (message.text === 'boogie');
+	};
+
+	var logic = function(message, bot, auths){
+		bot.sendMessage('You know I can boogie down', message.channel);
+		if (message.user === 'user') {
+			bot.sendMessage('Specially for you', message.channel);		
+		} else {
+			return Promise.reject();	
+		} 
+		return Promise.resolve();
+	};
+
+	var otherPattern = function(message, bot, auths){
+		return (message.text === 'opkit twelve');
+	};
+	var otherLogic = function(message, bot, auths){
+		bot.sendMessage('Twelve, from the special handler', message.channel);
+		if (message.user === 'user') {
+			return Promise.resolve();
+		} else {
+			return Promise.reject();	
+		} 
+	};
+
+	var sendsTwelve = function(message, bot, auth){
+		bot.sendMessage('12', message.channel);
+		return Promise.resolve("Bot successfully sent the string literal '12'.");
+	};
+
+	var authorizationFunction = function(message, bot, auth){
+		return Promise.resolve(['A', 'B', 'C']);
+	};
+
+	var sendsTwelveObject = {
+		command : sendsTwelve,
+		name : 'twelve',
+		syntax : [	['give', 'me', 'twelve'],
+					['send', 'me', 'twelve'],
+					['send', 'twelve'],
+					['give', 'me', 'a', 'number'],
+					'twelve'],
+		package : 'numbers'
+	};
+
+	var otherObject = {
+		command : sendsTwelve,
+		name : 'totesnotTwelve',
+		syntax : ['give', 'me', 'totesnotTwelve'],
+		package : 'numbers'
+	};
+
+	var mockPersister = {
+		save : function(brain, package){
+			return Promise.resolve(true);
+		},
+		recover : function(package){
+			return Promise.resolve({
+				data : 'some_data'
+			});
+		},
+		start : function(){
+			return Promise.resolve(true);
+		}
+	};
+
+	var failsToSendTwelve = function(message, bot, auth){
+		return Promise.reject("Bot couldn't send '12' for some reason.");
+	};
+
+	var bot;
+	var result;
+
+	var clock = sinon.useFakeTimers();
+
+	afterEach(function() {
+		result = undefined;
+	});
+
 	describe('#Constructor without params', function(){
 		before(function(){
 			bot = new Opkit.Bot(
@@ -270,7 +277,6 @@ describe('Bot', function(){
 			);	
 		});
 		describe('#case of match without params', function () {
-			var result;
 			before(function(){
 				return bot.messageParser(['testbot', 'send', 'me', 'twelve'], bot)
 				.then(function(data){
@@ -283,8 +289,6 @@ describe('Bot', function(){
 			});
 		});
 		describe('#case of match with params', function () {
-			var result;
-
 			before(function(){
 				return bot.messageParser(['testbot', 'send', 'me', 'twelve' ,'please'], bot)
 				.then(function(data){
@@ -294,15 +298,10 @@ describe('Bot', function(){
 
 			it('should return a match', function(){
 				assert.equal(result.command, sendsTwelveObject);
-			});
-
-			it('should return the correct args', function(){
 				assert.deepEqual(result.args, ['please']);
 			});
 		});
 		describe('#case with no match (JW distance high; likely typo)', function(){
-			var result;
-			
 			before(function(){
 				return bot.messageParser(['testbot', 'send', 'me', 'twilve'], bot)
 				.then(function(){
@@ -318,8 +317,6 @@ describe('Bot', function(){
 			});
 		});
 		describe('#case with no match (JW distance low; unlikely typo)', function(){
-			var result;
-			
 			before(function(){
 				return bot.messageParser(['testbot', 'fdasfdsfsdaf', 'fdsfdsdf', 'fdafdfdfdfdfdfdfdfdfdfdfd'], bot)
 				.then(function(){
@@ -461,7 +458,6 @@ describe('Bot', function(){
 			);
 		});
 		describe('#case where a user has one role', function(){
-			var result;
 			before(function(){
 				bot.messageParser = sinon.mock().resolves({
 					command : sendsTwelveObject,
@@ -483,7 +479,6 @@ describe('Bot', function(){
 			});
 		});
 		describe('#case where a user has multiple roles', function(){
-			var result;
 			before(function(){
 				bot.messageParser = sinon.mock().resolves({
 					command : sendsTwelveObject,
@@ -508,7 +503,6 @@ describe('Bot', function(){
 			});
 		});
 		describe('#case where access is denied', function(){
-			var result;
 			before(function(){
 				bot.messageParser = sinon.mock().resolves({
 					command : sendsTwelveObject,
@@ -533,7 +527,6 @@ describe('Bot', function(){
 			});
 		});
 		describe("#case where the command rejects promise", function(){
-			var result;
 			before(function(){
 				bot.messageParser = sinon.mock().resolves({
 					command : sendsTwelveObject,
@@ -557,7 +550,7 @@ describe('Bot', function(){
 			});
 			it('should still resolve', function(){
 				assert(result);							
-			})
+			});
 		}); 
 	});
 });
