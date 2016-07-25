@@ -179,9 +179,9 @@ describe('Alarms', function(){
 		});
 		it('Should result in a correct health report', function () {
 			assert.equal(result, "*Number Of Alarms, By State:* \n"+
-			"There are "+'*1*'+" OK alarms, \n"+
-			"          "+'*1*'+ " alarming alarms, and \n"+
-			"          "+'*1*'+" alarms for which there is insufficient data.");
+			"*OK*: 1*\n"+
+			"*Alarm*: *1*\n"+
+			"*Insufficient Data*: *1*");
 		});
 	});
 	describe('Alarms Paginated Response', function() {
