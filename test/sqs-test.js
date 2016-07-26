@@ -2,7 +2,7 @@ var assert = require('chai').assert;
 var opkit = require('../index');
 var sqsqueue = new opkit.SQS();
 var sinon = require('sinon');
-var AWSMock = require('aws-sdk-mock');
+require('sinon-as-promised');
 var AWS = require('aws-promised');
 
 describe('SQS', function() {
@@ -15,29 +15,33 @@ describe('SQS', function() {
 		auth1.updateRegion('narnia-1');
 		auth1.updateAuthKeys('shiny gold one', 'old rusty one');
 
-		AWSMock.mock('SQS', 'getQueueAttributes', function(params, callback) {
-			var data = {};
-			var qualities = {};
-			qualities.ApproximateNumberOfMessages = 2;
-			qualities.ApproximateNumberOfMessagesNotVisible = 0;
-			data.Attributes = qualities;
-			callback(null, data);
-		});
-
-		AWSMock.mock('SQS', 'listQueues', function(params, callback) {
-			var data = {};
-			var urls = ['www.example.com'];
-			data.QueueUrls = urls;
-			callback(null, data);
-		});
-
-		AWSMock.mock('SQS', 'getQueueUrl', function(params, callback) {
-			callback(null, "www.example.com");
+		sinon.stub(AWS, 'sqs', function(auth) {
+			this.getQueueAttributesPromised = function(params) {
+				var data = {};
+				var qualities = {};
+				qualities.ApproximateNumberOfMessages = 2;
+				qualities.ApproximateNumberOfMessagesNotVisible = 0;
+				data.Attributes = qualities;
+				return Promise.resolve(data);
+			};
+			this.listQueuesPromised = function(params) {
+				var data = {};
+				var urls = ['www.example.com'];
+				data.QueueUrls = urls;
+				return Promise.resolve(data);
+			};
+			this.getQueueUrlPromised = function(params) {
+				return Promise.resolve('www.example.com');
+			}
 		});
 	});
 
 	afterEach(function() {
 		result = undefined;
+	});
+
+	after(function() {
+		AWS.sqs.restore();
 	});
 
 	describe('SQSQueueSizeInt', function() {
