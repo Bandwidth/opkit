@@ -1,5 +1,5 @@
 README v0.01 / 11 MAY 2016
-[![Build Status](https://travis-ci.com/inetCatapult/opkit.svg?token=hbpefyJzUkgSojiEnqMS&branch=master)](https://travis-ci.com/inetCatapult/opkit)
+[![Build Status](https://travis-ci.com/bandwidthcom/opkit.svg?token=hbpefyJzUkgSojiEnqMS&branch=master)](https://travis-ci.com/inetCatapult/opkit)
 
 # Opkit
 
