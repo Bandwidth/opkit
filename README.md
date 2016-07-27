@@ -16,7 +16,7 @@ It has many features which are useful for configuring the bot to control mission
 
 Opkit is an npm module. To install:
 
-npm install opkit (--save)
+`npm install opkit (--save)`
 
 You may need to run this command as root.
 
