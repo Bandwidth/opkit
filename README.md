@@ -2,7 +2,7 @@ README v0.01 / 11 MAY 2016
 [![Build Status](https://travis-ci.com/bandwidthcom/opkit.svg?token=hbpefyJzUkgSojiEnqMS&branch=master)](https://travis-ci.com/inetCatapult/opkit)
 
 # Opkit
-Part of [Bandwidth Open Source](bandwidth.com/?utm_medium=social&utm_source=github&utm_campaign=dtolb&utm_content=opkit)
+Part of [Bandwidth Open Source](http://bandwidth.com/?utm_medium=social&utm_source=github&utm_campaign=dtolb&utm_content=opkit)
 
 ## Introduction
 
