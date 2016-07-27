@@ -6,7 +6,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; th
 	cd $HOME
 	git config --global user.email "travis@travis-ci.org"
 	git config --global user.name "travis-ci"
-	git clone --quiet --branch=gh-pages git@github.com:bandwdithcom/opkit.git
+	git clone --quiet --branch=gh-pages git@github.com:bandwidthcom/opkit.git
 
 	cd opkit
 	git rm -rf .
