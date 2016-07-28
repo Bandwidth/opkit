@@ -72,7 +72,7 @@ You'll need to ensure that your Slack API token is stored at the environment var
 
 `token=$YOUR_API_TOKEN_HERE node server.js`.
 
-There is more thorough documentation available at the Javadoc page; documentation is automagically generated and posted to http://inetcatapult.github.io/opkit/index.html with each update. Look at our example scripts, too!
+There is more thorough documentation available at the Javadoc page; documentation is automagically generated and posted to http://bandwidthcom.github.io/opkit/index.html with each update. Look at our example scripts, too!
 
 ##Running Tests Locally
 
