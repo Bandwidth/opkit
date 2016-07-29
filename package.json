@@ -1,6 +1,6 @@
 {
   "name": "opkit",
-  "version": "0.0.1c",
+  "version": "0.0.2",
   "description": "An Erector Set For Devops Bots",
   "main": "index.js",
   "scripts": {
