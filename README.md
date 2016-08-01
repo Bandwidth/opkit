@@ -21,6 +21,8 @@ Opkit is an npm module. To install:
 
 You may need to run this command as root.
 
+There is an example bot that includes several useful commands at https://github.com/BandwidthExamples/opkit-example which features one-click Heroku deploy. Consider cloning this to get a better idea of how Opkit is used.
+
 ### Getting Started
 
 There is an example script at examples/example.js in the repository. You'll need to set an environment variable for your slack token, which can be obtained through the Custom Integrations panel on Slack. (The example script expects the environment variable to be named `token`. Run it with `node example.js`.
