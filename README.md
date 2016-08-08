@@ -1,4 +1,3 @@
-README v0.01 / 11 MAY 2016
 [![Build Status](https://travis-ci.org/bandwidthcom/opkit.svg?branch=master)](https://travis-ci.org/bandwidthcom/opkit)
 [![Known Vulnerabilities](https://snyk.io/test/npm/opkit/badge.svg)](https://snyk.io/test/npm/opkit)
 # Opkit
