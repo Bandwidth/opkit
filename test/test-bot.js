@@ -227,7 +227,26 @@ describe('Bot', function(){
 			assert(!calledHandlerCallback.called);
 		});		
 	});
-
+	describe("addCron", function(){
+		before(function(){
+			bot = new Opkit.Bot(
+				'opkit',
+				[sendsTwelveObject],
+				mockPersister,
+				{
+					authFunction : authorizationFunction,
+					logLevel     : 'TEST'
+				}
+			);
+			bot.addCron('* * * * * *', 'opkit twelve', 'user');
+			var clock = sinon.useFakeTimers();
+			bot.sendMessage = sinon.mock().once();
+			clock.tick(1200);
+		});
+		it('should run the job', function(){
+			bot.sendMessage.verify();
+		});
+	});
 	describe('#sendMessage', function(){
 		before(function(){
 			bot = new Opkit.Bot(
