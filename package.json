@@ -1,6 +1,6 @@
 {
   "name": "opkit",
-  "version": "1.0.0a",
+  "version": "1.1.0",
   "description": "An Erector Set For Devops Bots",
   "main": "index.js",
   "scripts": {
@@ -42,6 +42,7 @@
     "aws-promised": "^2.13.0",
     "aws-sdk": "^2.3.10",
     "bluebird": "^3.4.0",
+    "cron": "^1.1.0",
     "fs-promise": "^0.5.0",
     "lodash": "^3.10.1",
     "mongodb-bluebird": "^0.1.1",
