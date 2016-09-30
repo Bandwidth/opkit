@@ -101,6 +101,28 @@ describe('EC2', function() {
 	});
 
 	describe('Identifying EC2 instances', function() {
+		describe("getTagsByID", function() {
+			before(function() {
+				AWS.ec2.restore();
+				sinon.stub(AWS, 'ec2', function(auth) {
+					this.describeInstancesPromised = function(params) {
+						var data = {};
+						data.Reservations = [{Instances : [{Tags : [{Key : 'Name', Value: 'Tag'}, 
+												{Key: 'OtherName', Value: 'OtherTag'}]}]}];
+						return Promise.resolve(data);
+					}
+				});
+				return ecInstance.getTagsByID('a-bcdefg', auth1)
+				.then(function(data) {
+					result = data;
+				});
+			});
+
+			it("getting the tags of a specified EC2 instance works", function() {
+				assert.isOk(result);
+			});
+		});
+
 		describe("getInstanceID", function() {
 			before(function() {
 				AWS.ec2.restore();
