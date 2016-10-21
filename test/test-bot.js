@@ -228,6 +228,7 @@ describe('Bot', function(){
 		});		
 	});
 	describe("addCron", function(){
+		var spy;
 		before(function(){
 			bot = new Opkit.Bot(
 				'opkit',
@@ -238,13 +239,13 @@ describe('Bot', function(){
 					logLevel     : 'TEST'
 				}
 			);
-			bot.addCron('* * * * * *', 'opkit twelve', 'user');
 			var clock = sinon.useFakeTimers();
-			bot.sendMessage = sinon.mock().once();
-			clock.tick(1200);
+			bot.addCron('* * * * * *', 'opkit twelve', 'user', 'America/New_York');
+			spy = sinon.spy(bot, 'sendMessage');
+			clock.tick(2500);
 		});
 		it('should run the job', function(){
-			bot.sendMessage.verify();
+			assert.equal(spy.called, true);
 		});
 	});
 	describe('#sendMessage', function(){
