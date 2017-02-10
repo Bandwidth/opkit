@@ -242,4 +242,25 @@ describe('Alarms', function(){
 			assert.isOk(result);
 		});
 	});
+	describe('Alarms getMetricStatisticsSingle', function() {
+		before(function() {
+			AWS.cloudWatch.restore();
+			sinon.stub(AWS, 'cloudWatch', function(auth) {
+				this.getMetricStatisticsPromised = function(params) {
+					return Promise.resolve([{Timestamp : 'time', Sum : 2, Unit : 'none'}])
+				}
+			});
+			return alarms.getMetricStatisticsSingle(auth1, {Namespace : 'Namespace',
+														MetricName : 'Metric',
+														Period : 60,
+														Statistics : ['Statistics']})
+			.then(function(data) {
+				result = data;
+			});
+		});
+
+		it('Should properly retrieve statistics', function() {
+			assert.isOk(result);
+		});
+	});
 });

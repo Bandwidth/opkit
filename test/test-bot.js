@@ -35,6 +35,7 @@ describe('Bot', function(){
 
 	var sendsTwelve = function(message, bot, auth){
 		bot.sendMessage('12', message.channel);
+		console.log("Sends twelve worked");
 		return Promise.resolve("Bot successfully sent the string literal '12'.");
 	};
 
