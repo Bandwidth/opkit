@@ -9,6 +9,16 @@ var AWS = require('aws-promised');
 
 var result;
 
+var defaultResult = {
+	MetricAlarms: [{
+		StateValue : 'OK',
+		MetricName : 'MetricName',
+		AlarmDescription: 'AlarmDescription',
+		Namespace : 'Namespace',
+		AlarmName : 'AlarmName'
+	}]
+};
+
 describe('Alarms', function(){
 
 	before(function() {
@@ -16,15 +26,7 @@ describe('Alarms', function(){
 		auth1.updateAuthKeys('shiny gold one', 'old rusty one');
 		sinon.stub(AWS, 'cloudWatch', function(auth) {
 			this.describeAlarmsPromised = function(params) {
-				return Promise.resolve({
-					MetricAlarms: [{
-						StateValue : 'OK',
-						MetricName : 'MetricName',
-						AlarmDescription: 'AlarmDescription',
-						Namespace : 'Namespace',
-						AlarmName : 'AlarmName'
-					}]
-				});
+				return Promise.resolve(defaultResult);
 			}
 		});
 	});
@@ -114,26 +116,34 @@ describe('Alarms', function(){
 			assert.equal(result, '*OK*: AlarmName\n');
 		});
 	});
-	describe('#getAllAlarms with an ignore list', function(){
+	describe('#getAllAlarms with a filter', function(){
 		before(function() {
-			return alarms.getAllAlarms(auth1, {}, ['AlarmName'])
+			filterByName = function(alarm) {
+				return alarm.AlarmName !== 'AlarmName';
+			}
+			
+			return alarms.getAllAlarms(auth1, {}, filterByName)
 			.then(function (data){
 				result = data;
 			})
 		});
 		it('Should retrieve no results', function () {
-			assert.isOk(result);
+			assert.deepEqual(result, { MetricAlarms: [] });
 		});
 	});
-	describe('#getAllAlarms ignore a non-existent alarm', function(){
+	describe('#getAllAlarms filter a non-existent alarm', function(){
 		before(function() {
-			return alarms.getAllAlarms(auth1, {}, ['SomeOtherAlarm'])
+			filterByName = function(alarm) {
+				return alarm.AlarmName !== 'SomeOtherAlarm';
+			}
+			
+			return alarms.getAllAlarms(auth1, {}, filterByName)
 			.then(function (data){
 				result = data;
 			});
 		});
 		it('Should retrieve no results', function () {
-			assert.isOk(result);
+			assert.deepEqual(result, defaultResult);
 		});
 	});
 	describe('#healthReportByState', function(){
