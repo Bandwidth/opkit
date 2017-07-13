@@ -8,4 +8,4 @@ after_success:
   - ./publish.sh
 language: node_js
 node_js:
-  - 0.12
+  - 6.11.1

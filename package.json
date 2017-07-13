@@ -1,6 +1,6 @@
 {
   "name": "opkit",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "An Erector Set For Devops Bots",
   "main": "index.js",
   "scripts": {
@@ -46,7 +46,7 @@
     "fs-promise": "^0.5.0",
     "lodash": "^3.10.1",
     "mongodb-bluebird": "^0.1.1",
-    "natural": "^0.4.0",
+    "natural": "^0.5.0",
     "pg-promise": "^4.8.1",
     "redis": "^2.6.2",
     "slack-client": "^2.0.6",
